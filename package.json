@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "check:type": "tsc --project tsconfig.json --noEmit",
-    "lint": "eslint . --ext ts,tsx"
+    "lint": "eslint . --ext ts,tsx --fix"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
