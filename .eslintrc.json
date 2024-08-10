@@ -1,0 +1,60 @@
+{
+  "extends": [
+    "airbnb",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb/hooks"
+  ],
+  "plugins": ["prettier", "import"],
+  "rules": {
+    "prettier/prettier": ["warn"],
+    "import/no-unresolved": "error",
+    "import/prefer-default-export": "warn",
+    "react/jsx-filename-extension": [0, { "extensions": [".tsx"] }],
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-props-no-spreading": [
+      0,
+      { "html": "ignore", "custom": "ignore", "explicitSpread": "ignore" }
+    ],
+    "no-use-before-define": 0,
+    "@typescript-eslint/no-use-before-define": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_" }
+    ],
+    "consistent-return": "warn",
+    "no-console": [
+      "warn",
+      { "allow": ["warn", "error"] }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/newline-after-import": "warn"
+  },
+  "parserOptions": {
+    "project": "./tsconfig.eslint.json"
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.eslint.json"
+      }
+    }
+  }
+}
