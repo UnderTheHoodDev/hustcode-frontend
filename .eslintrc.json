@@ -7,7 +7,7 @@
   ],
   "plugins": ["prettier", "import"],
   "rules": {
-    "prettier/prettier": ["warn"],
+    // "prettier/prettier": ["warn"],
     "import/no-unresolved": "error",
     "import/prefer-default-export": "warn",
     "react/jsx-filename-extension": [0, { "extensions": [".tsx"] }],
@@ -24,10 +24,7 @@
       { "argsIgnorePattern": "^_" }
     ],
     "consistent-return": "warn",
-    "no-console": [
-      "warn",
-      { "allow": ["warn", "error"] }
-    ],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
     "import/order": [
       "error",
       {
