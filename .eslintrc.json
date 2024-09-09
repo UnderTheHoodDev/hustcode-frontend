@@ -10,6 +10,14 @@
     // "prettier/prettier": ["warn"],
     "import/no-unresolved": "error",
     "import/prefer-default-export": "warn",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
     "react/jsx-filename-extension": [0, { "extensions": [".tsx"] }],
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": [
@@ -39,7 +47,8 @@
         "newlines-between": "always"
       }
     ],
-    "import/newline-after-import": "warn"
+    "import/newline-after-import": "warn",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "parserOptions": {
     "project": "./tsconfig.eslint.json"
