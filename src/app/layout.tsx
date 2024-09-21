@@ -1,8 +1,11 @@
+import '@/styles/global.scss';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import React from 'react';
+
+import Footer from '@/components/layouts/Footer';
+import Header from '@/components/layouts/Header';
 import './globals.css';
-import './styles/global.scss';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -28,7 +31,11 @@ export default function RootLayout({
         />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
       </head>
-      <body className="bg-background text-base_content">{children}</body>
+      <body className="bg-background text-base_content">
+        <Header />
+        <main>{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

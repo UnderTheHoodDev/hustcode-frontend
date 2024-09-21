@@ -65,13 +65,13 @@
   }
 }
 .layout-padding {
-  @apply sm:px-4 lg:px-[5%] px-[10%];
+  @apply px-4 sm:px-6 lg:px-[5%] xl:px-[10%];
 }
 
 .landing-button {
   background-image: linear-gradient(90deg, #2cb2eb 0%, #f472b6 100%),
     linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
   width: fit-content;
-  @apply text-base_content font-semibold px-10 py-3 text-base rounded-full hover:shadow-lg;
+  @apply rounded-full px-5 py-2 text-sm font-medium text-base_content hover:shadow-lg sm:px-9 sm:py-[10px] sm:text-base;
   transition: background-image 0.3s ease-in-out;
 }

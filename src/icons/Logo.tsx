@@ -4,6 +4,7 @@ const Logo = (
     width="40"
     height="40"
     viewBox="0 0 40 40"
+    className="h-8 w-8 xsm:h-9 xsm:w-9 md:h-10 md:w-10"
     fill="none"
   >
     <rect width="29.0905" height="7.27274" rx="3.63637" fill="#38BDF8" />

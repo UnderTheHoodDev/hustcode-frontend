@@ -5,6 +5,7 @@ const ProgrammingLanguageIcons = {
       height="50"
       viewBox="0 0 50 50"
       fill="none"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -19,6 +20,7 @@ const ProgrammingLanguageIcons = {
       height="50"
       viewBox="0 0 50 50"
       fill="none"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       xmlns="http://www.w3.org/2000/svg"
     >
       <g filter="url(#filter0_b_1_533)">
@@ -59,6 +61,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -73,6 +76,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -253,6 +257,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -283,6 +288,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -301,6 +307,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -366,6 +373,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -380,6 +388,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -438,6 +447,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -454,6 +464,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -472,6 +483,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -491,6 +503,7 @@ const ProgrammingLanguageIcons = {
       width="50"
       height="50"
       viewBox="0 0 50 50"
+      className="h-11 w-11 sm:h-[50px] sm:w-[50px]"
       fill="none"
     >
       <path

@@ -18,9 +18,10 @@
       { "html": "ignore", "custom": "ignore", "explicitSpread": "ignore" }
     ],
     "react/jsx-no-useless-fragment": "off",
+    "react/button-has-type": "off",
     "no-use-before-define": 0,
     "@typescript-eslint/no-use-before-define": "error",
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       { "argsIgnorePattern": "^_" }

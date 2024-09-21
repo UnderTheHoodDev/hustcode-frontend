@@ -5,6 +5,7 @@ const Community = (
     width="96"
     height="96"
     viewBox="0 0 96 96"
+    className="h-20 w-20 sm:h-[88px] sm:w-[88px] md:h-24 md:w-24"
     fill="none"
   >
     <path

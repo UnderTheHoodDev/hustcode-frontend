@@ -77,18 +77,20 @@ const ListLanguages = [
 ];
 function ProgrammingLanguages() {
   return (
-    <div className="flex flex-col justify-center text-3xl mb-24 layout-padding">
-      <div className="flex justify-center mb-11 font-semibold text-[#F472B6]">
+    <div className="layout-padding mb-14 flex flex-col justify-center text-xl leading-normal xsm:text-2xl sm:mb-24 sm:text-3xl">
+      <div className="mb-4 flex flex-col items-center justify-center gap-2 font-semibold text-[#F472B6] xsm:mb-10 xsm:flex-row xsm:items-center xsm:gap-0">
         <span className="text-base_content">Solve your problems in&nbsp; </span>
-        <Typewriter
-          words={ListLanguages.map((language) => language.name)}
-          loop={0}
-          typeSpeed={150}
-          deleteSpeed={150}
-          delaySpeed={2000}
-        />
+        <div className="relative h-8 overflow-hidden xsm:h-auto">
+          <Typewriter
+            words={ListLanguages.map((language) => language.name)}
+            loop={0}
+            typeSpeed={150}
+            deleteSpeed={150}
+            delaySpeed={2000}
+          />
+        </div>
       </div>
-      <div className="flex flex-wrap gap-8 justify-center">
+      <div className="flex flex-wrap justify-center gap-5 xsm:gap-6 sm:gap-8">
         {ListLanguages.map((language) => (
           <Fragment key={language.name}> {language.icon} </Fragment>
         ))}
