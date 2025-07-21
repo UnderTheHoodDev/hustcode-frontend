@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:prod": "node server.js",
+    "generate-api": "openapi-generator-cli generate -i ./api/specs/api.json -g typescript-axios -o ./src/api/client",
     "check:type": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint . --ext ts,tsx --fix"
   },
@@ -24,6 +26,7 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
+    "axios": "^1.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "jotai": "^2.9.2",
@@ -36,10 +39,12 @@
     "react-simple-typewriter": "^5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "sass": "^1.78.0",
+    "sharp": "^0.34.3",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.21.3",
     "@types/hast": "^3.0.4",
     "@types/mdast": "^4.0.4",
     "@types/minimist": "^1.2.5",

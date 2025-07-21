@@ -30,7 +30,7 @@ function HeroSection() {
             width={390}
             height={390}
             alt="Hero Image"
-            objectFit="contain"
+            style={{ objectFit: 'contain' }}
           />
         </div>
       </div>
