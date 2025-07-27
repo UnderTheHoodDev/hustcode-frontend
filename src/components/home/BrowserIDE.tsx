@@ -46,7 +46,7 @@ console.log(solveTSP())`;
         <Link href="/#" className="landing-button mb-8 md:mb-14">
           Get started
         </Link>
-        <div className="w-full text-sm shadow-[0px_-225px_150px_-150px_rgba(79,70,229,0.40)] sm:w-5/6 lg:w-full">
+        <div className="flex w-full flex-col items-center justify-center text-sm shadow-[0px_-225px_150px_-150px_rgba(79,70,229,0.40)] md:w-11/12 lg:w-3/4">
           <div className="flex h-9 w-full items-center justify-between border-b border-[#272D3D] bg-[#0E1527] px-4">
             <div className="flex basis-1/3 items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-red-500" />
@@ -58,7 +58,7 @@ console.log(solveTSP())`;
             language="javascript"
             style={dracula}
             showLineNumbers
-            className="m-0 h-[350px] overflow-x-auto bg-[#0E1527] text-[12px] xsm:h-[400px] md:h-auto md:text-sm"
+            className="m-0 h-[350px] w-full overflow-x-auto bg-[#0E1527] text-[12px] xsm:h-[400px] md:h-auto md:text-sm"
           >
             {codeString}
           </SyntaxHighlighter>
