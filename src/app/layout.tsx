@@ -31,7 +31,7 @@ export default function RootLayout({
         />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
       </head>
-      <body className="bg-background text-base_content">
+      <body className="bg-background text-base-content">
         <Header />
         <main>{children}</main>
         <Footer />

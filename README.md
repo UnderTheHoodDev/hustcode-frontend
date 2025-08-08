@@ -4,13 +4,17 @@
 
 The HustCode Frontend is the frontend for a coding platform. It provides the necessary folder structure and configuration setup to kickstart your frontend development for the HustCode project.
 
-## Prerequisites
+## Tech Stack
 
-Before using this frontend template, make sure you have the following installed:
+- Framework: NextJS
 
-- Node.js: You can download and install Node.js from the official website.
+- Styling: TailwindCSS, Sass
 
-- Yarn: A fast, reliable, and secure dependency management tool for JavaScript.
+- UI material library: shadcn/ui
+
+- Global state management: Jotai
+
+## Installation & Setup
 
 To use the HustCode Frontend template, follow these steps:
 

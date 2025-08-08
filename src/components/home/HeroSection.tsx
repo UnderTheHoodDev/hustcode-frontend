@@ -1,25 +1,27 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
 function HeroSection() {
   return (
     <div className="layout-padding bg-[url('/images/gradient-background.png')] bg-cover bg-center">
-      <div className="xsm:pt-22 flex pb-14 pt-[70px] xsm:pt-20 sm:pb-20 sm:pt-24 md:pt-28">
+      <div className="xsm:pt-22 xsm:pt-20 flex pt-[70px] pb-14 sm:pt-24 sm:pb-20 md:pt-28">
         <div className="flex flex-1 flex-col pt-4">
-          <div className="text-center text-3xl font-bold leading-normal xsm:text-4xl sm:text-[42px] md:text-left lg:text-5xl">
+          <div className="xsm:text-4xl text-3xl leading-normal font-bold sm:text-[42px] lg:text-5xl">
             <span>Start your</span>
             <span className="bg-gradient-to-r from-sky-400 to-pink-400 bg-clip-text text-transparent">
               &nbsp;coding
             </span>
           </div>
-          <span className="mb-6 mt-0 text-center text-3xl font-bold leading-normal xsm:mt-3 xsm:text-4xl sm:mb-10 sm:text-[42px] md:text-left lg:text-5xl">
+          <span className="xsm:mt-3 xsm:text-4xl mt-0 mb-6 text-3xl leading-normal font-bold sm:mb-10 sm:text-[42px] lg:text-5xl">
             journey today
           </span>
-          <div className="mb-8 w-full text-center text-sm leading-relaxed text-neutral_content sm:mb-10 sm:text-base md:mb-14 md:w-2/3 md:text-left">
+          <p className="text-neutral-content xsm:w-3/4 mb-8 w-full text-sm leading-relaxed sm:mb-14 sm:w-2/3 sm:text-base">
             Hustcoder is the best platform to help you sharpen your
             problem-solving skills for coding interviews and build a strong
             foundation for your software development career.
-          </div>
+          </p>
           <div className="flex w-full items-center justify-center md:block">
             <Link href="/#" className="landing-button">
               Create account

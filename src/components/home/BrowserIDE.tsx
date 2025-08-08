@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+SyntaxHighlighter.registerLanguage('javascript', js);
+
 function BrowserIDE() {
+  const Highlighter = SyntaxHighlighter as unknown as React.ComponentType<any>;
   const codeString = `const INF = Number.MAX_SAFE_INTEGER; 
 const N = 1000;
   
@@ -35,10 +41,10 @@ console.log(solveTSP())`;
         <span className="mb-1 text-center text-xl font-semibold text-[#F472B6] sm:mb-2 sm:text-2xl">
           In Browser IDE
         </span>
-        <span className="mb-5 text-center text-xl font-semibold leading-normal xsm:mb-8 xsm:text-2xl sm:text-3xl">
+        <span className="xsm:mb-8 xsm:text-2xl mb-5 text-center text-xl leading-normal font-semibold sm:text-3xl">
           Hands-on Learning Experience
         </span>
-        <p className="mb-7 w-full text-center text-sm leading-normal text-neutral_content sm:w-3/4 sm:text-[18px] sm:text-base">
+        <p className="text-neutral_content mb-7 w-full text-center text-sm leading-normal sm:w-3/4 sm:text-base sm:text-[18px]">
           Practice as you learn with our built-in IDE. Each lesson is designed
           to be followed by a coding exercise to apply the concepts and gain
           immediate feedback.
@@ -54,14 +60,14 @@ console.log(solveTSP())`;
               <div className="h-3 w-3 rounded-full bg-green-500" />
             </div>
           </div>
-          <SyntaxHighlighter
+          <Highlighter
             language="javascript"
             style={dracula}
             showLineNumbers
-            className="m-0 h-[350px] w-full overflow-x-auto bg-[#0E1527] text-[12px] xsm:h-[400px] md:h-auto md:text-sm"
+            className="xsm:h-[400px] m-0! h-[350px] w-full overflow-x-auto bg-[#0E1527] text-[12px] md:h-auto md:text-sm"
           >
             {codeString}
-          </SyntaxHighlighter>
+          </Highlighter>
         </div>
       </div>
     </>

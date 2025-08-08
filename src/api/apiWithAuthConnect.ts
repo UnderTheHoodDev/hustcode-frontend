@@ -7,7 +7,7 @@ import { DEFAULT_API_BASE_URL } from '@/constants/api_paths';
 const axiosInstanceWithAuth = axios.create();
 
 axiosInstanceWithAuth.interceptors.request.use(async (request) => {
-  const token = cookies().get('access_token')?.value || '';
+  const token = (await cookies()).get('access_token')?.value || '';
   if (token) request.headers.Authorization = `Bearer ${token}`;
   return request;
 });
