@@ -1,11 +1,8 @@
 {
-  "rules": {
-      "indentation": 2,
-      "no-duplicate-selectors": true,
-      "selector-attribute-operator-space-before": "never",
-      "selector-attribute-brackets-space-inside": "never",
-      "declaration-block-trailing-semicolon": "always",
-      "declaration-colon-space-before": "never",
-      "comment-empty-line-before": "always"
-  }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true
+  },
+  "include": ["src/**/*", "*.js", "*.ts", "eslint.config.js"],
+  "exclude": ["node_modules", ".next", "out", "dist"]
 }

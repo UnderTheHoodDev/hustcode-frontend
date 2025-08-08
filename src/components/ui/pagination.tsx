@@ -1,7 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-has-content */
-/* eslint-disable react/require-default-props */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { FaHeart, FaStar } from 'react-icons/fa';
 import { MdChevronRight } from 'react-icons/md';
@@ -12,7 +14,7 @@ function MadeWithLove() {
         <div className="mb-4 flex items-center gap-2 text-[18px] font-medium text-[#FF4842] sm:text-xl">
           Made with <FaHeart /> in HN
         </div>
-        <p className="mb-6 w-full text-center text-sm text-neutral_content sm:mb-10 sm:w-3/4 sm:text-base">
+        <p className="text-neutral-content mb-6 w-full text-center text-sm sm:mb-10 sm:w-3/4 sm:text-base">
           At HUSTCODER, our mission is to help you improve yourself and land
           your dream job. We have a sizable repository of interview resources
           for many companies. In the past few years, our students have landed
@@ -23,7 +25,7 @@ function MadeWithLove() {
             Join our community
           </Link>
           <Link href="/#" className="flex items-center text-sm sm:text-base">
-            <FaStar color="#FFC926" className="mb-[1px] mr-[6px]" />
+            <FaStar color="#FFC926" className="mr-[6px] mb-[1px]" />
             <span>Star us on Github</span>
             <MdChevronRight className="ml-[2px]" />
           </Link>
