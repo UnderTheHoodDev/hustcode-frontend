@@ -9,7 +9,8 @@
     "start:prod": "node server.js",
     "generate-api": "openapi-generator-cli generate -i ./api/specs/api.json -g typescript-axios -o ./src/api/client",
     "check:type": "tsc --project tsconfig.json --noEmit",
-    "lint": "eslint . --ext ts,tsx --fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "resolutions": {
     "prismjs": "^1.30.0",
@@ -35,6 +36,7 @@
     "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.32.0",
     "@openapitools/openapi-generator-cli": "^2.21.3",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.2.0",
@@ -50,10 +52,11 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "globals": "^16.3.0",
     "postcss": "^8.5.6",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
