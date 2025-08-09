@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 'use client';
 
 // Inspired by react-hot-toast library
