@@ -1,3 +1,11 @@
 import { atom } from 'jotai';
 
-export const usernameAtom = atom<string>('');
+import { UserInfo } from '@/types/user';
+
+export const userInfoAtom = atom<UserInfo>({
+  id: '',
+  name: '',
+  email: '',
+  avatar: '',
+  role: '',
+});
