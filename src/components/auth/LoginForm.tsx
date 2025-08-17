@@ -60,7 +60,7 @@ export function LoginForm() {
   return (
     <div className="flex w-full max-w-md translate-y-10 items-center justify-center sm:translate-y-8">
       <Card className="flex-1">
-        <CardHeader className="space-y-1">
+        <CardHeader className="space-y-1 px-4 sm:px-6">
           <CardTitle className="flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-pink-400 bg-clip-text text-2xl font-bold text-transparent">
             Start Coding
           </CardTitle>
@@ -68,7 +68,7 @@ export function LoginForm() {
             Sign in to your account to continue
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-4 sm:px-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
