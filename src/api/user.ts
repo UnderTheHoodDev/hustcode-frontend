@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { UserApi } from '@/api/client/api';
 import { Configuration } from '@/api/client/configuration';
-import { authConnect } from '@/api/guess';
+import { authConnect } from '@/api/guest';
 import { DEFAULT_API_BASE_URL } from '@/config/api';
 
 const axiosInstanceWithAuth = axios.create({

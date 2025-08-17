@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Login() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="layout-padding flex flex-1 items-center justify-center">
       <LoginForm />
     </div>
   );

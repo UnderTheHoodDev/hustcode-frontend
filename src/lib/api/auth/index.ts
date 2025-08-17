@@ -1,5 +1,5 @@
 import { LoginDto, SignupDto } from '@/api/client';
-import { authConnect } from '@/api/guess';
+import { authConnect } from '@/api/guest';
 
 const login = async (payload: LoginDto) => {
   return await authConnect.authControllerLogin(payload);

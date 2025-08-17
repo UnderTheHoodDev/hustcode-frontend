@@ -26,11 +26,11 @@ export default function RootLayout({
         />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
       </head>
-      <body className="text-base-content bg-background graph-paper-background">
+      <body className="text-base-content bg-background graph-paper-background flex min-h-screen flex-col">
         <Providers>
           <NextTopLoader showSpinner={false} />
           <Header />
-          <main>{children}</main>
+          <main className="flex flex-1 flex-col">{children}</main>
           <Footer />
         </Providers>
         <Toaster position="top-center" richColors closeButton />

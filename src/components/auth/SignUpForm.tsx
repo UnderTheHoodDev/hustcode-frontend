@@ -68,8 +68,8 @@ export function SignUpForm() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-md">
-      <Card>
+    <div className="flex w-full max-w-md translate-y-10 items-center justify-center sm:translate-y-8">
+      <Card className="flex-1">
         <CardHeader className="space-y-1">
           <CardTitle className="bg-gradient-to-r from-sky-500 to-pink-400 bg-clip-text text-center text-2xl font-bold text-transparent">
             Create Account

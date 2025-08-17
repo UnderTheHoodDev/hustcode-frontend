@@ -58,7 +58,7 @@ export function LoginForm() {
   ];
 
   return (
-    <div className="flex w-full max-w-md items-center justify-center">
+    <div className="flex w-full max-w-md translate-y-10 items-center justify-center sm:translate-y-8">
       <Card className="flex-1">
         <CardHeader className="space-y-1">
           <CardTitle className="flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-sky-500 to-pink-400 bg-clip-text text-2xl font-bold text-transparent">
