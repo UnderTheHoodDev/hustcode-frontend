@@ -75,9 +75,10 @@ const ListLanguages = [
     icon: Swift,
   },
 ];
+
 function ProgrammingLanguages() {
   return (
-    <div className="layout-padding xsm:text-2xl mb-14 flex flex-col justify-center text-xl leading-normal sm:mb-24 sm:text-3xl">
+    <div className="xsm:text-2xl mb-14 flex flex-col justify-center text-xl leading-normal sm:mb-24 sm:text-3xl">
       <div className="xsm:mb-10 xsm:flex-row xsm:items-center xsm:gap-0 mb-4 flex flex-col items-center justify-center gap-2 font-semibold text-[#F472B6]">
         <span className="text-base-content">Solve your problems in&nbsp; </span>
         <div className="xsm:h-auto relative h-8 overflow-hidden">

@@ -37,7 +37,7 @@ function solveTSP() {
 console.log(solveTSP())`;
   return (
     <>
-      <div className="layout-padding mb-14 flex flex-col items-center justify-center text-xl lg:mb-16">
+      <div className="mb-14 flex flex-col items-center justify-center text-xl lg:mb-16">
         <span className="mb-1 text-center text-xl font-semibold text-[#F472B6] sm:mb-2 sm:text-2xl">
           In Browser IDE
         </span>
@@ -64,7 +64,7 @@ console.log(solveTSP())`;
             language="javascript"
             style={dracula}
             showLineNumbers
-            className="xsm:h-[400px] m-0! h-[350px] w-full overflow-x-auto bg-[#0E1527] text-[12px] md:h-auto md:text-sm"
+            className="xsm:h-[400px] rounded-0! m-0! h-[350px] w-full overflow-x-auto bg-[#0F172E]! text-[12px] md:h-auto md:text-sm"
           >
             {codeString}
           </Highlighter>
