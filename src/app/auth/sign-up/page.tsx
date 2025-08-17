@@ -3,8 +3,7 @@ import { Metadata } from 'next';
 import { SignUpForm } from '@/components/auth/SignUpForm';
 
 export const metadata: Metadata = {
-  title: 'Sign Up | HUSTCODE',
-  description: 'Welcome to HUSTCODE, your best coding platform',
+  title: 'Sign Up',
 };
 
 export default function SignUp() {

@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import { SignupDto } from '@/api/client';
@@ -6,6 +6,7 @@ import { signUp } from '@/lib/api/auth';
 import { toastError, toastSuccess } from '@/utils/toaster';
 
 const useSignUpMutation = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const mutation = useMutation({
@@ -16,8 +17,9 @@ const useSignUpMutation = () => {
     },
     onSuccess: (response) => {
       console.log('Sign up successful:', response);
-      router.push('/auth/login');
-      toastSuccess('Sign up successful! Please log in.');
+      router.push('/');
+      queryClient.invalidateQueries({ queryKey: ['user_status'] });
+      toastSuccess('Sign up successful!');
     },
   });
 

@@ -3,8 +3,7 @@ import { Metadata } from 'next';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata: Metadata = {
-  title: 'Login | HUSTCODE',
-  description: 'Welcome to HUSTCODE, your best coding platform',
+  title: 'Login',
 };
 
 export default function Login() {

@@ -7,7 +7,6 @@ import ProgrammingLanguages from '@/components/home/ProgrammingLanguages';
 
 export const metadata: Metadata = {
   title: 'Home | HUSTCODE',
-  description: 'Welcome to HUSTCODE, your best coding platform',
 };
 
 export default function Home() {
