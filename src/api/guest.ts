@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { AuthApi, type Configuration } from '@/api/client';
+import { AuthApi, ProblemApi, type Configuration } from '@/api/client';
 import { DEFAULT_API_BASE_URL } from '@/config/api';
 
 export const axiosInstance = axios.create({
@@ -9,6 +9,14 @@ export const axiosInstance = axios.create({
 });
 
 export const authConnect = new AuthApi(
+  {
+    basePath: DEFAULT_API_BASE_URL,
+  } as Configuration,
+  undefined,
+  axiosInstance
+);
+
+export const problemConnect = new ProblemApi(
   {
     basePath: DEFAULT_API_BASE_URL,
   } as Configuration,

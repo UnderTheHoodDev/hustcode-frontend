@@ -34,10 +34,10 @@ const UserAvatarDropdown = () => {
     <div className="flex items-center justify-end">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="relative h-11 w-11 cursor-pointer rounded-full border-2 border-gray-700">
-            <Avatar className="h-11 w-11">
+          <Button className="relative h-9 w-9 cursor-pointer rounded-full border-1 border-gray-700">
+            <Avatar className="h-9 w-9">
               <AvatarImage src={userInfo.avatar} alt={userInfo.name} />
-              <AvatarFallback className="bg-background-primary border-2 border-gray-700">
+              <AvatarFallback className="bg-background-primary border-1 border-gray-700">
                 {getUserInitials(userInfo.name)}
               </AvatarFallback>
             </Avatar>

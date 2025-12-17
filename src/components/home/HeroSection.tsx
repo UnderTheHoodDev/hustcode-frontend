@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 function HeroSection() {
   return (
-    <div className="layout-padding bg-[url('/images/gradient-background.webp')] bg-cover bg-center">
+    <div className="bg-[url('/images/gradient-background.webp')] bg-cover bg-center">
       <div className="xsm:pt-22 xsm:pt-20 flex pt-[70px] pb-14 sm:pt-24 sm:pb-20 md:pt-28">
         <div className="flex flex-1 flex-col items-center pt-5 md:items-baseline">
           <div className="xsm:text-4xl text-3xl leading-normal font-bold sm:text-[42px] lg:text-5xl">

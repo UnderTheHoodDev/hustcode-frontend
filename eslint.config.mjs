@@ -7,6 +7,7 @@ const baseDirectory =
 
 const compat = new FlatCompat({ baseDirectory });
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   ...compat.config({
     extends: ['next/core-web-vitals', 'next/typescript', 'prettier'],

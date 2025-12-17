@@ -13,6 +13,18 @@
         "tags": ["App"]
       }
     },
+    "/health": {
+      "get": {
+        "operationId": "AppController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["App"]
+      }
+    },
     "/auth/signup": {
       "post": {
         "operationId": "AuthController_signup",
@@ -92,6 +104,313 @@
         },
         "tags": ["User"]
       }
+    },
+    "/problem": {
+      "post": {
+        "operationId": "ProblemController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The problem has been successfully created."
+          },
+          "400": {
+            "description": "Bad Request. Invalid input data."
+          }
+        },
+        "summary": "Create a new problem",
+        "tags": ["problem"]
+      },
+      "get": {
+        "operationId": "ProblemController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "difficulty",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["EASY", "MEDIUM", "HARD"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["PENDING", "APPROVED", "REJECTED"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "two sum",
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": ["array", "hash-table"],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of problems retrieved successfully"
+          }
+        },
+        "summary": "Get all problems with pagination and filters",
+        "tags": ["problem"]
+      }
+    },
+    "/problem/{id}": {
+      "get": {
+        "operationId": "ProblemController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Problem retrieved successfully"
+          },
+          "404": {
+            "description": "Problem not found"
+          }
+        },
+        "summary": "Get a problem by ID",
+        "tags": ["problem"]
+      },
+      "patch": {
+        "operationId": "ProblemController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Problem updated successfully"
+          },
+          "404": {
+            "description": "Problem not found"
+          }
+        },
+        "summary": "Update a problem",
+        "tags": ["problem"]
+      },
+      "delete": {
+        "operationId": "ProblemController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Problem deleted successfully"
+          },
+          "404": {
+            "description": "Problem not found"
+          }
+        },
+        "summary": "Delete a problem",
+        "tags": ["problem"]
+      }
+    },
+    "/submission": {
+      "post": {
+        "operationId": "SubmissionController_createSubmission",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubmissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The result of the code execution and evaluation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionResultDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Submit code for execution and evaluation",
+        "tags": ["Submission"]
+      }
+    },
+    "/problem-submission": {
+      "post": {
+        "description": "Submit source code to solve a problem. Code will be tested against all testcases.",
+        "operationId": "ProblemSubmissionController_submitProblem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Submission created and evaluated successfully"
+          },
+          "400": {
+            "description": "Invalid input or problem has no testcases"
+          },
+          "404": {
+            "description": "Problem not found"
+          }
+        },
+        "summary": "Submit code for a problem",
+        "tags": ["ProblemSubmission"]
+      }
+    },
+    "/problem-submission/user/{userId}": {
+      "get": {
+        "description": "Get paginated list of submissions by a specific user",
+        "operationId": "ProblemSubmissionController_getUserSubmissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "PENDING",
+                "RUNNING",
+                "ACCEPTED",
+                "WRONG_ANSWER",
+                "TIME_LIMIT_EXCEEDED",
+                "MEMORY_LIMIT_EXCEEDED",
+                "RUNTIME_ERROR",
+                "COMPILATION_ERROR"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User submissions retrieved successfully"
+          }
+        },
+        "summary": "Get all submissions for a user",
+        "tags": ["ProblemSubmission"]
+      }
     }
   },
   "info": {
@@ -131,6 +450,335 @@
           }
         },
         "required": ["email", "password"]
+      },
+      "CreateTestcaseDto": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "example": "5 3"
+          },
+          "output": {
+            "type": "string",
+            "example": "8"
+          },
+          "isSample": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is this a sample testcase shown to users?"
+          }
+        },
+        "required": ["input", "output", "isSample"]
+      },
+      "CreateProblemConstraintDto": {
+        "type": "object",
+        "properties": {
+          "memoryLimit": {
+            "type": "number",
+            "example": 256,
+            "description": "Memory limit in MB"
+          },
+          "timeLimit": {
+            "type": "number",
+            "example": 2000,
+            "description": "Time limit in milliseconds"
+          }
+        },
+        "required": ["memoryLimit", "timeLimit"]
+      },
+      "CreateSolutionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "def solve(a, b):\n    return a + b"
+          },
+          "languageId": {
+            "type": "string",
+            "example": "1",
+            "description": "Language ID"
+          }
+        },
+        "required": ["code", "languageId"]
+      },
+      "CreateProblemDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Two Sum"
+          },
+          "description": {
+            "type": "string",
+            "example": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
+          },
+          "tags": {
+            "example": ["array", "hash-table"],
+            "description": "Array of tag names. Tags will be created if they don't exist.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["EASY", "MEDIUM", "HARD"],
+            "example": "EASY"
+          },
+          "taskDescription": {
+            "type": "string",
+            "example": "You are given an array of integers and a target. Find two numbers that sum to the target."
+          },
+          "inputDescription": {
+            "type": "string",
+            "example": "First line: n integers\nSecond line: target integer"
+          },
+          "outputDescription": {
+            "type": "string",
+            "example": "Two space-separated integers representing the indices"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "REJECTED"],
+            "example": "PENDING",
+            "description": "Defaults to PENDING if not provided"
+          },
+          "testcases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateTestcaseDto"
+            }
+          },
+          "constraint": {
+            "$ref": "#/components/schemas/CreateProblemConstraintDto"
+          },
+          "solution": {
+            "$ref": "#/components/schemas/CreateSolutionDto"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "tags",
+          "difficulty",
+          "taskDescription",
+          "inputDescription",
+          "outputDescription",
+          "testcases",
+          "constraint"
+        ]
+      },
+      "UpdateProblemDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Two Sum"
+          },
+          "description": {
+            "type": "string",
+            "example": "Given an array of integers nums and an integer target..."
+          },
+          "tags": {
+            "example": ["array", "hash-table"],
+            "description": "Array of tag names. Tags will be created if they don't exist.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["EASY", "MEDIUM", "HARD"],
+            "example": "EASY"
+          },
+          "taskDescription": {
+            "type": "string",
+            "example": "You are given an array of integers and a target. Find two numbers that sum to the target."
+          },
+          "inputDescription": {
+            "type": "string",
+            "example": "First line: n integers\nSecond line: target integer"
+          },
+          "outputDescription": {
+            "type": "string",
+            "example": "Two space-separated integers representing the indices"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "REJECTED"],
+            "example": "APPROVED"
+          },
+          "testcases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateTestcaseDto"
+            }
+          },
+          "constraint": {
+            "$ref": "#/components/schemas/CreateProblemConstraintDto"
+          },
+          "solution": {
+            "$ref": "#/components/schemas/CreateSolutionDto"
+          }
+        }
+      },
+      "SubmissionLanguageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "python"
+          },
+          "version": {
+            "type": "string",
+            "example": "3.10"
+          }
+        },
+        "required": ["id", "version"]
+      },
+      "CreateSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "source_code": {
+            "type": "string",
+            "example": "text=input()\nprint(text)"
+          },
+          "stdin": {
+            "type": "string",
+            "example": "hello, world!"
+          },
+          "expected_output": {
+            "type": "string",
+            "example": "hello, world!\n"
+          },
+          "cpu_time_limit": {
+            "type": "number",
+            "example": "2",
+            "description": "Time limit in seconds"
+          },
+          "cpu_extra_time": {
+            "type": "number",
+            "example": "0.5",
+            "description": "Extra time in seconds"
+          },
+          "memory_limit": {
+            "type": "number",
+            "example": "128000",
+            "description": "Memory limit in kilobytes"
+          },
+          "language": {
+            "$ref": "#/components/schemas/SubmissionLanguageDto"
+          }
+        },
+        "required": ["source_code", "stdin", "expected_output", "language"]
+      },
+      "ProgrammingLanguageSubmissionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "python"
+          },
+          "name": {
+            "type": "string",
+            "example": "Python (3.10)"
+          },
+          "version": {
+            "type": "string",
+            "example": "3.10"
+          }
+        },
+        "required": ["id", "name", "version"]
+      },
+      "SubmissionResultDto": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "object",
+            "example": 1.23,
+            "nullable": true,
+            "description": "Total CPU time used (seconds)"
+          },
+          "memory": {
+            "type": "object",
+            "example": 12345,
+            "nullable": true,
+            "description": "Maximum memory used (kB)"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Accepted",
+              "Wrong Answer",
+              "Time Limit Exceeded",
+              "Memory Limit Exceeded",
+              "Runtime Error",
+              "Compile Error"
+            ],
+            "example": "Accepted",
+            "description": "Final result status"
+          },
+          "stdout": {
+            "type": "string",
+            "example": "Hello, world!",
+            "description": "Standard output from user code"
+          },
+          "stderr": {
+            "type": "string",
+            "example": "",
+            "description": "Standard error from user code or system"
+          },
+          "compile_error": {
+            "type": "string",
+            "example": "Error message",
+            "description": "Compile error message"
+          },
+          "language": {
+            "description": "Programming language and version",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgrammingLanguageSubmissionResult"
+              }
+            ]
+          }
+        },
+        "required": ["time", "memory", "status", "stdout", "stderr"]
+      },
+      "SubmitLanguageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "python",
+            "description": "Language ID"
+          },
+          "version": {
+            "type": "string",
+            "example": "3.10",
+            "description": "Language version"
+          }
+        },
+        "required": ["id", "version"]
+      },
+      "SubmitProblemDto": {
+        "type": "object",
+        "properties": {
+          "source_code": {
+            "type": "string",
+            "example": "a, b = map(int, input().split())\nprint(a + b)",
+            "description": "Source code to submit"
+          },
+          "problemId": {
+            "type": "string",
+            "example": "cmioubiat0003ueb44panymo2",
+            "description": "Problem ID to submit solution for"
+          },
+          "language": {
+            "$ref": "#/components/schemas/SubmitLanguageDto"
+          }
+        },
+        "required": ["source_code", "problemId", "language"]
       }
     }
   }

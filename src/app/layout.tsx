@@ -1,12 +1,10 @@
+import '@/app/global.css';
 import '@/styles/global.scss';
 
 import NextTopLoader from 'nextjs-toploader';
 
 import { poppins } from '@/app/fonts';
-import '@/app/global.css';
 import Providers from '@/app/providers';
-import Footer from '@/components/layouts/Footer';
-import Header from '@/components/layouts/Header';
 import { Toaster } from '@/components/ui/sonner';
 import { defaultMetadata } from '@/config/metadata';
 
@@ -29,9 +27,7 @@ export default function RootLayout({
       <body className="text-base-content bg-background graph-paper-background flex min-h-screen flex-col">
         <Providers>
           <NextTopLoader showSpinner={false} />
-          <Header />
-          <main className="flex flex-1 flex-col">{children}</main>
-          <Footer />
+          {children}
         </Providers>
         <Toaster position="top-center" richColors closeButton />
       </body>

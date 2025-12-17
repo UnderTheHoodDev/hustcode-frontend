@@ -49,7 +49,7 @@ console.log(solveTSP())`;
           to be followed by a coding exercise to apply the concepts and gain
           immediate feedback.
         </p>
-        <Link href="/#" className="landing-button mb-8 md:mb-14">
+        <Link href="/problems" className="landing-button mb-8 md:mb-14">
           Get started
         </Link>
         <div className="flex w-full flex-col items-center justify-center text-sm shadow-[0px_-225px_150px_-150px_rgba(79,70,229,0.40)] md:w-11/12 lg:w-3/4">
