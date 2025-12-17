@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useAtomValue } from 'jotai';
-import { Bell } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,14 +11,16 @@ import UserAvatarDropdown from '@/components/layouts/UserAvatarDropdown';
 import Logo from '@/icons/Logo';
 
 const NavBar = () => {
+  const pathName = usePathname();
+  const userInfo = useAtomValue(userInfoAtom);
+
+  const isAdmin = userInfo.role === 'ADMIN';
+
   const navLinks = [
     { title: 'Problems', href: '/problems' },
     { title: 'Contests', href: '/contests' },
     { title: 'Discuss', href: '/#' },
   ];
-
-  const pathName = usePathname();
-  const userInfo = useAtomValue(userInfoAtom);
 
   return (
     <div className="flex items-center">
@@ -41,6 +43,18 @@ const NavBar = () => {
             </Link>
           );
         })}
+        {isAdmin && (
+          <Link
+            href="/admin/problems"
+            className={clsx(
+              pathName.includes('/admin') && 'text-cyan-400',
+              'flex items-center gap-2 px-4 py-4 text-cyan-400/80 hover:text-cyan-400'
+            )}
+          >
+            <Settings className="h-4 w-4" />
+            Console
+          </Link>
+        )}
       </div>
       {userInfo.id && (
         <div className="flex items-center gap-4">

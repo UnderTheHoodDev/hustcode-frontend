@@ -1,6 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { FiLogOut, FiSettings, FiUser } from 'react-icons/fi';
 
 import { userInfoAtom } from '@/atoms';
@@ -18,6 +19,7 @@ import useLogoutMutation from '@/lib/api/auth/mutations/use-logout';
 import { getUserInitials } from '@/utils/user';
 
 const UserAvatarDropdown = () => {
+  const router = useRouter();
   const userInfo = useAtomValue(userInfoAtom);
 
   const { mutate: logout } = useLogoutMutation();
@@ -26,7 +28,9 @@ const UserAvatarDropdown = () => {
     logout();
   };
 
-  const handleProfile = () => {};
+  const handleProfile = () => {
+    router.push('/profile');
+  };
 
   const handleSettings = () => {};
 

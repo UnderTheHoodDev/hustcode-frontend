@@ -1,6 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
+import { Settings } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -14,6 +15,8 @@ const UserAvatarDropdown = dynamic(
 
 const HeaderPC = () => {
   const userInfo = useAtomValue(userInfoAtom);
+
+  const isAdmin = userInfo.role === 'ADMIN';
 
   const visibleLinks = userInfo.id
     ? HEADER_LINKS.filter((link) => link.label !== 'Sign in')
@@ -30,6 +33,15 @@ const HeaderPC = () => {
           {element.label}
         </Link>
       ))}
+      {isAdmin && (
+        <Link
+          href="/admin/problems"
+          className="flex items-center gap-2 text-cyan-400/80 hover:text-cyan-400"
+        >
+          <Settings className="h-4 w-4" />
+          Console
+        </Link>
+      )}
       {userInfo.id && <UserAvatarDropdown />}
     </div>
   );

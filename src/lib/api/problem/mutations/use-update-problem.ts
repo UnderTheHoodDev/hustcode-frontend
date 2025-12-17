@@ -16,6 +16,7 @@ const useUpdateProblem = (id: string) => {
     onSuccess: (response) => {
       console.log('Update problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['problems'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-problems'] });
       toastSuccess('Problem updated successfully!');
     },
   });

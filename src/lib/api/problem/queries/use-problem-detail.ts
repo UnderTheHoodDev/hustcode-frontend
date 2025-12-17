@@ -14,8 +14,8 @@ const useProblemDetailQuery = (id: string) => {
         throw error;
       }
     },
+    enabled: !!id, // Only fetch when id is provided
     refetchOnWindowFocus: false,
-    staleTime: Infinity,
   });
 
   return query;

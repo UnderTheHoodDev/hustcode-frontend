@@ -15,6 +15,7 @@ const useDeleteProblem = (id: string) => {
     onSuccess: (response) => {
       console.log('Delete problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['problems'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-problems'] });
       toastSuccess('Problem deleted successfully!');
     },
   });

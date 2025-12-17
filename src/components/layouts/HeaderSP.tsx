@@ -1,6 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
+import { Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai';
@@ -14,6 +15,8 @@ const HeaderSP = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const userInfo = useAtomValue(userInfoAtom);
+
+  const isAdmin = userInfo.role === 'ADMIN';
 
   const toggleDrawer = () => setIsDrawerOpen((prev) => !prev);
 
@@ -78,6 +81,16 @@ const HeaderSP = () => {
               {element.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              href="/admin/problems"
+              className="flex items-center gap-2 text-sm text-cyan-400/80 hover:text-cyan-400"
+              onClick={toggleDrawer}
+            >
+              <Settings className="h-4 w-4" />
+              Console
+            </Link>
+          )}
         </nav>
         {userInfo.id && (
           <>

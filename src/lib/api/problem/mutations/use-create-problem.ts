@@ -16,6 +16,7 @@ const useCreateProblem = () => {
     onSuccess: (response) => {
       console.log('Create problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['problems'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-problems'] });
       toastSuccess('Problem created successfully!');
     },
   });
