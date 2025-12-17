@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock } from 'lucide-react';
+import { Clock, Heart, MessageSquare, Send } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,6 +23,8 @@ interface ProblemDescriptionProps {
   inputDescription: string;
   outputDescription: string;
   submissions?: SubmissionHistory[];
+  submissionCount?: number;
+  likeCount?: number;
 }
 
 const ProblemDescription = ({
@@ -34,53 +36,79 @@ const ProblemDescription = ({
   inputDescription,
   outputDescription,
   submissions = [],
+  submissionCount = 0,
+  likeCount = 0,
 }: ProblemDescriptionProps) => {
-  const difficultyColors: Record<string, string> = {
-    EASY: 'bg-green-500/10 text-green-500',
-    MEDIUM: 'bg-yellow-500/10 text-yellow-500',
-    HARD: 'bg-red-500/10 text-red-500',
+  const difficultyConfig: Record<
+    string,
+    { bg: string; text: string; label: string }
+  > = {
+    EASY: { bg: 'bg-green-500/15', text: 'text-green-400', label: 'Easy' },
+    MEDIUM: {
+      bg: 'bg-amber-500/15',
+      text: 'text-amber-400',
+      label: 'Medium',
+    },
+    HARD: { bg: 'bg-red-500/15', text: 'text-red-400', label: 'Hard' },
   };
 
   const statusColors: Record<string, string> = {
-    Accepted: 'text-green-500',
-    'Wrong Answer': 'text-red-500',
-    'Time Limit Exceeded': 'text-yellow-500',
-    'Runtime Error': 'text-orange-500',
+    Accepted: 'text-green-400',
+    'Wrong Answer': 'text-red-400',
+    'Time Limit Exceeded': 'text-amber-400',
+    'Runtime Error': 'text-orange-400',
   };
 
+  const diffConfig = difficultyConfig[difficulty] || difficultyConfig.EASY;
+
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#1e2430]">
-      <div className="border-b border-gray-700 p-6">
-        <div className="mb-4 flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-100">{title}</h1>
-          <Badge className={`${difficultyColors[difficulty]} border-0`}>
-            {difficulty}
+    <div className="custom-scrollbar flex h-full flex-col overflow-hidden bg-[#1a2332]">
+      {/* Header */}
+      <div className="border-b border-gray-700/50 p-6">
+        <div className="mb-3 flex items-center gap-3">
+          <h1 className="text-xl font-bold text-white">{title}</h1>
+          <Badge className={`${diffConfig.bg} ${diffConfig.text} border-0 px-2.5 py-0.5 text-xs font-medium`}>
+            {diffConfig.label}
           </Badge>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* Tags */}
+        <div className="mb-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <Badge
               key={tag.id}
-              className="border-0 bg-blue-500/10 text-blue-400"
+              className="border-0 bg-cyan-500/10 px-2 py-0.5 text-xs text-cyan-400 hover:bg-cyan-500/20"
             >
               {tag.name}
             </Badge>
           ))}
         </div>
+
+        {/* Stats */}
+        <div className="flex items-center gap-4 text-sm text-gray-400">
+          <div className="flex items-center gap-1.5">
+            <Send className="h-3.5 w-3.5" />
+            <span>{submissionCount} submissions</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Heart className="h-3.5 w-3.5" />
+            <span>{likeCount} likes</span>
+          </div>
+        </div>
       </div>
 
-      <Tabs defaultValue="description" className="flex flex-1 flex-col">
-        <TabsList className="mx-6 mt-4 bg-gray-800">
+      {/* Tabs */}
+      <Tabs defaultValue="description" className="flex flex-1 flex-col overflow-hidden">
+        <TabsList className="mx-6 mt-4 w-fit bg-[#252d3d] p-1">
           <TabsTrigger
             value="description"
-            className="data-[state=active]:bg-cyan-500"
+            className="px-4 py-1.5 text-sm text-gray-400 data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
           >
             Description
           </TabsTrigger>
           <TabsTrigger
             value="submissions"
-            className="data-[state=active]:bg-cyan-500"
+            className="px-4 py-1.5 text-sm text-gray-400 data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
           >
             Submissions
           </TabsTrigger>
@@ -88,81 +116,93 @@ const ProblemDescription = ({
 
         <TabsContent
           value="description"
-          className="mx-6 mb-6 flex-1 overflow-y-auto"
+          className="custom-scrollbar mx-6 mb-6 flex-1 overflow-y-auto pr-2"
         >
-          <div className="space-y-6">
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-gray-100">
+          <div className="space-y-6 py-4">
+            {/* Description */}
+            <section>
+              <h2 className="mb-2 text-base font-semibold text-gray-200">
                 Description
               </h2>
-              <p className="text-gray-300">{description}</p>
-            </div>
+              <p className="text-sm leading-relaxed text-gray-400">
+                {description}
+              </p>
+            </section>
 
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-gray-100">Task</h2>
-              <p className="text-gray-300">{taskDescription}</p>
-            </div>
+            {/* Task */}
+            <section>
+              <h2 className="mb-2 text-base font-semibold text-gray-200">
+                Task
+              </h2>
+              <p className="text-sm leading-relaxed text-gray-400">
+                {taskDescription}
+              </p>
+            </section>
 
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-gray-100">
+            {/* Input */}
+            <section>
+              <h2 className="mb-2 text-base font-semibold text-gray-200">
                 Input
               </h2>
-              <pre className="rounded-lg bg-gray-900 p-4 text-sm whitespace-pre-wrap text-gray-300">
+              <pre className="rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 text-sm leading-relaxed whitespace-pre-wrap text-gray-300">
                 {inputDescription}
               </pre>
-            </div>
+            </section>
 
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-gray-100">
+            {/* Output */}
+            <section>
+              <h2 className="mb-2 text-base font-semibold text-gray-200">
                 Output
               </h2>
-              <pre className="rounded-lg bg-gray-900 p-4 text-sm whitespace-pre-wrap text-gray-300">
+              <pre className="rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 text-sm leading-relaxed whitespace-pre-wrap text-gray-300">
                 {outputDescription}
               </pre>
-            </div>
+            </section>
           </div>
         </TabsContent>
 
         <TabsContent
           value="submissions"
-          className="mx-6 mb-6 flex-1 overflow-y-auto"
+          className="custom-scrollbar mx-6 mb-6 flex-1 overflow-y-auto pr-2"
         >
-          <div className="space-y-3">
+          <div className="space-y-3 py-4">
             {submissions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-                <Clock className="mb-4 h-12 w-12" />
-                <p>No submissions yet</p>
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-600 py-16 text-gray-500">
+                <MessageSquare className="mb-3 h-10 w-10 text-gray-600" />
+                <p className="text-sm">No submissions yet</p>
+                <p className="mt-1 text-xs text-gray-600">
+                  Submit your solution to see results here
+                </p>
               </div>
             ) : (
               submissions.map((submission) => (
                 <div
                   key={submission.id}
-                  className="rounded-lg border border-gray-700 bg-gray-900 p-4 transition-colors hover:border-gray-600"
+                  className="rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600"
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <span
-                      className={`font-semibold ${
-                        statusColors[submission.status]
-                      }`}
+                      className={`font-medium ${statusColors[submission.status]}`}
                     >
                       {submission.status}
                     </span>
-                    <span className="text-sm text-gray-400">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Clock className="h-3 w-3" />
                       {submission.submittedAt}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-300">
+                  <div className="flex items-center gap-4 text-xs text-gray-400">
                     <span>
                       Language:{' '}
-                      <span className="font-medium">{submission.language}</span>
+                      <span className="text-gray-300">{submission.language}</span>
                     </span>
                     <span>
                       Runtime:{' '}
-                      <span className="font-medium">{submission.runtime}</span>
+                      <span className="text-cyan-400">{submission.runtime}</span>
                     </span>
                     <span>
                       Memory:{' '}
-                      <span className="font-medium">{submission.memory}</span>
+                      <span className="text-cyan-400">{submission.memory}</span>
                     </span>
                   </div>
                 </div>
