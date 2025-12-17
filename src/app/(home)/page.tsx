@@ -6,18 +6,16 @@ import MadeWithLove from '@/components/home/MadeWithLove';
 import ProgrammingLanguages from '@/components/home/ProgrammingLanguages';
 
 export const metadata: Metadata = {
-  title: 'Home | HUSTCODE',
+  title: 'Home',
 };
 
 export default function Home() {
   return (
     <>
       <HeroSection />
-      <div className="layout-padding">
-        <ProgrammingLanguages />
-        <BrowserIDE />
-        <MadeWithLove />
-      </div>
+      <ProgrammingLanguages />
+      <BrowserIDE />
+      <MadeWithLove />
     </>
   );
 }

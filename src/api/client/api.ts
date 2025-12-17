@@ -26,6 +26,207 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface CreateProblemConstraintDto
+ */
+export interface CreateProblemConstraintDto {
+    /**
+     * Memory limit in MB
+     * @type {number}
+     * @memberof CreateProblemConstraintDto
+     */
+    'memoryLimit': number;
+    /**
+     * Time limit in milliseconds
+     * @type {number}
+     * @memberof CreateProblemConstraintDto
+     */
+    'timeLimit': number;
+}
+/**
+ * 
+ * @export
+ * @interface CreateProblemDto
+ */
+export interface CreateProblemDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'description': string;
+    /**
+     * Array of tag names. Tags will be created if they don\'t exist.
+     * @type {Array<string>}
+     * @memberof CreateProblemDto
+     */
+    'tags': Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'difficulty': CreateProblemDtoDifficultyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'taskDescription': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'inputDescription': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'outputDescription': string;
+    /**
+     * Defaults to PENDING if not provided
+     * @type {string}
+     * @memberof CreateProblemDto
+     */
+    'status'?: CreateProblemDtoStatusEnum;
+    /**
+     * 
+     * @type {Array<CreateTestcaseDto>}
+     * @memberof CreateProblemDto
+     */
+    'testcases': Array<CreateTestcaseDto>;
+    /**
+     * 
+     * @type {CreateProblemConstraintDto}
+     * @memberof CreateProblemDto
+     */
+    'constraint': CreateProblemConstraintDto;
+    /**
+     * 
+     * @type {CreateSolutionDto}
+     * @memberof CreateProblemDto
+     */
+    'solution'?: CreateSolutionDto;
+}
+
+export const CreateProblemDtoDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+
+export type CreateProblemDtoDifficultyEnum = typeof CreateProblemDtoDifficultyEnum[keyof typeof CreateProblemDtoDifficultyEnum];
+export const CreateProblemDtoStatusEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type CreateProblemDtoStatusEnum = typeof CreateProblemDtoStatusEnum[keyof typeof CreateProblemDtoStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface CreateSolutionDto
+ */
+export interface CreateSolutionDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateSolutionDto
+     */
+    'code': string;
+    /**
+     * Language ID
+     * @type {string}
+     * @memberof CreateSolutionDto
+     */
+    'languageId': string;
+}
+/**
+ * 
+ * @export
+ * @interface CreateSubmissionDto
+ */
+export interface CreateSubmissionDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateSubmissionDto
+     */
+    'source_code': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateSubmissionDto
+     */
+    'stdin': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateSubmissionDto
+     */
+    'expected_output': string;
+    /**
+     * Time limit in seconds
+     * @type {number}
+     * @memberof CreateSubmissionDto
+     */
+    'cpu_time_limit'?: number;
+    /**
+     * Extra time in seconds
+     * @type {number}
+     * @memberof CreateSubmissionDto
+     */
+    'cpu_extra_time'?: number;
+    /**
+     * Memory limit in kilobytes
+     * @type {number}
+     * @memberof CreateSubmissionDto
+     */
+    'memory_limit'?: number;
+    /**
+     * 
+     * @type {SubmissionLanguageDto}
+     * @memberof CreateSubmissionDto
+     */
+    'language': SubmissionLanguageDto;
+}
+/**
+ * 
+ * @export
+ * @interface CreateTestcaseDto
+ */
+export interface CreateTestcaseDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateTestcaseDto
+     */
+    'input': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateTestcaseDto
+     */
+    'output': string;
+    /**
+     * Is this a sample testcase shown to users?
+     * @type {boolean}
+     * @memberof CreateTestcaseDto
+     */
+    'isSample': boolean;
+}
+/**
+ * 
+ * @export
  * @interface LoginDto
  */
 export interface LoginDto {
@@ -41,6 +242,31 @@ export interface LoginDto {
      * @memberof LoginDto
      */
     'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface ProgrammingLanguageSubmissionResult
+ */
+export interface ProgrammingLanguageSubmissionResult {
+    /**
+     * 
+     * @type {string}
+     * @memberof ProgrammingLanguageSubmissionResult
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProgrammingLanguageSubmissionResult
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProgrammingLanguageSubmissionResult
+     */
+    'version': string;
 }
 /**
  * 
@@ -61,6 +287,219 @@ export interface SignupDto {
      */
     'password': string;
 }
+/**
+ * 
+ * @export
+ * @interface SubmissionLanguageDto
+ */
+export interface SubmissionLanguageDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof SubmissionLanguageDto
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubmissionLanguageDto
+     */
+    'version': string;
+}
+/**
+ * 
+ * @export
+ * @interface SubmissionResultDto
+ */
+export interface SubmissionResultDto {
+    /**
+     * Total CPU time used (seconds)
+     * @type {object}
+     * @memberof SubmissionResultDto
+     */
+    'time': object | null;
+    /**
+     * Maximum memory used (kB)
+     * @type {object}
+     * @memberof SubmissionResultDto
+     */
+    'memory': object | null;
+    /**
+     * Final result status
+     * @type {string}
+     * @memberof SubmissionResultDto
+     */
+    'status': SubmissionResultDtoStatusEnum;
+    /**
+     * Standard output from user code
+     * @type {string}
+     * @memberof SubmissionResultDto
+     */
+    'stdout': string;
+    /**
+     * Standard error from user code or system
+     * @type {string}
+     * @memberof SubmissionResultDto
+     */
+    'stderr': string;
+    /**
+     * Compile error message
+     * @type {string}
+     * @memberof SubmissionResultDto
+     */
+    'compile_error'?: string;
+    /**
+     * Programming language and version
+     * @type {ProgrammingLanguageSubmissionResult}
+     * @memberof SubmissionResultDto
+     */
+    'language'?: ProgrammingLanguageSubmissionResult;
+}
+
+export const SubmissionResultDtoStatusEnum = {
+    Accepted: 'Accepted',
+    WrongAnswer: 'Wrong Answer',
+    TimeLimitExceeded: 'Time Limit Exceeded',
+    MemoryLimitExceeded: 'Memory Limit Exceeded',
+    RuntimeError: 'Runtime Error',
+    CompileError: 'Compile Error'
+} as const;
+
+export type SubmissionResultDtoStatusEnum = typeof SubmissionResultDtoStatusEnum[keyof typeof SubmissionResultDtoStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface SubmitLanguageDto
+ */
+export interface SubmitLanguageDto {
+    /**
+     * Language ID
+     * @type {string}
+     * @memberof SubmitLanguageDto
+     */
+    'id': string;
+    /**
+     * Language version
+     * @type {string}
+     * @memberof SubmitLanguageDto
+     */
+    'version': string;
+}
+/**
+ * 
+ * @export
+ * @interface SubmitProblemDto
+ */
+export interface SubmitProblemDto {
+    /**
+     * Source code to submit
+     * @type {string}
+     * @memberof SubmitProblemDto
+     */
+    'source_code': string;
+    /**
+     * Problem ID to submit solution for
+     * @type {string}
+     * @memberof SubmitProblemDto
+     */
+    'problemId': string;
+    /**
+     * 
+     * @type {SubmitLanguageDto}
+     * @memberof SubmitProblemDto
+     */
+    'language': SubmitLanguageDto;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateProblemDto
+ */
+export interface UpdateProblemDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'description'?: string;
+    /**
+     * Array of tag names. Tags will be created if they don\'t exist.
+     * @type {Array<string>}
+     * @memberof UpdateProblemDto
+     */
+    'tags'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'difficulty'?: UpdateProblemDtoDifficultyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'taskDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'inputDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'outputDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateProblemDto
+     */
+    'status'?: UpdateProblemDtoStatusEnum;
+    /**
+     * 
+     * @type {Array<CreateTestcaseDto>}
+     * @memberof UpdateProblemDto
+     */
+    'testcases'?: Array<CreateTestcaseDto>;
+    /**
+     * 
+     * @type {CreateProblemConstraintDto}
+     * @memberof UpdateProblemDto
+     */
+    'constraint'?: CreateProblemConstraintDto;
+    /**
+     * 
+     * @type {CreateSolutionDto}
+     * @memberof UpdateProblemDto
+     */
+    'solution'?: CreateSolutionDto;
+}
+
+export const UpdateProblemDtoDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+
+export type UpdateProblemDtoDifficultyEnum = typeof UpdateProblemDtoDifficultyEnum[keyof typeof UpdateProblemDtoDifficultyEnum];
+export const UpdateProblemDtoStatusEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type UpdateProblemDtoStatusEnum = typeof UpdateProblemDtoStatusEnum[keyof typeof UpdateProblemDtoStatusEnum];
+
 
 /**
  * AppApi - axios parameter creator
@@ -68,6 +507,35 @@ export interface SignupDto {
  */
 export const AppApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appControllerGetHealth: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/health`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -112,6 +580,17 @@ export const AppApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async appControllerGetHealth(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appControllerGetHealth(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AppApi.appControllerGetHealth']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async appControllerGetHello(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.appControllerGetHello(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -133,6 +612,14 @@ export const AppApiFactory = function (configuration?: Configuration, basePath?:
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        appControllerGetHealth(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appControllerGetHealth(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         appControllerGetHello(options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.appControllerGetHello(options).then((request) => request(axios, basePath));
         },
@@ -146,6 +633,16 @@ export const AppApiFactory = function (configuration?: Configuration, basePath?:
  * @extends {BaseAPI}
  */
 export class AppApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AppApi
+     */
+    public appControllerGetHealth(options?: RawAxiosRequestConfig) {
+        return AppApiFp(this.configuration).appControllerGetHealth(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {*} [options] Override http request option.
@@ -443,6 +940,795 @@ export class AuthApi extends BaseAPI {
      */
     public authControllerSignup(signupDto: SignupDto, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).authControllerSignup(signupDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ProblemApi - axios parameter creator
+ * @export
+ */
+export const ProblemApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Create a new problem
+         * @param {CreateProblemDto} createProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerCreate: async (createProblemDto: CreateProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createProblemDto' is not null or undefined
+            assertParamExists('problemControllerCreate', 'createProblemDto', createProblemDto)
+            const localVarPath = `/problem`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all problems with pagination and filters
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ProblemControllerFindAllDifficultyEnum} [difficulty] 
+         * @param {ProblemControllerFindAllStatusEnum} [status] 
+         * @param {string} [search] 
+         * @param {Array<string>} [tags] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerFindAll: async (page?: number, pageSize?: number, difficulty?: ProblemControllerFindAllDifficultyEnum, status?: ProblemControllerFindAllStatusEnum, search?: string, tags?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/problem`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (difficulty !== undefined) {
+                localVarQueryParameter['difficulty'] = difficulty;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (tags) {
+                localVarQueryParameter['tags'] = tags;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get a problem by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerFindOne: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('problemControllerFindOne', 'id', id)
+            const localVarPath = `/problem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete a problem
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerRemove: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('problemControllerRemove', 'id', id)
+            const localVarPath = `/problem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update a problem
+         * @param {string} id 
+         * @param {UpdateProblemDto} updateProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerUpdate: async (id: string, updateProblemDto: UpdateProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('problemControllerUpdate', 'id', id)
+            // verify required parameter 'updateProblemDto' is not null or undefined
+            assertParamExists('problemControllerUpdate', 'updateProblemDto', updateProblemDto)
+            const localVarPath = `/problem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ProblemApi - functional programming interface
+ * @export
+ */
+export const ProblemApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ProblemApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a new problem
+         * @param {CreateProblemDto} createProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemControllerCreate(createProblemDto: CreateProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemControllerCreate(createProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemApi.problemControllerCreate']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get all problems with pagination and filters
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ProblemControllerFindAllDifficultyEnum} [difficulty] 
+         * @param {ProblemControllerFindAllStatusEnum} [status] 
+         * @param {string} [search] 
+         * @param {Array<string>} [tags] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemControllerFindAll(page?: number, pageSize?: number, difficulty?: ProblemControllerFindAllDifficultyEnum, status?: ProblemControllerFindAllStatusEnum, search?: string, tags?: Array<string>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemControllerFindAll(page, pageSize, difficulty, status, search, tags, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemApi.problemControllerFindAll']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get a problem by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemControllerFindOne(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemControllerFindOne(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemApi.problemControllerFindOne']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Delete a problem
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemControllerRemove(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemControllerRemove(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemApi.problemControllerRemove']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update a problem
+         * @param {string} id 
+         * @param {UpdateProblemDto} updateProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemControllerUpdate(id: string, updateProblemDto: UpdateProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemControllerUpdate(id, updateProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemApi.problemControllerUpdate']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ProblemApi - factory interface
+ * @export
+ */
+export const ProblemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ProblemApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a new problem
+         * @param {CreateProblemDto} createProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerCreate(createProblemDto: CreateProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemControllerCreate(createProblemDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all problems with pagination and filters
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ProblemControllerFindAllDifficultyEnum} [difficulty] 
+         * @param {ProblemControllerFindAllStatusEnum} [status] 
+         * @param {string} [search] 
+         * @param {Array<string>} [tags] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerFindAll(page?: number, pageSize?: number, difficulty?: ProblemControllerFindAllDifficultyEnum, status?: ProblemControllerFindAllStatusEnum, search?: string, tags?: Array<string>, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemControllerFindAll(page, pageSize, difficulty, status, search, tags, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get a problem by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerFindOne(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemControllerFindOne(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete a problem
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerRemove(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemControllerRemove(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update a problem
+         * @param {string} id 
+         * @param {UpdateProblemDto} updateProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemControllerUpdate(id: string, updateProblemDto: UpdateProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemControllerUpdate(id, updateProblemDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ProblemApi - object-oriented interface
+ * @export
+ * @class ProblemApi
+ * @extends {BaseAPI}
+ */
+export class ProblemApi extends BaseAPI {
+    /**
+     * 
+     * @summary Create a new problem
+     * @param {CreateProblemDto} createProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemApi
+     */
+    public problemControllerCreate(createProblemDto: CreateProblemDto, options?: RawAxiosRequestConfig) {
+        return ProblemApiFp(this.configuration).problemControllerCreate(createProblemDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all problems with pagination and filters
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {ProblemControllerFindAllDifficultyEnum} [difficulty] 
+     * @param {ProblemControllerFindAllStatusEnum} [status] 
+     * @param {string} [search] 
+     * @param {Array<string>} [tags] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemApi
+     */
+    public problemControllerFindAll(page?: number, pageSize?: number, difficulty?: ProblemControllerFindAllDifficultyEnum, status?: ProblemControllerFindAllStatusEnum, search?: string, tags?: Array<string>, options?: RawAxiosRequestConfig) {
+        return ProblemApiFp(this.configuration).problemControllerFindAll(page, pageSize, difficulty, status, search, tags, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get a problem by ID
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemApi
+     */
+    public problemControllerFindOne(id: string, options?: RawAxiosRequestConfig) {
+        return ProblemApiFp(this.configuration).problemControllerFindOne(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete a problem
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemApi
+     */
+    public problemControllerRemove(id: string, options?: RawAxiosRequestConfig) {
+        return ProblemApiFp(this.configuration).problemControllerRemove(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update a problem
+     * @param {string} id 
+     * @param {UpdateProblemDto} updateProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemApi
+     */
+    public problemControllerUpdate(id: string, updateProblemDto: UpdateProblemDto, options?: RawAxiosRequestConfig) {
+        return ProblemApiFp(this.configuration).problemControllerUpdate(id, updateProblemDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+/**
+ * @export
+ */
+export const ProblemControllerFindAllDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+export type ProblemControllerFindAllDifficultyEnum = typeof ProblemControllerFindAllDifficultyEnum[keyof typeof ProblemControllerFindAllDifficultyEnum];
+/**
+ * @export
+ */
+export const ProblemControllerFindAllStatusEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+export type ProblemControllerFindAllStatusEnum = typeof ProblemControllerFindAllStatusEnum[keyof typeof ProblemControllerFindAllStatusEnum];
+
+
+/**
+ * ProblemSubmissionApi - axios parameter creator
+ * @export
+ */
+export const ProblemSubmissionApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Get paginated list of submissions by a specific user
+         * @summary Get all submissions for a user
+         * @param {string} userId 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] 
+         * @param {ProblemSubmissionControllerGetUserSubmissionsStatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemSubmissionControllerGetUserSubmissions: async (userId: string, page?: number, pageSize?: number, problemId?: string, status?: ProblemSubmissionControllerGetUserSubmissionsStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('problemSubmissionControllerGetUserSubmissions', 'userId', userId)
+            const localVarPath = `/problem-submission/user/{userId}`
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (problemId !== undefined) {
+                localVarQueryParameter['problemId'] = problemId;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Submit source code to solve a problem. Code will be tested against all testcases.
+         * @summary Submit code for a problem
+         * @param {SubmitProblemDto} submitProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemSubmissionControllerSubmitProblem: async (submitProblemDto: SubmitProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'submitProblemDto' is not null or undefined
+            assertParamExists('problemSubmissionControllerSubmitProblem', 'submitProblemDto', submitProblemDto)
+            const localVarPath = `/problem-submission`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(submitProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ProblemSubmissionApi - functional programming interface
+ * @export
+ */
+export const ProblemSubmissionApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ProblemSubmissionApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Get paginated list of submissions by a specific user
+         * @summary Get all submissions for a user
+         * @param {string} userId 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] 
+         * @param {ProblemSubmissionControllerGetUserSubmissionsStatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemSubmissionControllerGetUserSubmissions(userId: string, page?: number, pageSize?: number, problemId?: string, status?: ProblemSubmissionControllerGetUserSubmissionsStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemSubmissionControllerGetUserSubmissions(userId, page, pageSize, problemId, status, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemSubmissionApi.problemSubmissionControllerGetUserSubmissions']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Submit source code to solve a problem. Code will be tested against all testcases.
+         * @summary Submit code for a problem
+         * @param {SubmitProblemDto} submitProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async problemSubmissionControllerSubmitProblem(submitProblemDto: SubmitProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.problemSubmissionControllerSubmitProblem(submitProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProblemSubmissionApi.problemSubmissionControllerSubmitProblem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ProblemSubmissionApi - factory interface
+ * @export
+ */
+export const ProblemSubmissionApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ProblemSubmissionApiFp(configuration)
+    return {
+        /**
+         * Get paginated list of submissions by a specific user
+         * @summary Get all submissions for a user
+         * @param {string} userId 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] 
+         * @param {ProblemSubmissionControllerGetUserSubmissionsStatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemSubmissionControllerGetUserSubmissions(userId: string, page?: number, pageSize?: number, problemId?: string, status?: ProblemSubmissionControllerGetUserSubmissionsStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemSubmissionControllerGetUserSubmissions(userId, page, pageSize, problemId, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Submit source code to solve a problem. Code will be tested against all testcases.
+         * @summary Submit code for a problem
+         * @param {SubmitProblemDto} submitProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        problemSubmissionControllerSubmitProblem(submitProblemDto: SubmitProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.problemSubmissionControllerSubmitProblem(submitProblemDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ProblemSubmissionApi - object-oriented interface
+ * @export
+ * @class ProblemSubmissionApi
+ * @extends {BaseAPI}
+ */
+export class ProblemSubmissionApi extends BaseAPI {
+    /**
+     * Get paginated list of submissions by a specific user
+     * @summary Get all submissions for a user
+     * @param {string} userId 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {string} [problemId] 
+     * @param {ProblemSubmissionControllerGetUserSubmissionsStatusEnum} [status] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemSubmissionApi
+     */
+    public problemSubmissionControllerGetUserSubmissions(userId: string, page?: number, pageSize?: number, problemId?: string, status?: ProblemSubmissionControllerGetUserSubmissionsStatusEnum, options?: RawAxiosRequestConfig) {
+        return ProblemSubmissionApiFp(this.configuration).problemSubmissionControllerGetUserSubmissions(userId, page, pageSize, problemId, status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Submit source code to solve a problem. Code will be tested against all testcases.
+     * @summary Submit code for a problem
+     * @param {SubmitProblemDto} submitProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProblemSubmissionApi
+     */
+    public problemSubmissionControllerSubmitProblem(submitProblemDto: SubmitProblemDto, options?: RawAxiosRequestConfig) {
+        return ProblemSubmissionApiFp(this.configuration).problemSubmissionControllerSubmitProblem(submitProblemDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+/**
+ * @export
+ */
+export const ProblemSubmissionControllerGetUserSubmissionsStatusEnum = {
+    Pending: 'PENDING',
+    Running: 'RUNNING',
+    Accepted: 'ACCEPTED',
+    WrongAnswer: 'WRONG_ANSWER',
+    TimeLimitExceeded: 'TIME_LIMIT_EXCEEDED',
+    MemoryLimitExceeded: 'MEMORY_LIMIT_EXCEEDED',
+    RuntimeError: 'RUNTIME_ERROR',
+    CompilationError: 'COMPILATION_ERROR'
+} as const;
+export type ProblemSubmissionControllerGetUserSubmissionsStatusEnum = typeof ProblemSubmissionControllerGetUserSubmissionsStatusEnum[keyof typeof ProblemSubmissionControllerGetUserSubmissionsStatusEnum];
+
+
+/**
+ * SubmissionApi - axios parameter creator
+ * @export
+ */
+export const SubmissionApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Submit code for execution and evaluation
+         * @param {CreateSubmissionDto} createSubmissionDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        submissionControllerCreateSubmission: async (createSubmissionDto: CreateSubmissionDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createSubmissionDto' is not null or undefined
+            assertParamExists('submissionControllerCreateSubmission', 'createSubmissionDto', createSubmissionDto)
+            const localVarPath = `/submission`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createSubmissionDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * SubmissionApi - functional programming interface
+ * @export
+ */
+export const SubmissionApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = SubmissionApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Submit code for execution and evaluation
+         * @param {CreateSubmissionDto} createSubmissionDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async submissionControllerCreateSubmission(createSubmissionDto: CreateSubmissionDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SubmissionResultDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.submissionControllerCreateSubmission(createSubmissionDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SubmissionApi.submissionControllerCreateSubmission']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * SubmissionApi - factory interface
+ * @export
+ */
+export const SubmissionApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = SubmissionApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Submit code for execution and evaluation
+         * @param {CreateSubmissionDto} createSubmissionDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        submissionControllerCreateSubmission(createSubmissionDto: CreateSubmissionDto, options?: RawAxiosRequestConfig): AxiosPromise<SubmissionResultDto> {
+            return localVarFp.submissionControllerCreateSubmission(createSubmissionDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * SubmissionApi - object-oriented interface
+ * @export
+ * @class SubmissionApi
+ * @extends {BaseAPI}
+ */
+export class SubmissionApi extends BaseAPI {
+    /**
+     * 
+     * @summary Submit code for execution and evaluation
+     * @param {CreateSubmissionDto} createSubmissionDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SubmissionApi
+     */
+    public submissionControllerCreateSubmission(createSubmissionDto: CreateSubmissionDto, options?: RawAxiosRequestConfig) {
+        return SubmissionApiFp(this.configuration).submissionControllerCreateSubmission(createSubmissionDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { UserApi } from '@/api/client/api';
+import { ProblemApi, UserApi } from '@/api/client/api';
 import { Configuration } from '@/api/client/configuration';
 import { authConnect } from '@/api/guest';
 import { DEFAULT_API_BASE_URL } from '@/config/api';
@@ -37,6 +37,14 @@ axiosInstanceWithAuth.interceptors.response.use(
 );
 
 export const userConnect = new UserApi(
+  {
+    basePath: DEFAULT_API_BASE_URL,
+  } as Configuration,
+  undefined,
+  axiosInstanceWithAuth
+);
+
+export const problemConnectWithAuth = new ProblemApi(
   {
     basePath: DEFAULT_API_BASE_URL,
   } as Configuration,

@@ -8,7 +8,7 @@ import VN from '@/icons/VN';
 
 const Footer = () => {
   return (
-    <footer className="layout-padding flex flex-col items-center py-6 lg:flex-row">
+    <footer className="flex flex-col items-center py-6 lg:flex-row">
       <span className="text-sm sm:text-base"> Copyright © 2024 HUSTCODE</span>
       <div className="mt-3 flex flex-1 flex-wrap items-center justify-center gap-2 text-[12px] sm:text-sm lg:mt-0 lg:justify-end">
         {FOOTER_LINKS.map((element, index) => (

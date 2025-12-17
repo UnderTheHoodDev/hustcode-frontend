@@ -1,5 +1,5 @@
 const HEADER_LINKS = [
-  { label: 'Explore', link: '/#' },
+  { label: 'Explore', link: '/problems' },
   { label: 'Blog', link: '/#' },
   { label: 'Community', link: '/#' },
   { label: 'Sign in', link: '/auth/login' },

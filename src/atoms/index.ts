@@ -1,8 +1,8 @@
-import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 import { UserInfo } from '@/types/user';
 
-export const userInfoAtom = atom<UserInfo>({
+export const userInfoAtom = atomWithStorage<UserInfo>('userInfo', {
   id: '',
   name: '',
   email: '',
