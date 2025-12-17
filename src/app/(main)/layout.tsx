@@ -8,7 +8,6 @@ export default function MainLayout({
   return (
     <>
       <main className="flex flex-1 flex-col">{children}</main>
-      <Footer />
     </>
   );
 }

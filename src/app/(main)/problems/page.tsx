@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import Footer from '@/components/layouts/Footer';
 import NavBar from '@/components/layouts/NavBar';
 import ProblemList from '@/components/problem/ProblemList';
 
@@ -12,9 +13,10 @@ export default function ProblemsPage() {
     <>
       <div className="layout-padding">
         <NavBar />
-        <div className="flex gap-8 py-4">
+        <div className="flex min-h-screen gap-8 py-4">
           <ProblemList />
         </div>
+        <Footer />
       </div>
     </>
   );
