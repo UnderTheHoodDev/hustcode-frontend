@@ -8,7 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { AlertCircle, Check } from 'lucide-react';
+import { AlertCircle, Check, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -16,9 +16,38 @@ import ProblemFilter from '@/components/problem/ProblemFIlter';
 import ProblemPagination from '@/components/problem/ProblemPagination';
 import ProblemTable from '@/components/problem/ProblemTable';
 import { Badge } from '@/components/ui/badge';
-import { problemsData } from '@/constants/mock-problem-data';
+import useProblems from '@/lib/api/problem/queries/use-problems';
 
-type Problem = (typeof problemsData.data)[0];
+type Problem = {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  taskDescription: string;
+  inputDescription: string;
+  outputDescription: string;
+  status: string;
+  authorId: string;
+  likeNumber: number;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
+  tags: Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  _count: {
+    submissions: number;
+    comments: number;
+  };
+  userStatus: 'Solved' | 'Attempted' | 'Unsolved';
+};
 
 const StatusIcon = ({ status }: { status: string }) => {
   if (status === 'Solved') {
@@ -49,22 +78,74 @@ export default function ProblemList() {
   const [statusFilter, setStatusFilter] = React.useState('');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+  const [page, setPage] = React.useState(1);
+  const pageSize = 20;
 
-  // Get all unique tags from problems
+  // Build filter options for API
+  // Note: userStatus (Solved/Attempted/Unsolved) is filtered client-side
+  const filterOptions: OptherOptionsProps = React.useMemo(() => {
+    const options: OptherOptionsProps = {
+      page,
+      pageSize,
+    };
+
+    if (difficulty && difficulty !== 'All') {
+      options.difficulty = difficulty as OptherOptionsProps['difficulty'];
+    }
+
+    if (searchQuery) {
+      options.search = searchQuery;
+    }
+
+    if (selectedTags.length > 0) {
+      options.tags = selectedTags;
+    }
+
+    return options;
+  }, [page, pageSize, difficulty, searchQuery, selectedTags]);
+
+  // Fetch problems from API
+  const { data: response, isLoading, isError } = useProblems(filterOptions);
+
+  // Type assertion for API response
+  const apiData = response?.data as
+    | {
+        data: Problem[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+      }
+    | undefined;
+
+  // Filter by userStatus client-side (Solved, Attempted, Unsolved)
+  const problems: Problem[] = React.useMemo(() => {
+    const data = apiData?.data || [];
+    
+    if (!statusFilter || statusFilter === 'All') {
+      return data;
+    }
+    
+    return data.filter((problem) => problem.userStatus === statusFilter);
+  }, [apiData, statusFilter]);
+
+  const totalPages = apiData?.totalPages || 1;
+
+  // Get all unique tags from problems for filter dropdown
   const allTags = React.useMemo(() => {
     const tagsSet = new Set<string>();
-    problemsData.data.forEach((problem) => {
+    problems.forEach((problem) => {
       problem.tags.forEach((tag) => {
         tagsSet.add(tag.name);
       });
     });
     return Array.from(tagsSet).sort();
-  }, []);
+  }, [problems]);
 
   const handleRandomProblem = () => {
-    if (filteredData.length > 0) {
-      const randomIndex = Math.floor(Math.random() * filteredData.length);
-      const randomProblem = filteredData[randomIndex];
+    if (problems.length > 0) {
+      const randomIndex = Math.floor(Math.random() * problems.length);
+      const randomProblem = problems[randomIndex];
       router.push(`/problems/${randomProblem.id}`);
     }
   };
@@ -122,41 +203,51 @@ export default function ProblemList() {
     },
   ];
 
-  const filteredData = React.useMemo(() => {
-    return problemsData.data.filter((problem) => {
-      const matchesDifficulty =
-        !difficulty ||
-        difficulty === 'All' ||
-        problem.difficulty === difficulty;
-      const matchesStatus =
-        !statusFilter ||
-        statusFilter === 'All' ||
-        problem.userStatus === statusFilter;
-      const matchesSearch =
-        !searchQuery ||
-        problem.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesTags =
-        selectedTags.length === 0 ||
-        selectedTags.every((selectedTag) =>
-          problem.tags.some((tag) => tag.name === selectedTag)
-        );
-      return matchesDifficulty && matchesStatus && matchesSearch && matchesTags;
-    });
-  }, [difficulty, statusFilter, searchQuery, selectedTags]);
-
   const table = useReactTable({
-    data: filteredData,
+    data: problems,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    initialState: {
+    manualPagination: true,
+    pageCount: totalPages,
+    state: {
       pagination: {
-        pageSize: 20,
+        pageIndex: page - 1,
+        pageSize,
       },
     },
+    onPaginationChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newState = updater({ pageIndex: page - 1, pageSize });
+        setPage(newState.pageIndex + 1);
+      }
+    },
   });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
+          <p className="text-gray-400">Loading problems...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          Failed to load problems. Please try again later.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

@@ -4,7 +4,15 @@ import { getProblems } from '@/lib/api/problem';
 
 const useProblems = (options: OptherOptionsProps) => {
   const query = useQuery({
-    queryKey: ['problems'],
+    queryKey: [
+      'problems',
+      options.page,
+      options.pageSize,
+      options.difficulty,
+      options.status,
+      options.search,
+      options.tags,
+    ],
     queryFn: async () => {
       try {
         const response = await getProblems(options);
@@ -15,7 +23,6 @@ const useProblems = (options: OptherOptionsProps) => {
       }
     },
     refetchOnWindowFocus: false,
-    staleTime: Infinity,
   });
 
   return query;
