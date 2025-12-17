@@ -12,6 +12,11 @@ export type UserStats = {
   accepted: number;
 };
 
+export type LanguageUsage = {
+  language: string;
+  count: number;
+};
+
 export type UserProfile = {
   id: string;
   email: string;
@@ -20,5 +25,5 @@ export type UserProfile = {
   rating: number | null;
   contributions: number | null;
   stats: UserStats;
-  languagesUsed: string[];
+  languagesUsed: LanguageUsage[];
 };

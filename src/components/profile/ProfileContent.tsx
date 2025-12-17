@@ -2,6 +2,7 @@
 
 import {
   Award,
+  Calendar,
   CheckCircle2,
   Code2,
   Flame,
@@ -11,14 +12,40 @@ import {
   Trophy,
   User,
 } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import useProfileQuery from '@/lib/api/user/queries/use-profile';
 import { getUserInitials } from '@/utils/user';
 
+// Language colors for visual distinction
+const LANGUAGE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  python: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+  javascript: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+  typescript: { bg: 'bg-blue-600/20', text: 'text-blue-300', border: 'border-blue-600/30' },
+  java: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' },
+  c: { bg: 'bg-gray-500/20', text: 'text-gray-300', border: 'border-gray-500/30' },
+  'c++': { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' },
+  cpp: { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' },
+  nodejs: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
+  go: { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/30' },
+  rust: { bg: 'bg-orange-600/20', text: 'text-orange-300', border: 'border-orange-600/30' },
+};
+
+const getLanguageColor = (language: string) => {
+  const key = language.toLowerCase();
+  return LANGUAGE_COLORS[key] || { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' };
+};
+
 const ProfileContent = () => {
   const { data: profile, isLoading, isError } = useProfileQuery();
+
+  // Calculate total submissions
+  const totalSubmissions = useMemo(() => {
+    if (!profile?.languagesUsed) return 0;
+    return profile.languagesUsed.reduce((sum, lang) => sum + lang.count, 0);
+  }, [profile?.languagesUsed]);
 
   if (isLoading) {
     return (
@@ -90,23 +117,34 @@ const ProfileContent = () => {
               <span>{profile.email}</span>
             </div>
 
-            {profile.rating !== null && (
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-amber-400" />
-                <span className="font-semibold text-amber-400">
-                  Rating: {profile.rating}
-                </span>
-              </div>
-            )}
+            <div className="flex flex-wrap items-center gap-4">
+              {profile.rating !== null && (
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-amber-400" />
+                  <span className="font-semibold text-amber-400">
+                    Rating: {profile.rating}
+                  </span>
+                </div>
+              )}
 
-            {profile.contributions !== null && profile.contributions > 0 && (
-              <div className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-purple-400" />
-                <span className="text-purple-400">
-                  {profile.contributions} contributions
-                </span>
-              </div>
-            )}
+              {profile.contributions !== null && profile.contributions > 0 && (
+                <div className="flex items-center gap-2">
+                  <Award className="h-4 w-4 text-purple-400" />
+                  <span className="text-purple-400">
+                    {profile.contributions} contributions
+                  </span>
+                </div>
+              )}
+
+              {totalSubmissions > 0 && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-green-400" />
+                  <span className="text-green-400">
+                    {totalSubmissions} total submissions
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -164,21 +202,71 @@ const ProfileContent = () => {
 
       {/* Languages Used Section */}
       <div className="rounded-xl border border-gray-700/50 bg-gradient-to-br from-[#1a2332] to-[#0f1724] p-6">
-        <div className="mb-4 flex items-center gap-3">
-          <Code2 className="h-5 w-5 text-cyan-400" />
-          <h2 className="text-lg font-semibold text-white">Languages Used</h2>
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Code2 className="h-5 w-5 text-cyan-400" />
+            <h2 className="text-lg font-semibold text-white">Languages Used</h2>
+          </div>
+          {profile.languagesUsed.length > 0 && (
+            <span className="text-sm text-gray-400">
+              {profile.languagesUsed.length} languages
+            </span>
+          )}
         </div>
 
         {profile.languagesUsed.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {profile.languagesUsed.map((lang) => (
-              <Badge
-                key={lang}
-                className="border-gray-600 bg-gray-700/50 text-gray-300 hover:bg-gray-700"
-              >
-                {lang}
-              </Badge>
-            ))}
+          <div className="space-y-4">
+            {/* Language cards */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {profile.languagesUsed
+                .sort((a, b) => b.count - a.count)
+                .map((lang) => {
+                  const colors = getLanguageColor(lang.language);
+                  const percentage = totalSubmissions > 0 
+                    ? Math.round((lang.count / totalSubmissions) * 100) 
+                    : 0;
+                  
+                  return (
+                    <div
+                      key={lang.language}
+                      className={`relative overflow-hidden rounded-lg border ${colors.border} ${colors.bg} p-4 transition-all hover:scale-[1.02]`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
+                            <Code2 className={`h-5 w-5 ${colors.text}`} />
+                          </div>
+                          <div>
+                            <p className={`font-semibold ${colors.text}`}>
+                              {lang.language}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {lang.count} submissions
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-2xl font-bold ${colors.text}`}>
+                            {percentage}%
+                          </p>
+                        </div>
+                      </div>
+                      {/* Progress bar */}
+                      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-gray-700/50">
+                        <div
+                          className={`h-full rounded-full ${colors.bg} transition-all`}
+                          style={{ 
+                            width: `${percentage}%`,
+                            backgroundColor: colors.text.replace('text-', '').includes('400') 
+                              ? `rgb(var(--tw-${colors.text.replace('text-', '').replace('-400', '-500')}))` 
+                              : undefined
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-3 rounded-lg border border-dashed border-gray-600 py-8 text-gray-500">
@@ -204,4 +292,3 @@ const ProfileContent = () => {
 };
 
 export default ProfileContent;
-
