@@ -60,16 +60,18 @@ const ProblemPagination = ({ table }: ProblemPaginationProps) => {
   return (
     <div className="mt-4 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Select defaultValue="20">
+        <Select
+          defaultValue="20"
+          onValueChange={(value) => {
+            table.setPageSize(Number(value));
+          }}
+        >
           <SelectTrigger className="w-[120px] border-[#3a4556] bg-[#252d3d] text-gray-200">
             <SelectValue />
           </SelectTrigger>
           <SelectContent
             className="border-[#3a4556] bg-[#252d3d]"
             position="popper"
-            onSelect={(value) => {
-              table.setPageSize(Number(value));
-            }}
           >
             <SelectItem value="10" className="text-gray-200">
               10 / page
