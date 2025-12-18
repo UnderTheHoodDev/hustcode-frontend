@@ -56,8 +56,8 @@ const createProblemSchema = z.object({
   inputDescription: z.string().min(1, 'Input description is required'),
   outputDescription: z.string().min(1, 'Output description is required'),
   tags: z.string().min(1, 'At least one tag is required'),
-  timeLimit: z.number().min(100, 'Min 100ms').max(10000, 'Max 10000ms'),
-  memoryLimit: z.number().min(16, 'Min 16MB').max(512, 'Max 512MB'),
+  timeLimit: z.coerce.number().min(100, 'Min 100ms').max(10000, 'Max 10000ms'),
+  memoryLimit: z.coerce.number().min(16, 'Min 16MB').max(512, 'Max 512MB'),
   testcases: z
     .array(testcaseSchema)
     .min(1, 'At least one testcase is required'),

@@ -7,7 +7,7 @@ import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
 import CodeMirror from '@uiw/react-codemirror';
 import { ArrowLeft, Code2, RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,49 +24,96 @@ import {
 } from '@/components/ui/tooltip';
 
 // Default starter code templates
-const DEFAULT_STARTER_CODE: Record<string, string> = {
+export const DEFAULT_STARTER_CODE: Record<string, string> = {
+  c: `#include <stdio.h>
+
+int main() {
+  // Your code here
+  return 0;
+}`,
   cpp: `#include <bits/stdc++.h>
 using namespace std;
 
 int main() {
-    // Your code here
-    return 0;
+  // Your code here
+  return 0;
 }`,
   python: `# Your code here
 def solve():
-    pass
+  pass
 
 if __name__ == "__main__":
-    solve()`,
+  solve()`,
   java: `import java.util.*;
 
 public class Solution {
-    public static void main(String[] args) {
-        // Your code here
-    }
+  public static void main(String[] args) {
+    // Your code here
+  }
 }`,
   javascript: `// Your code here
 function solve() {
-    
+  
 }
 
 solve();`,
+};
+
+// Language config for Run Code API (/submission) - lowercase IDs
+export const RUN_CODE_LANGUAGE_CONFIG: Record<
+  string,
+  { id: string; version: string; name: string }
+> = {
+  c: { id: 'c', version: '12', name: 'C' },
+  cpp: { id: 'cpp', version: '12', name: 'C++' },
+  python: { id: 'python', version: '3.10', name: 'Python' },
+  java: { id: 'java', version: '17', name: 'Java' },
+  javascript: { id: 'nodejs', version: '18', name: 'JavaScript' },
+};
+
+// Language config for Submit Problem API (/problem-submission) - original IDs
+export const LANGUAGE_CONFIG: Record<
+  string,
+  { id: string; version: string; name: string }
+> = {
+  c: { id: 'C', version: '12', name: 'C' },
+  cpp: { id: 'Cpp', version: '12', name: 'C++' },
+  python: { id: 'Python', version: '3.10', name: 'Python' },
+  java: { id: 'Java', version: '17', name: 'Java' },
+  javascript: { id: 'NodeJs', version: '18', name: 'JavaScript' },
 };
 
 interface CodeEditorPanelProps {
   starterCode?: Record<string, string>;
   viewingSubmission?: { code: string; language: string } | null;
   onBackToEditor?: () => void;
+  // Controlled state props
+  code: string;
+  language: string;
+  onCodeChange: (code: string) => void;
+  onLanguageChange: (language: string) => void;
+  isSubmitting?: boolean;
 }
 
 const CodeEditorPanel = ({
   starterCode,
   viewingSubmission,
   onBackToEditor,
+  code,
+  language,
+  onCodeChange,
+  onLanguageChange,
+  isSubmitting = false,
 }: CodeEditorPanelProps) => {
   const codeTemplates = starterCode || DEFAULT_STARTER_CODE;
-  const [language, setLanguage] = useState('cpp');
-  const [code, setCode] = useState(codeTemplates[language] || '');
+
+  // Initialize code when language changes
+  useEffect(() => {
+    if (!code && !viewingSubmission) {
+      onCodeChange(codeTemplates[language] || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Determine what to display
   const isViewingSubmission = !!viewingSubmission;
@@ -76,25 +123,19 @@ const CodeEditorPanel = ({
   const displayCode = isViewingSubmission ? viewingSubmission.code : code;
 
   const handleLanguageChange = (newLanguage: string) => {
-    if (isViewingSubmission) return; // Prevent language change when viewing submission
-    setLanguage(newLanguage);
-    setCode(codeTemplates[newLanguage] || '');
+    if (isViewingSubmission) return;
+    onLanguageChange(newLanguage);
+    onCodeChange(codeTemplates[newLanguage] || '');
   };
 
   const handleReset = () => {
-    if (isViewingSubmission) return; // Prevent reset when viewing submission
-    setCode(codeTemplates[language] || '');
-  };
-
-  const languageMap: Record<string, string> = {
-    cpp: 'C++',
-    python: 'Python',
-    java: 'Java',
-    javascript: 'JavaScript',
+    if (isViewingSubmission) return;
+    onCodeChange(codeTemplates[language] || '');
   };
 
   // CodeMirror language extensions mapping
   const languageExtensions: Record<string, ReturnType<typeof cpp>> = {
+    c: cpp(), // C uses same syntax highlighting as C++
     cpp: cpp(),
     python: python(),
     java: java(),
@@ -128,19 +169,19 @@ const CodeEditorPanel = ({
           <Select
             value={displayLanguage}
             onValueChange={handleLanguageChange}
-            disabled={isViewingSubmission}
+            disabled={isViewingSubmission || isSubmitting}
           >
             <SelectTrigger className="h-8 w-32 border-gray-600 bg-[#252d3d] text-sm text-gray-200 hover:border-gray-500 disabled:cursor-not-allowed disabled:opacity-50">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="border-gray-600 bg-[#252d3d]">
-              {Object.entries(languageMap).map(([key, value]) => (
+              {Object.entries(LANGUAGE_CONFIG).map(([key, config]) => (
                 <SelectItem
                   key={key}
                   value={key}
                   className="text-sm text-gray-200 hover:bg-[#2a3444]"
                 >
-                  {value}
+                  {config.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -153,7 +194,7 @@ const CodeEditorPanel = ({
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              disabled={isViewingSubmission}
+              disabled={isViewingSubmission || isSubmitting}
               className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RotateCcw className="h-4 w-4" />
@@ -169,9 +210,9 @@ const CodeEditorPanel = ({
           value={displayCode}
           height="100%"
           theme={oneDark}
-          extensions={[languageExtensions[language]]}
-          onChange={(value) => !isViewingSubmission && setCode(value)}
-          editable={!isViewingSubmission}
+          extensions={[languageExtensions[displayLanguage] || python()]}
+          onChange={(value) => !isViewingSubmission && onCodeChange(value)}
+          editable={!isViewingSubmission && !isSubmitting}
           basicSetup={{
             lineNumbers: true,
             highlightActiveLineGutter: true,

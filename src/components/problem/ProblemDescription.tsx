@@ -1,20 +1,13 @@
 'use client';
 
-import { Clock, Heart, MessageSquare, Send } from 'lucide-react';
+import { Clock, Heart, Loader2, MessageSquare, Send } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-interface SubmissionHistory {
-  id: string;
-  language: string;
-  status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error';
-  runtime: string;
-  memory: string;
-  submittedAt: string;
-}
+import useSubmissions from '@/lib/api/submission/queries/use-submissions';
 
 interface ProblemDescriptionProps {
+  problemId: string;
   title: string;
   difficulty: string;
   tags: { id: string; name: string }[];
@@ -22,61 +15,13 @@ interface ProblemDescriptionProps {
   taskDescription: string;
   inputDescription: string;
   outputDescription: string;
-  submissions?: SubmissionHistory[];
   submissionCount?: number;
   likeCount?: number;
   onViewSubmission?: (code: string, language: string) => void;
 }
-const SUBMISSIONS = [
-  {
-    id: 'cmja7irye0009uesk9fvw8e3d',
-    code: '#include <stdio.h>\nint main() {\n    int a, b;\n    if (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}',
-    languageId: '2',
-    status: 'ACCEPTED',
-    userId: 'cmh7h7e2t0001uedolql29x74',
-    problemId: 'cmioubiat0003ueb44panymo2',
-    consumedTime: 0,
-    consumedMemory: 1,
-    submittedAt: '2025-12-17T16:09:29.607Z',
-    updatedAt: '2025-12-17T16:09:30.924Z',
-    problem: {
-      id: 'cmioubiat0003ueb44panymo2',
-      title: 'Two Sum',
-      difficulty: 'EASY',
-    },
-    language: {
-      id: '2',
-      name: 'C',
-      createdAt: '2025-12-13T07:00:27.569Z',
-      updatedAt: '2025-12-13T07:00:27.569Z',
-    },
-  },
-  {
-    id: 'cmja77hih0007ueskwpwoqofj',
-    code: '#include <stdio.h>\nint main() {\n    int a, b;\n    if (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}',
-    languageId: '2',
-    status: 'WRONG_ANSWER',
-    userId: 'cmh7h7e2t0001uedolql29x74',
-    problemId: 'cmioubiat0003ueb44panymo2',
-    consumedTime: 0,
-    consumedMemory: 1,
-    submittedAt: '2025-12-17T16:00:42.858Z',
-    updatedAt: '2025-12-17T16:00:44.320Z',
-    problem: {
-      id: 'cmioubiat0003ueb44panymo2',
-      title: 'Two Sum',
-      difficulty: 'EASY',
-    },
-    language: {
-      id: '2',
-      name: 'C',
-      createdAt: '2025-12-13T07:00:27.569Z',
-      updatedAt: '2025-12-13T07:00:27.569Z',
-    },
-  },
-];
 
 const ProblemDescription = ({
+  problemId,
   title,
   difficulty,
   tags,
@@ -84,11 +29,15 @@ const ProblemDescription = ({
   taskDescription,
   inputDescription,
   outputDescription,
-  submissions = [],
   submissionCount = 0,
   likeCount = 0,
   onViewSubmission,
 }: ProblemDescriptionProps) => {
+  // Fetch user's submissions for this problem
+  const { data: submissionsResponse, isLoading: isLoadingSubmissions } =
+    useSubmissions({ problemId });
+  const submissions = submissionsResponse?.data || [];
+
   const difficultyConfig: Record<
     string,
     { bg: string; text: string; label: string }
@@ -102,14 +51,35 @@ const ProblemDescription = ({
     HARD: { bg: 'bg-red-500/15', text: 'text-red-400', label: 'Hard' },
   };
 
-  const statusColors: Record<string, string> = {
-    ACCEPTED: 'text-green-400',
-    WRONG_ANSWER: 'text-red-400',
-    TIME_LIMIT_EXCEEDED: 'text-amber-400',
-    RUNTIME_ERROR: 'text-orange-400',
+  const statusConfig: Record<string, { color: string; label: string }> = {
+    ACCEPTED: { color: 'text-green-400', label: 'Accepted' },
+    WRONG_ANSWER: { color: 'text-red-400', label: 'Wrong Answer' },
+    TIME_LIMIT_EXCEEDED: {
+      color: 'text-amber-400',
+      label: 'Time Limit Exceeded',
+    },
+    MEMORY_LIMIT_EXCEEDED: {
+      color: 'text-orange-400',
+      label: 'Memory Limit Exceeded',
+    },
+    RUNTIME_ERROR: { color: 'text-orange-400', label: 'Runtime Error' },
+    COMPILATION_ERROR: { color: 'text-red-400', label: 'Compile Error' },
+    PENDING: { color: 'text-gray-400', label: 'Pending' },
+    RUNNING: { color: 'text-cyan-400', label: 'Running' },
   };
 
   const diffConfig = difficultyConfig[difficulty] || difficultyConfig.EASY;
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <div className="custom-scrollbar flex h-full flex-col overflow-hidden bg-[#1a2332]">
@@ -166,6 +136,11 @@ const ProblemDescription = ({
             className="px-4 py-1.5 text-sm text-gray-400 data-[state=active]:bg-cyan-500 data-[state=active]:text-white"
           >
             Submissions
+            {submissions.length > 0 && (
+              <span className="ml-1.5 rounded-full bg-cyan-500/20 px-1.5 py-0.5 text-xs text-cyan-400">
+                {submissions.length}
+              </span>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -221,7 +196,14 @@ const ProblemDescription = ({
           className="custom-scrollbar mx-6 mb-6 flex-1 overflow-y-auto pr-2"
         >
           <div className="space-y-3 py-4">
-            {SUBMISSIONS.length === 0 ? (
+            {isLoadingSubmissions ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+                <p className="mt-3 text-sm text-gray-400">
+                  Loading submissions...
+                </p>
+              </div>
+            ) : submissions.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-600 py-16 text-gray-500">
                 <MessageSquare className="mb-3 h-10 w-10 text-gray-600" />
                 <p className="text-sm">No submissions yet</p>
@@ -230,60 +212,64 @@ const ProblemDescription = ({
                 </p>
               </div>
             ) : (
-              SUBMISSIONS.map((submission) => (
-                <div
-                  key={submission.id}
-                  className="cursor-pointer rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600 hover:bg-[#0f1724]/80"
-                  onClick={() =>
-                    onViewSubmission?.(
-                      submission.code,
-                      submission.language.name
-                    )
-                  }
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      onViewSubmission?.(
-                        submission.code,
-                        submission.language.name
-                      );
+              submissions.map((submission) => {
+                const status =
+                  statusConfig[submission.status] || statusConfig.PENDING;
+
+                return (
+                  <div
+                    key={submission.id}
+                    className="cursor-pointer rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600 hover:bg-[#0f1724]/80"
+                    onClick={() =>
+                      onViewSubmission?.(submission.code, submission.language.name)
                     }
-                  }}
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span
-                      className={`font-medium ${statusColors[submission.status]}`}
-                    >
-                      {submission.status}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                      <Clock className="h-3 w-3" />
-                      {new Date(submission.submittedAt).toLocaleString()}
-                    </span>
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        onViewSubmission?.(
+                          submission.code,
+                          submission.language.name
+                        );
+                      }
+                    }}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className={`font-medium ${status.color}`}>
+                        {status.label}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        {formatDate(submission.submittedAt)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                      <span>
+                        Language:{' '}
+                        <span className="text-gray-300">
+                          {submission.language.name}
+                        </span>
+                      </span>
+                      {submission.consumedTime > 0 && (
+                        <span>
+                          Runtime:{' '}
+                          <span className="text-cyan-400">
+                            {submission.consumedTime}ms
+                          </span>
+                        </span>
+                      )}
+                      {submission.consumedMemory > 0 && (
+                        <span>
+                          Memory:{' '}
+                          <span className="text-cyan-400">
+                            {submission.consumedMemory}KB
+                          </span>
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-400">
-                    <span>
-                      Language:{' '}
-                      <span className="text-gray-300">
-                        {submission.language.name}
-                      </span>
-                    </span>
-                    <span>
-                      Runtime:{' '}
-                      <span className="text-cyan-400">
-                        {`${submission.consumedTime}ms`}
-                      </span>
-                    </span>
-                    <span>
-                      Memory:{' '}
-                      <span className="text-cyan-400">
-                        {`${submission.consumedMemory}KB`}
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </TabsContent>

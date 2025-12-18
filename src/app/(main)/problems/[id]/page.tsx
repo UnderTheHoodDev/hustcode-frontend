@@ -1,10 +1,14 @@
 'use client';
 
-import { ArrowLeft, Loader2, Send } from 'lucide-react';
+import { ArrowLeft, Loader2, Play, Send } from 'lucide-react';
 import Link from 'next/link';
-import { use, useState } from 'react';
+import { use, useCallback, useState } from 'react';
 
-import CodeEditorPanel from '@/components/problem/CodeEditorPanel';
+import CodeEditorPanel, {
+  DEFAULT_STARTER_CODE,
+  LANGUAGE_CONFIG,
+  RUN_CODE_LANGUAGE_CONFIG,
+} from '@/components/problem/CodeEditorPanel';
 import ProblemDescription from '@/components/problem/ProblemDescription';
 import ProblemListSheet from '@/components/problem/ProblemListSheet';
 import TestCasePanel from '@/components/problem/TestCasePanel';
@@ -15,6 +19,10 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import useProblemDetailQuery from '@/lib/api/problem/queries/use-problem-detail';
+import useRunCode from '@/lib/api/submission/mutations/use-run-code';
+import useSubmitProblem from '@/lib/api/submission/mutations/use-submit-problem';
+import { TestCaseResult } from '@/types/submission';
+import { toastError, toastSuccess } from '@/utils/toaster';
 
 type SubmissionView = {
   code: string;
@@ -72,20 +80,196 @@ export default function ProblemDetailPage({
   const { data: response, isLoading, isError } = useProblemDetailQuery(id);
   const problem = response?.data as ProblemDetail | undefined;
 
-  const [submitting, setSubmitting] = useState(false);
+  // Code editor state (lifted up for submission)
+  const [code, setCode] = useState('');
+  const [language, setLanguage] = useState('cpp');
+
+  // Initialize code when problem is loaded
+  const handleLanguageChange = useCallback((newLang: string) => {
+    setLanguage(newLang);
+    setCode(DEFAULT_STARTER_CODE[newLang] || '');
+  }, []);
+
+  // Submission state
+  const [isRunning, setIsRunning] = useState(false);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [runningCaseNumber, setRunningCaseNumber] = useState(0);
+  const [runningTotal, setRunningTotal] = useState(0);
+  const [submissionResults, setSubmissionResults] = useState<
+    TestCaseResult[] | null
+  >(null);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+
+  // Viewing submission code
   const [viewingSubmission, setViewingSubmission] =
     useState<SubmissionView>(null);
 
-  const handleSubmit = () => {
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      alert('Submission completed!');
-    }, 1500);
+  // Mutations
+  const runCodeMutation = useRunCode();
+  const submitProblemMutation = useSubmitProblem(id);
+
+  // Run code against sample test cases (no submission record)
+  const handleRun = async () => {
+    if (!problem || !code.trim()) {
+      toastError('Please write some code before running');
+      return;
+    }
+
+    const sampleCasesWithIndex = problem.testcases
+      .map((tc, index) => ({ tc, index }))
+      .filter(({ tc }) => tc.isSample);
+
+    if (sampleCasesWithIndex.length === 0) {
+      toastError('No sample test cases available');
+      return;
+    }
+
+    setIsRunning(true);
+    setSubmissionError(null);
+    setSubmissionResults(null);
+    setCurrentTestIndex(0);
+    setRunningCaseNumber(0);
+    setRunningTotal(sampleCasesWithIndex.length);
+
+    const results: TestCaseResult[] = [];
+    const runLangConfig = RUN_CODE_LANGUAGE_CONFIG[language];
+
+    try {
+      for (let i = 0; i < sampleCasesWithIndex.length; i++) {
+        const { tc: testCase, index } = sampleCasesWithIndex[i];
+        setRunningCaseNumber(i);
+        setCurrentTestIndex(index);
+
+        try {
+          const result = await runCodeMutation.mutateAsync({
+            source_code: code,
+            stdin: testCase.input,
+            expected_output: testCase.output,
+            cpu_time_limit: problem.problemConstrain?.timeLimit
+              ? problem.problemConstrain.timeLimit / 1000
+              : 2,
+            memory_limit: problem.problemConstrain?.memoryLimit
+              ? problem.problemConstrain.memoryLimit * 1000
+              : 128000,
+            language: {
+              id: runLangConfig.id,
+              version: runLangConfig.version,
+            },
+          });
+
+          results.push({
+            testcaseId: testCase.id,
+            input: testCase.input,
+            expectedOutput: testCase.output,
+            userOutput: result.stdout || result.stderr || '',
+            isPassed: result.status === 'Accepted',
+            time: result.time,
+            memory: result.memory,
+            status: result.status,
+          });
+        } catch {
+          results.push({
+            testcaseId: testCase.id,
+            input: testCase.input,
+            expectedOutput: testCase.output,
+            userOutput: '',
+            isPassed: false,
+            time: null,
+            memory: null,
+            status: 'Runtime Error',
+          });
+        }
+
+        // Update results incrementally
+        setSubmissionResults([...results]);
+      }
+
+      // Show summary
+      const passed = results.filter((r) => r.isPassed).length;
+      if (passed === results.length) {
+        toastSuccess(`All ${results.length} sample test cases passed!`);
+      } else {
+        toastError(`${passed}/${results.length} sample test cases passed`);
+      }
+    } catch {
+      setSubmissionError('Failed to run code. Please try again.');
+      toastError('Failed to run code');
+    } finally {
+      setIsRunning(false);
+    }
   };
 
-  const handleViewSubmission = (code: string, language: string) => {
-    setViewingSubmission({ code, language });
+  // Submit code (runs all test cases and creates submission)
+  const handleSubmit = async () => {
+    if (!problem || !code.trim()) {
+      toastError('Please write some code before submitting');
+      return;
+    }
+
+    setSubmissionError(null);
+    setSubmissionResults(null);
+
+    const langConfig = LANGUAGE_CONFIG[language];
+
+    try {
+      const response = await submitProblemMutation.mutateAsync({
+        source_code: code,
+        problemId: id,
+        language: {
+          id: langConfig.id,
+          version: langConfig.version,
+        },
+      });
+
+      // Convert API testcase results to UI format
+      const results: TestCaseResult[] = response.testcaseResults.map((tc) => ({
+        testcaseId: tc.testcaseId,
+        userOutput: tc.stdout || tc.stderr || '',
+        isPassed: tc.status === 'Accepted',
+        time: tc.time,
+        memory: tc.memory,
+        status: tc.status,
+      }));
+
+      setSubmissionResults(results);
+
+      // Show result based on submission status
+      const submissionStatus = response.submission.status;
+      if (submissionStatus === 'ACCEPTED') {
+        toastSuccess('Accepted! All test cases passed!');
+      } else {
+        const passed = results.filter((r) => r.isPassed).length;
+        const statusLabel = getStatusLabel(submissionStatus);
+        toastError(
+          `${statusLabel}: ${passed}/${results.length} test cases passed`
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to submit. Please try again.';
+      setSubmissionError(errorMessage);
+      toastError('Failed to submit');
+    }
+  };
+
+  const getStatusLabel = (status: string): string => {
+    const labels: Record<string, string> = {
+      WRONG_ANSWER: 'Wrong Answer',
+      TIME_LIMIT_EXCEEDED: 'Time Limit Exceeded',
+      MEMORY_LIMIT_EXCEEDED: 'Memory Limit Exceeded',
+      RUNTIME_ERROR: 'Runtime Error',
+      COMPILATION_ERROR: 'Compilation Error',
+    };
+    return labels[status] || status;
+  };
+
+  const handleViewSubmission = (
+    submissionCode: string,
+    submissionLang: string
+  ) => {
+    setViewingSubmission({ code: submissionCode, language: submissionLang });
   };
 
   const handleBackToEditor = () => {
@@ -126,29 +310,33 @@ export default function ProblemDetailPage({
     );
   }
 
-  // Get sample test cases for display
-  const sampleTestCases =
-    problem.testcases
-      ?.filter((tc) => tc.isSample)
-      .map((tc) => ({
-        input: tc.input,
-        expectedOutput: tc.output,
-      })) || [];
+  // Provide all test cases to panel, but only expose input/output for samples
+  const testCasesForPanel =
+    problem.testcases?.map((tc) => ({
+      id: tc.id,
+      isSample: tc.isSample,
+      input: tc.isSample ? tc.input : undefined,
+      expectedOutput: tc.isSample ? tc.output : undefined,
+    })) || [];
 
-  // If no sample test cases, show first 2 test cases
-  const displayTestCases =
-    sampleTestCases.length > 0
-      ? sampleTestCases
-      : problem.testcases?.slice(0, 2).map((tc) => ({
-          input: tc.input,
-          expectedOutput: tc.output,
-        })) || [];
+  const isSubmitting = submitProblemMutation.isPending;
+  const isProcessing = isSubmitting || isRunning;
 
   return (
     <div className="flex h-screen flex-col bg-[#0f1724]">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-700/50 bg-[#1a2332] px-6 py-3">
         <div className="flex items-center gap-4">
+          <Link href="/problems">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-gray-600 bg-transparent text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Problems</span>
+            </Button>
+          </Link>
           <ProblemListSheet currentProblemId={problem.id} />
           {problem.problemConstrain && (
             <div className="hidden items-center gap-4 text-sm text-gray-400 md:flex">
@@ -168,14 +356,36 @@ export default function ProblemDetailPage({
             </div>
           )}
         </div>
-        <Button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="bg-green-600 text-white hover:bg-green-500"
-        >
-          <Send className="mr-2 h-4 w-4" />
-          {submitting ? 'Submitting...' : 'Submit'}
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Run Button */}
+          <Button
+            onClick={handleRun}
+            disabled={isProcessing}
+            variant="outline"
+            className="border-gray-600 bg-transparent text-gray-300 hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isRunning ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Play className="mr-2 h-4 w-4" />
+            )}
+            {isRunning ? 'Running...' : 'Run'}
+          </Button>
+
+          {/* Submit Button */}
+          <Button
+            onClick={handleSubmit}
+            disabled={isProcessing}
+            className="bg-green-600 text-white hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="mr-2 h-4 w-4" />
+            )}
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -184,6 +394,7 @@ export default function ProblemDetailPage({
           {/* Left Panel - Problem Description */}
           <ResizablePanel defaultSize={40} minSize={25}>
             <ProblemDescription
+              problemId={problem.id}
               title={problem.title}
               difficulty={problem.difficulty}
               tags={problem.tags}
@@ -207,6 +418,11 @@ export default function ProblemDetailPage({
                 <CodeEditorPanel
                   viewingSubmission={viewingSubmission}
                   onBackToEditor={handleBackToEditor}
+                  code={code}
+                  language={language}
+                  onCodeChange={setCode}
+                  onLanguageChange={handleLanguageChange}
+                  isSubmitting={isProcessing}
                 />
               </ResizablePanel>
 
@@ -214,7 +430,15 @@ export default function ProblemDetailPage({
 
               {/* Test Cases */}
               <ResizablePanel defaultSize={40} minSize={15}>
-                <TestCasePanel testCases={displayTestCases} />
+                <TestCasePanel
+                  testCases={testCasesForPanel}
+                  isSubmitting={isProcessing}
+                  submissionResults={submissionResults}
+                  submissionError={submissionError}
+                  currentTestIndex={isRunning ? currentTestIndex : undefined}
+                  runningCaseNumber={isRunning ? runningCaseNumber : undefined}
+                  runningTotal={isRunning ? runningTotal : undefined}
+                />
               </ResizablePanel>
             </ResizablePanelGroup>
           </ResizablePanel>
