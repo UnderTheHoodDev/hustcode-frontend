@@ -1,9 +1,8 @@
 import { CreateProblemDto, UpdateProblemDto } from '@/api/client';
-import { problemConnect } from '@/api/guest';
 import { problemConnectWithAuth } from '@/api/user';
 
 const getProblems = async (options: OptherOptionsProps) => {
-  return await problemConnect.problemControllerFindAll(
+  return await problemConnectWithAuth.problemControllerFindAll(
     options.page,
     options.pageSize,
     options.difficulty,
@@ -14,7 +13,7 @@ const getProblems = async (options: OptherOptionsProps) => {
 };
 
 const getProblemDetail = async (id: string) => {
-  return await problemConnect.problemControllerFindOne(id);
+  return await problemConnectWithAuth.problemControllerFindOne(id);
 };
 
 const createProblem = async (payload: CreateProblemDto) => {

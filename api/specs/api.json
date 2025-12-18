@@ -105,6 +105,27 @@
         "tags": ["User"]
       }
     },
+    "/user/profile/{id}": {
+      "get": {
+        "operationId": "UserController_getUserProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["User"]
+      }
+    },
     "/problem": {
       "post": {
         "operationId": "ProblemController_create",
@@ -193,7 +214,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of problems retrieved successfully"
+            "description": "List of problems retrieved successfully. Each problem includes userStatus: Solved (user has ACCEPTED submission), Attempted (user has submissions but none ACCEPTED), or Unsolved (no submissions)"
           }
         },
         "summary": "Get all problems with pagination and filters",

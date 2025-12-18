@@ -25,7 +25,56 @@ interface ProblemDescriptionProps {
   submissions?: SubmissionHistory[];
   submissionCount?: number;
   likeCount?: number;
+  onViewSubmission?: (code: string, language: string) => void;
 }
+const SUBMISSIONS = [
+  {
+    id: 'cmja7irye0009uesk9fvw8e3d',
+    code: '#include <stdio.h>\nint main() {\n    int a, b;\n    if (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}',
+    languageId: '2',
+    status: 'ACCEPTED',
+    userId: 'cmh7h7e2t0001uedolql29x74',
+    problemId: 'cmioubiat0003ueb44panymo2',
+    consumedTime: 0,
+    consumedMemory: 1,
+    submittedAt: '2025-12-17T16:09:29.607Z',
+    updatedAt: '2025-12-17T16:09:30.924Z',
+    problem: {
+      id: 'cmioubiat0003ueb44panymo2',
+      title: 'Two Sum',
+      difficulty: 'EASY',
+    },
+    language: {
+      id: '2',
+      name: 'C',
+      createdAt: '2025-12-13T07:00:27.569Z',
+      updatedAt: '2025-12-13T07:00:27.569Z',
+    },
+  },
+  {
+    id: 'cmja77hih0007ueskwpwoqofj',
+    code: '#include <stdio.h>\nint main() {\n    int a, b;\n    if (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}',
+    languageId: '2',
+    status: 'WRONG_ANSWER',
+    userId: 'cmh7h7e2t0001uedolql29x74',
+    problemId: 'cmioubiat0003ueb44panymo2',
+    consumedTime: 0,
+    consumedMemory: 1,
+    submittedAt: '2025-12-17T16:00:42.858Z',
+    updatedAt: '2025-12-17T16:00:44.320Z',
+    problem: {
+      id: 'cmioubiat0003ueb44panymo2',
+      title: 'Two Sum',
+      difficulty: 'EASY',
+    },
+    language: {
+      id: '2',
+      name: 'C',
+      createdAt: '2025-12-13T07:00:27.569Z',
+      updatedAt: '2025-12-13T07:00:27.569Z',
+    },
+  },
+];
 
 const ProblemDescription = ({
   title,
@@ -38,6 +87,7 @@ const ProblemDescription = ({
   submissions = [],
   submissionCount = 0,
   likeCount = 0,
+  onViewSubmission,
 }: ProblemDescriptionProps) => {
   const difficultyConfig: Record<
     string,
@@ -53,10 +103,10 @@ const ProblemDescription = ({
   };
 
   const statusColors: Record<string, string> = {
-    Accepted: 'text-green-400',
-    'Wrong Answer': 'text-red-400',
-    'Time Limit Exceeded': 'text-amber-400',
-    'Runtime Error': 'text-orange-400',
+    ACCEPTED: 'text-green-400',
+    WRONG_ANSWER: 'text-red-400',
+    TIME_LIMIT_EXCEEDED: 'text-amber-400',
+    RUNTIME_ERROR: 'text-orange-400',
   };
 
   const diffConfig = difficultyConfig[difficulty] || difficultyConfig.EASY;
@@ -67,7 +117,9 @@ const ProblemDescription = ({
       <div className="border-b border-gray-700/50 p-6">
         <div className="mb-3 flex items-center gap-3">
           <h1 className="text-xl font-bold text-white">{title}</h1>
-          <Badge className={`${diffConfig.bg} ${diffConfig.text} border-0 px-2.5 py-0.5 text-xs font-medium`}>
+          <Badge
+            className={`${diffConfig.bg} ${diffConfig.text} border-0 px-2.5 py-0.5 text-xs font-medium`}
+          >
             {diffConfig.label}
           </Badge>
         </div>
@@ -98,7 +150,10 @@ const ProblemDescription = ({
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="description" className="flex flex-1 flex-col overflow-hidden">
+      <Tabs
+        defaultValue="description"
+        className="flex flex-1 flex-col overflow-hidden"
+      >
         <TabsList className="mx-6 mt-4 w-fit bg-[#252d3d] p-1">
           <TabsTrigger
             value="description"
@@ -166,7 +221,7 @@ const ProblemDescription = ({
           className="custom-scrollbar mx-6 mb-6 flex-1 overflow-y-auto pr-2"
         >
           <div className="space-y-3 py-4">
-            {submissions.length === 0 ? (
+            {SUBMISSIONS.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-600 py-16 text-gray-500">
                 <MessageSquare className="mb-3 h-10 w-10 text-gray-600" />
                 <p className="text-sm">No submissions yet</p>
@@ -175,10 +230,26 @@ const ProblemDescription = ({
                 </p>
               </div>
             ) : (
-              submissions.map((submission) => (
+              SUBMISSIONS.map((submission) => (
                 <div
                   key={submission.id}
-                  className="rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600"
+                  className="cursor-pointer rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600 hover:bg-[#0f1724]/80"
+                  onClick={() =>
+                    onViewSubmission?.(
+                      submission.code,
+                      submission.language.name
+                    )
+                  }
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      onViewSubmission?.(
+                        submission.code,
+                        submission.language.name
+                      );
+                    }
+                  }}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <span
@@ -188,21 +259,27 @@ const ProblemDescription = ({
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-gray-500">
                       <Clock className="h-3 w-3" />
-                      {submission.submittedAt}
+                      {new Date(submission.submittedAt).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex items-center gap-4 text-xs text-gray-400">
                     <span>
                       Language:{' '}
-                      <span className="text-gray-300">{submission.language}</span>
+                      <span className="text-gray-300">
+                        {submission.language.name}
+                      </span>
                     </span>
                     <span>
                       Runtime:{' '}
-                      <span className="text-cyan-400">{submission.runtime}</span>
+                      <span className="text-cyan-400">
+                        {`${submission.consumedTime}ms`}
+                      </span>
                     </span>
                     <span>
                       Memory:{' '}
-                      <span className="text-cyan-400">{submission.memory}</span>
+                      <span className="text-cyan-400">
+                        {`${submission.consumedMemory}KB`}
+                      </span>
                     </span>
                   </div>
                 </div>

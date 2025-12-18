@@ -16,6 +16,11 @@ import {
 } from '@/components/ui/resizable';
 import useProblemDetailQuery from '@/lib/api/problem/queries/use-problem-detail';
 
+type SubmissionView = {
+  code: string;
+  language: string;
+} | null;
+
 // Type for problem detail from API
 type ProblemDetail = {
   id: string;
@@ -68,6 +73,8 @@ export default function ProblemDetailPage({
   const problem = response?.data as ProblemDetail | undefined;
 
   const [submitting, setSubmitting] = useState(false);
+  const [viewingSubmission, setViewingSubmission] =
+    useState<SubmissionView>(null);
 
   const handleSubmit = () => {
     setSubmitting(true);
@@ -75,6 +82,14 @@ export default function ProblemDetailPage({
       setSubmitting(false);
       alert('Submission completed!');
     }, 1500);
+  };
+
+  const handleViewSubmission = (code: string, language: string) => {
+    setViewingSubmission({ code, language });
+  };
+
+  const handleBackToEditor = () => {
+    setViewingSubmission(null);
   };
 
   // Loading state
@@ -113,10 +128,12 @@ export default function ProblemDetailPage({
 
   // Get sample test cases for display
   const sampleTestCases =
-    problem.testcases?.filter((tc) => tc.isSample).map((tc) => ({
-      input: tc.input,
-      expectedOutput: tc.output,
-    })) || [];
+    problem.testcases
+      ?.filter((tc) => tc.isSample)
+      .map((tc) => ({
+        input: tc.input,
+        expectedOutput: tc.output,
+      })) || [];
 
   // If no sample test cases, show first 2 test cases
   const displayTestCases =
@@ -176,6 +193,7 @@ export default function ProblemDetailPage({
               outputDescription={problem.outputDescription}
               submissionCount={problem._count.submissions}
               likeCount={problem.likeNumber}
+              onViewSubmission={handleViewSubmission}
             />
           </ResizablePanel>
 
@@ -186,7 +204,10 @@ export default function ProblemDetailPage({
             <ResizablePanelGroup direction="vertical">
               {/* Code Editor */}
               <ResizablePanel defaultSize={60} minSize={30}>
-                <CodeEditorPanel />
+                <CodeEditorPanel
+                  viewingSubmission={viewingSubmission}
+                  onBackToEditor={handleBackToEditor}
+                />
               </ResizablePanel>
 
               <ResizableHandle className="h-1 bg-gray-700/50 transition-colors hover:bg-cyan-500/50" />

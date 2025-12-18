@@ -6,7 +6,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
 import CodeMirror from '@uiw/react-codemirror';
-import { Code2, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Code2, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -55,19 +55,34 @@ solve();`,
 
 interface CodeEditorPanelProps {
   starterCode?: Record<string, string>;
+  viewingSubmission?: { code: string; language: string } | null;
+  onBackToEditor?: () => void;
 }
 
-const CodeEditorPanel = ({ starterCode }: CodeEditorPanelProps) => {
+const CodeEditorPanel = ({
+  starterCode,
+  viewingSubmission,
+  onBackToEditor,
+}: CodeEditorPanelProps) => {
   const codeTemplates = starterCode || DEFAULT_STARTER_CODE;
   const [language, setLanguage] = useState('cpp');
   const [code, setCode] = useState(codeTemplates[language] || '');
 
+  // Determine what to display
+  const isViewingSubmission = !!viewingSubmission;
+  const displayLanguage = isViewingSubmission
+    ? viewingSubmission.language.toLowerCase()
+    : language;
+  const displayCode = isViewingSubmission ? viewingSubmission.code : code;
+
   const handleLanguageChange = (newLanguage: string) => {
+    if (isViewingSubmission) return; // Prevent language change when viewing submission
     setLanguage(newLanguage);
     setCode(codeTemplates[newLanguage] || '');
   };
 
   const handleReset = () => {
+    if (isViewingSubmission) return; // Prevent reset when viewing submission
     setCode(codeTemplates[language] || '');
   };
 
@@ -92,8 +107,30 @@ const CodeEditorPanel = ({ starterCode }: CodeEditorPanelProps) => {
       <div className="flex items-center justify-between border-b border-gray-700/50 px-4 py-2">
         <div className="flex items-center gap-3">
           <Code2 className="h-4 w-4 text-cyan-400" />
-          <Select value={language} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="h-8 w-32 border-gray-600 bg-[#252d3d] text-sm text-gray-200 hover:border-gray-500">
+
+          {isViewingSubmission && onBackToEditor && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onBackToEditor}
+                  className="h-8 px-3 text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <ArrowLeft className="mr-1.5 h-4 w-4" />
+                  Back to Editor
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Return to your code</TooltipContent>
+            </Tooltip>
+          )}
+
+          <Select
+            value={displayLanguage}
+            onValueChange={handleLanguageChange}
+            disabled={isViewingSubmission}
+          >
+            <SelectTrigger className="h-8 w-32 border-gray-600 bg-[#252d3d] text-sm text-gray-200 hover:border-gray-500 disabled:cursor-not-allowed disabled:opacity-50">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="border-gray-600 bg-[#252d3d]">
@@ -116,7 +153,8 @@ const CodeEditorPanel = ({ starterCode }: CodeEditorPanelProps) => {
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-700 hover:text-white"
+              disabled={isViewingSubmission}
+              className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -128,11 +166,12 @@ const CodeEditorPanel = ({ starterCode }: CodeEditorPanelProps) => {
       {/* Editor */}
       <div className="flex-1 overflow-auto">
         <CodeMirror
-          value={code}
+          value={displayCode}
           height="100%"
           theme={oneDark}
           extensions={[languageExtensions[language]]}
-          onChange={(value) => setCode(value)}
+          onChange={(value) => !isViewingSubmission && setCode(value)}
+          editable={!isViewingSubmission}
           basicSetup={{
             lineNumbers: true,
             highlightActiveLineGutter: true,
