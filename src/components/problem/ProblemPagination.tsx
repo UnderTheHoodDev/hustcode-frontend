@@ -61,7 +61,7 @@ const ProblemPagination = ({ table }: ProblemPaginationProps) => {
     <div className="mt-4 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Select
-          value={`${table.getState().pagination.pageSize}`}
+          defaultValue="20"
           onValueChange={(value) => {
             table.setPageSize(Number(value));
           }}

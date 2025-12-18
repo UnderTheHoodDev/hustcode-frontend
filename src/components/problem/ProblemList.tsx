@@ -79,7 +79,7 @@ export default function ProblemList() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(1);
-  const pageSize = 20;
+  const [pageSize, setPageSize] = React.useState(20);
 
   // Build filter options for API
   // Note: userStatus (Solved/Attempted/Unsolved) is filtered client-side
@@ -121,11 +121,11 @@ export default function ProblemList() {
   // Filter by userStatus client-side (Solved, Attempted, Unsolved)
   const problems: Problem[] = React.useMemo(() => {
     const data = apiData?.data || [];
-    
+
     if (!statusFilter || statusFilter === 'All') {
       return data;
     }
-    
+
     return data.filter((problem) => problem.userStatus === statusFilter);
   }, [apiData, statusFilter]);
 
@@ -210,21 +210,21 @@ export default function ProblemList() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    manualPagination: true,
-    pageCount: totalPages,
-    state: {
+    initialState: {
       pagination: {
-        pageIndex: page - 1,
         pageSize,
       },
     },
-    onPaginationChange: (updater) => {
-      if (typeof updater === 'function') {
-        const newState = updater({ pageIndex: page - 1, pageSize });
-        setPage(newState.pageIndex + 1);
-      }
-    },
   });
+
+  React.useEffect(() => {
+    setPage(1);
+    table.setPageIndex(0);
+  }, [difficulty, statusFilter, searchQuery, selectedTags, table]);
+
+  React.useEffect(() => {
+    table.setPageSize(pageSize);
+  }, [pageSize, table]);
 
   // Loading state
   if (isLoading) {
