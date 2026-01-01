@@ -2,6 +2,7 @@ import {
   CreateContestDto,
   CreateContestProblemDto,
   UpdateContestDto,
+  UpdateContestProblemDto,
 } from '@/api/client/api';
 import { contestConnectWithAuth } from '@/api/user';
 
@@ -40,6 +41,18 @@ const removeContestProblem = async (contest_id: string, problem_id: string) => {
   );
 };
 
+const updateContestProblem = async (
+  contest_id: string,
+  problem_id: string,
+  payload: UpdateContestProblemDto
+) => {
+  return await contestConnectWithAuth.contestControllerUpdateProblem(
+    contest_id,
+    problem_id,
+    payload
+  );
+};
+
 export {
   createContest,
   createContestProblem,
@@ -48,4 +61,5 @@ export {
   getContests,
   removeContestProblem,
   updateContest,
+  updateContestProblem,
 };

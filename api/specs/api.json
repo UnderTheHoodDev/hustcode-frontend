@@ -752,6 +752,56 @@
       }
     },
     "/contests/{contestId}/problems/{problemId}": {
+      "patch": {
+        "description": "Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.",
+        "operationId": "ContestController_updateProblem",
+        "parameters": [
+          {
+            "name": "contestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx987654321",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContestProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Problem updated successfully"
+          },
+          "400": {
+            "description": "Invalid input or order conflict"
+          },
+          "403": {
+            "description": "Only contest creator can update problems"
+          },
+          "404": {
+            "description": "Contest or problem not found"
+          }
+        },
+        "summary": "Update problem in contest",
+        "tags": ["contests"]
+      },
       "delete": {
         "description": "Remove a problem from contest and delete it (since it's contest-only). Only contest creator can remove problems.",
         "operationId": "ContestController_removeProblem",
@@ -1326,6 +1376,62 @@
           "testcases",
           "constraint"
         ]
+      },
+      "UpdateContestProblemDto": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "number",
+            "example": 1,
+            "description": "Problem order"
+          },
+          "points": {
+            "type": "number",
+            "example": 100,
+            "description": "Points"
+          },
+          "title": {
+            "type": "string",
+            "example": "Two Sum (Updated)"
+          },
+          "description": {
+            "type": "string",
+            "example": "Updated description..."
+          },
+          "tags": {
+            "example": ["array", "hash-table", "two-pointers"],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["EASY", "MEDIUM", "HARD"],
+            "example": "MEDIUM"
+          },
+          "taskDescription": {
+            "type": "string",
+            "example": "Updated task description"
+          },
+          "inputDescription": {
+            "type": "string",
+            "example": "Updated input description"
+          },
+          "outputDescription": {
+            "type": "string",
+            "example": "Updated output description"
+          },
+          "testcases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateContestProblemTestcaseDto"
+            }
+          },
+          "constraint": {
+            "$ref": "#/components/schemas/CreateContestProblemConstraintDto"
+          }
+        }
       }
     }
   }

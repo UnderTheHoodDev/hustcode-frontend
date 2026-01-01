@@ -635,6 +635,88 @@ export type UpdateContestDtoStatusEnum = typeof UpdateContestDtoStatusEnum[keyof
 /**
  * 
  * @export
+ * @interface UpdateContestProblemDto
+ */
+export interface UpdateContestProblemDto {
+    /**
+     * Problem order
+     * @type {number}
+     * @memberof UpdateContestProblemDto
+     */
+    'order'?: number;
+    /**
+     * Points
+     * @type {number}
+     * @memberof UpdateContestProblemDto
+     */
+    'points'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UpdateContestProblemDto
+     */
+    'tags'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'difficulty'?: UpdateContestProblemDtoDifficultyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'taskDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'inputDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'outputDescription'?: string;
+    /**
+     * 
+     * @type {Array<CreateContestProblemTestcaseDto>}
+     * @memberof UpdateContestProblemDto
+     */
+    'testcases'?: Array<CreateContestProblemTestcaseDto>;
+    /**
+     * 
+     * @type {CreateContestProblemConstraintDto}
+     * @memberof UpdateContestProblemDto
+     */
+    'constraint'?: CreateContestProblemConstraintDto;
+}
+
+export const UpdateContestProblemDtoDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+
+export type UpdateContestProblemDtoDifficultyEnum = typeof UpdateContestProblemDtoDifficultyEnum[keyof typeof UpdateContestProblemDtoDifficultyEnum];
+
+/**
+ * 
+ * @export
  * @interface UpdateProblemDto
  */
 export interface UpdateProblemDto {
@@ -1440,6 +1522,50 @@ export const ContestsApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdateProblem: async (contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'contestId' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'contestId', contestId)
+            // verify required parameter 'problemId' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'problemId', problemId)
+            // verify required parameter 'updateContestProblemDto' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'updateContestProblemDto', updateContestProblemDto)
+            const localVarPath = `/contests/{contestId}/problems/{problemId}`
+                .replace(`{${"contestId"}}`, encodeURIComponent(String(contestId)))
+                .replace(`{${"problemId"}}`, encodeURIComponent(String(problemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateContestProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1546,6 +1672,21 @@ export const ContestsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerUpdate']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerUpdateProblem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -1630,6 +1771,18 @@ export const ContestsApiFactory = function (configuration?: Configuration, baseP
          */
         contestControllerUpdate(id: string, updateContestDto: UpdateContestDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.contestControllerUpdate(id, updateContestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1728,6 +1881,20 @@ export class ContestsApi extends BaseAPI {
      */
     public contestControllerUpdate(id: string, updateContestDto: UpdateContestDto, options?: RawAxiosRequestConfig) {
         return ContestsApiFp(this.configuration).contestControllerUpdate(id, updateContestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+     * @summary Update problem in contest
+     * @param {string} contestId 
+     * @param {string} problemId 
+     * @param {UpdateContestProblemDto} updateContestProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
