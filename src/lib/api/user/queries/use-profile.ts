@@ -4,11 +4,11 @@ import { getUserMe } from '@/lib/api/user';
 import { UserProfile } from '@/types/user';
 
 const useProfileQuery = () => {
-  const query = useQuery<UserProfile>({
+  const query = useQuery({
     queryKey: ['user_profile'],
     queryFn: async () => {
       const response = await getUserMe();
-      return response.data as UserProfile;
+      return response.data as unknown as UserProfile;
     },
     refetchOnWindowFocus: false,
   });
@@ -17,4 +17,3 @@ const useProfileQuery = () => {
 };
 
 export default useProfileQuery;
-
