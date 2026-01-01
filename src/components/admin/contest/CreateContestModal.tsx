@@ -36,8 +36,12 @@ import useCreateContest from '@/lib/api/contest/mutations/use-create-contest';
 const createContestSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
   description: z.string().min(1, 'Description is required'),
-  startTime: z.date({ required_error: 'Start time is required' }),
-  endTime: z.date({ required_error: 'End time is required' }),
+  startTime: z.date().refine((v) => v instanceof Date, {
+    message: 'Start time is required',
+  }),
+  endTime: z.date().refine((v) => v instanceof Date, {
+    message: 'End time is required',
+  }),
   isPublic: z.string(),
 });
 
