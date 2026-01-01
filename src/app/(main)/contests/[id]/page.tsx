@@ -1,6 +1,5 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import {
   type ColumnDef,
   getCoreRowModel,
@@ -16,13 +15,13 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { use } from 'react';
+import React, { use } from 'react';
 
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockContestDetailData } from '@/constants/mock-contest-data';
+import useContest from '@/lib/api/contest/queries/use-contest';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -93,20 +92,40 @@ export default function ContestDetailPage({
   const { id } = use(params);
   const router = useRouter();
 
-  // Fetch contest detail - using mock data for now
-  const {
-    data: contest,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['contest', id],
-    queryFn: async () => {
-      // Simulating API call with mock data
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return mockContestDetailData;
-    },
-    refetchOnWindowFocus: false,
-  });
+  // Fetch contest detail from API
+  const { data, isLoading, isError, error } = useContest(id);
+
+  // Type assertion and transform API response to match ContestDetail type
+  const contest = React.useMemo(() => {
+    if (!data) return undefined;
+
+    const apiContest = data as any;
+
+    // Transform problems array from API format to ContestProblem format
+    // API format: { order, points, problem: { id, title, difficulty, tags, ... } }
+    // Target format: { id, title, description, difficulty, order, points, tags, ... }
+    const problems: ContestProblem[] =
+      apiContest.problems?.map((item: any) => {
+        const problem = item.problem || item;
+        return {
+          id: problem.id,
+          title: problem.title,
+          description: problem.description || '',
+          difficulty: problem.difficulty,
+          order: item.order,
+          points: item.points,
+          tags: problem.tags || [],
+          _count: {
+            submissions: problem._count?.submissions || 0,
+          },
+        };
+      }) || [];
+
+    return {
+      ...apiContest,
+      problems,
+    } as ContestDetail;
+  }, [data]);
 
   const handleProblemClick = (problemId: string) => {
     router.push(`/problems/${problemId}`);
@@ -194,12 +213,27 @@ export default function ContestDetailPage({
   }
 
   if (isError || !contest) {
+    // Check for specific error types
+    const errorMessage =
+      (error as any)?.response?.status === 403
+        ? 'Access denied. This contest is private.'
+        : (error as any)?.response?.status === 404
+          ? 'Contest not found.'
+          : 'Failed to load contest. Please try again later.';
+
     return (
-      <div className="flex h-screen flex-col items-center justify-center bg-[#0f1724]">
-        <p className="mb-4 text-red-400">Failed to load contest</p>
-        <Link href="/contests">
-          <Button variant="outline">Back to Contests</Button>
-        </Link>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f1724]">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
+          <p className="mb-4 text-red-400">{errorMessage}</p>
+          <Link href="/contests">
+            <Button
+              variant="outline"
+              className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+            >
+              Back to Contests
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -267,10 +301,22 @@ export default function ContestDetailPage({
           </TabsList>
 
           <TabsContent value="problems" className="mt-4">
-            <ContestTable
-              table={problemTable}
-              onRowClick={handleProblemClick}
-            />
+            {contest.problems.length > 0 ? (
+              <ContestTable
+                table={problemTable}
+                onRowClick={handleProblemClick}
+              />
+            ) : (
+              <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
+                <div className="text-center text-gray-400">
+                  <Trophy className="mx-auto mb-2 h-12 w-12 text-gray-600" />
+                  <p>No problems available yet</p>
+                  <p className="mt-1 text-sm">
+                    Problems will be added to this contest soon
+                  </p>
+                </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="leaderboard" className="mt-4">

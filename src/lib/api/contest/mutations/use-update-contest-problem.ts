@@ -11,14 +11,16 @@ const useUpdateContestProblem = (contest_id: string, problem_id: string) => {
     mutationFn: (payload: UpdateContestProblemDto) =>
       updateContestProblem(contest_id, problem_id, payload),
     onError: (error) => {
-      console.log('Create contest problem error:', error);
-      toastError('Failed to create contest problem. Please check your input.');
+      console.log('Update contest problem error:', error);
+      toastError('Failed to update contest problem. Please check your input.');
     },
     onSuccess: (response) => {
-      console.log('Create contest problem successful:', response);
+      console.log('Update contest problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['contests'] });
       queryClient.invalidateQueries({ queryKey: ['admin-contests'] });
-      toastSuccess('Contest problem created successfully!');
+      // Invalidate contest detail query
+      queryClient.invalidateQueries({ queryKey: ['contests', contest_id] });
+      toastSuccess('Contest problem updated successfully!');
     },
   });
 

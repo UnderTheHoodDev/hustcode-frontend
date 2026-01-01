@@ -2,9 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getContests } from '@/lib/api/contest';
 
-const useContests = (options: OptherOptionsProps) => {
+const useContests = (options: ContestFilterOptions) => {
   const query = useQuery({
-    queryKey: ['contests', options.page, options.pageSize, options.status],
+    queryKey: [
+      'contests',
+      options.page,
+      options.pageSize,
+      options.status,
+      options.isPublic,
+    ],
     queryFn: async () => {
       try {
         const response = await getContests(options);

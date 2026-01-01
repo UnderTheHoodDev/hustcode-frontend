@@ -1,13 +1,12 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import {
   type ColumnDef,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Calendar, Clock, Pencil, Trash2, Trophy, Users } from 'lucide-react';
+import { Calendar, Clock, Loader2, Pencil, Trash2, Trophy, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -23,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { mockContestsData } from '@/constants/mock-contest-data';
+import useContests from '@/lib/api/contest/queries/use-contests';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -80,26 +79,14 @@ export default function AdminContestList() {
     null
   );
 
-  // Fetch contests - using mock data for now
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['admin-contests', page, pageSize, statusFilter],
-    queryFn: async () => {
-      // Simulating API call with mock data
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      // Filter by status if selected
-      if (statusFilter && statusFilter !== 'All') {
-        const filtered = mockContestsData.data.filter(
-          (c) => c.status === statusFilter
-        );
-        return {
-          ...mockContestsData,
-          data: filtered,
-          total: filtered.length,
-        };
-      }
-      return mockContestsData;
-    },
-    refetchOnWindowFocus: false,
+  // Fetch contests from API
+  const { data, isLoading, isError } = useContests({
+    page,
+    pageSize,
+    status:
+      statusFilter && statusFilter !== 'All'
+        ? (statusFilter as ContestStatus)
+        : undefined,
   });
 
   const handleCreateContest = () => {
@@ -239,7 +226,9 @@ export default function AdminContestList() {
     },
   ];
 
-  const tableData = data?.data || [];
+  // Type assertion for API response
+  const apiData = data as ContestsResponse | undefined;
+  const tableData = apiData?.data || [];
 
   const table = useReactTable({
     data: tableData,
@@ -247,7 +236,7 @@ export default function AdminContestList() {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    pageCount: data?.totalPages || 1,
+    pageCount: apiData?.totalPages || 1,
     state: {
       pagination: {
         pageIndex: page - 1,
@@ -268,17 +257,20 @@ export default function AdminContestList() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <div className="text-gray-400">Loading contests...</div>
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
+          <p className="text-gray-400">Loading contests...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <div className="text-red-400">
-          Error loading contests. Please try again.
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          Failed to load contests. Please try again later.
         </div>
       </div>
     );
@@ -312,7 +304,7 @@ export default function AdminContestList() {
 
       {/* Stats */}
       <div className="mt-4 text-sm text-gray-400">
-        Total: {data?.total || 0} contests
+        Total: {apiData?.total || 0} contests
       </div>
     </div>
   );

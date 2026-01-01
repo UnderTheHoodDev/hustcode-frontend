@@ -1,20 +1,19 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import {
   type ColumnDef,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Calendar, Clock, Trophy, Users } from 'lucide-react';
+import { Calendar, Clock, Loader2, Trophy, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
 import ContestPagination from '@/components/contest/ContestPagination';
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
-import { mockContestsData } from '@/constants/mock-contest-data';
+import useContests from '@/lib/api/contest/queries/use-contests';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -63,15 +62,11 @@ export default function ContestList() {
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(20);
 
-  // Fetch contests - using mock data for now
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['contests', page, pageSize],
-    queryFn: async () => {
-      // Simulating API call with mock data
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return mockContestsData;
-    },
-    refetchOnWindowFocus: false,
+  // Fetch contests from API (only public contests for regular users)
+  const { data, isLoading, isError } = useContests({
+    page,
+    pageSize,
+    isPublic: true, // Only show public contests for regular users
   });
 
   const handleRowClick = (contestId: string) => {
@@ -170,17 +165,20 @@ export default function ContestList() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <div className="text-gray-400">Loading contests...</div>
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
+          <p className="text-gray-400">Loading contests...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <div className="text-red-400">
-          Error loading contests. Please try again.
+      <div className="flex min-h-[400px] w-full items-center justify-center">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          Failed to load contests. Please try again later.
         </div>
       </div>
     );

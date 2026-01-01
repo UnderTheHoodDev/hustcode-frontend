@@ -6,16 +6,19 @@ import {
 } from '@/api/client/api';
 import { contestConnectWithAuth } from '@/api/user';
 
-const getContests = async (options: OptherOptionsProps) => {
-  return await contestConnectWithAuth.contestControllerFindAll(
+const getContests = async (options: ContestFilterOptions) => {
+  const response = await contestConnectWithAuth.contestControllerFindAll(
     options.page,
     options.pageSize,
-    options.status
+    options.status,
+    options.isPublic
   );
+  return response.data;
 };
 
 const getContestDetail = async (contest_id: string) => {
-  return await contestConnectWithAuth.contestControllerFindOne(contest_id);
+  const response = await contestConnectWithAuth.contestControllerFindOne(contest_id);
+  return response.data;
 };
 
 const createContest = async (payload: CreateContestDto) => {

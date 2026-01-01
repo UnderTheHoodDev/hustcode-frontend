@@ -9,13 +9,15 @@ const useRemoveContestProblem = (contest_id: string, problem_id: string) => {
   const mutation = useMutation({
     mutationFn: () => removeContestProblem(contest_id, problem_id),
     onError: (error) => {
-      console.log('Delete contest error:', error);
-      toastError('Failed to delete contest. Please check your input.');
+      console.log('Remove contest problem error:', error);
+      toastError('Failed to remove contest problem. Please try again.');
     },
     onSuccess: (response) => {
       console.log('Remove contest problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['contests'] });
       queryClient.invalidateQueries({ queryKey: ['admin-contests'] });
+      // Invalidate contest detail query
+      queryClient.invalidateQueries({ queryKey: ['contests', contest_id] });
       toastSuccess('Contest problem removed successfully!');
     },
   });

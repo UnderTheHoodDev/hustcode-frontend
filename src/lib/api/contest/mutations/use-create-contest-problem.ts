@@ -18,6 +18,11 @@ const useCreateContestProblem = () => {
       console.log('Create contest problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['contests'] });
       queryClient.invalidateQueries({ queryKey: ['admin-contests'] });
+      // Invalidate contest detail query
+      const contestId = (response as any)?.contestId;
+      if (contestId) {
+        queryClient.invalidateQueries({ queryKey: ['contests', contestId] });
+      }
       toastSuccess('Contest problem created successfully!');
     },
   });

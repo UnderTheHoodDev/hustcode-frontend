@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
 import {
   type ColumnDef,
   getCoreRowModel,
@@ -21,7 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import Link from 'next/link';
-import { use, useState } from 'react';
+import React, { use, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -62,10 +61,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
-  mockContestDetailData,
   mockContestSubmissionsData,
 } from '@/constants/mock-contest-data';
+import AddContestProblemModal from '@/components/admin/contest/AddContestProblemModal';
+import DeleteContestProblemModal from '@/components/admin/contest/DeleteContestProblemModal';
+import EditContestProblemModal from '@/components/admin/contest/EditContestProblemModal';
 import useUpdateContest from '@/lib/api/contest/mutations/use-update-contest';
+import useContest from '@/lib/api/contest/queries/use-contest';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -187,44 +189,79 @@ export default function AdminContestDetailPage({
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [submissionsPageSize, setSubmissionsPageSize] = useState(20);
 
-  // Fetch contest detail - using mock data for now
-  const {
-    data: contest,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['admin-contest', id],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return mockContestDetailData;
-    },
-    refetchOnWindowFocus: false,
-  });
+  // Modal states for problems
+  const [isAddProblemModalOpen, setIsAddProblemModalOpen] = useState(false);
+  const [isEditProblemModalOpen, setIsEditProblemModalOpen] = useState(false);
+  const [isDeleteProblemModalOpen, setIsDeleteProblemModalOpen] = useState(false);
+  const [selectedProblem, setSelectedProblem] = useState<ContestProblem | null>(null);
+
+  // Fetch contest detail from API
+  const { data, isLoading, isError, error } = useContest(id);
+
+  // Type assertion and transform API response to match ContestDetail type
+  const contest = React.useMemo(() => {
+    if (!data) return undefined;
+
+    const apiContest = data as any;
+
+    // Transform problems array from API format to ContestProblem format
+    // API format: { order, points, problem: { id, title, difficulty, tags, ... } }
+    // Target format: { id, title, description, difficulty, order, points, tags, ... }
+    const problems: ContestProblem[] =
+      apiContest.problems?.map((item: any) => {
+        const problem = item.problem || item;
+        return {
+          id: problem.id,
+          title: problem.title,
+          description: problem.description || '',
+          difficulty: problem.difficulty,
+          order: item.order,
+          points: item.points,
+          tags: problem.tags || [],
+          _count: {
+            submissions: problem._count?.submissions || 0,
+          },
+        };
+      }) || [];
+
+    return {
+      ...apiContest,
+      problems,
+    } as ContestDetail;
+  }, [data]);
 
   // Fetch submissions - using mock data for now
-  const { data: submissions } = useQuery({
-    queryKey: ['contest-submissions', id, submissionsPage, submissionsPageSize],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return mockContestSubmissionsData;
-    },
-    refetchOnWindowFocus: false,
-  });
+  // TODO: Replace with real API when contest submissions endpoint is available
+  // Note: There's no contest-specific submissions API endpoint yet
+  // This is a placeholder using mock data
+  const submissions = mockContestSubmissionsData;
 
   const form = useForm<UpdateContestFormData>({
     resolver: zodResolver(updateContestSchema) as any,
     mode: 'onSubmit',
-    values: contest
-      ? {
-          title: contest.title,
-          description: contest.description,
-          startTime: new Date(contest.startTime),
-          endTime: new Date(contest.endTime),
-          status: contest.status,
-          isPublic: contest.isPublic ? 'true' : 'false',
-        }
-      : undefined,
+    defaultValues: {
+      title: '',
+      description: '',
+      startTime: undefined,
+      endTime: undefined,
+      status: 'UPCOMING',
+      isPublic: 'true',
+    },
   });
+
+  // Update form values when contest data is loaded
+  React.useEffect(() => {
+    if (contest) {
+      form.reset({
+        title: contest.title,
+        description: contest.description,
+        startTime: new Date(contest.startTime),
+        endTime: new Date(contest.endTime),
+        status: contest.status,
+        isPublic: contest.isPublic ? 'true' : 'false',
+      });
+    }
+  }, [contest, form]);
 
   const { mutate: updateContest, isPending: isUpdating } = useUpdateContest(id);
 
@@ -241,20 +278,38 @@ export default function AdminContestDetailPage({
     updateContest(payload as any);
   };
 
-  const handleProblemClick = (_problemId: string) => {
-    // Navigate to problem edit in a new tab or modal
-    // TODO: Implement problem edit functionality
+  const handleProblemClick = (problemId: string) => {
+    const problem = contest?.problems.find((p) => p.id === problemId);
+    if (problem) {
+      setSelectedProblem(problem);
+      setIsEditProblemModalOpen(true);
+    }
   };
 
   const handleAddProblem = () => {
-    // Open modal to add problem
-    // TODO: Implement add problem modal
+    setIsAddProblemModalOpen(true);
   };
 
-  const handleDeleteProblem = (_problemId: string) => {
-    // Delete problem from contest
-    // TODO: Implement delete problem functionality
+  const handleEditProblem = (problemId: string) => {
+    const problem = contest?.problems.find((p) => p.id === problemId);
+    if (problem) {
+      setSelectedProblem(problem);
+      setIsEditProblemModalOpen(true);
+    }
   };
+
+  const handleDeleteProblem = (problemId: string) => {
+    const problem = contest?.problems.find((p) => p.id === problemId);
+    if (problem) {
+      setSelectedProblem(problem);
+      setIsDeleteProblemModalOpen(true);
+    }
+  };
+
+  // Get existing orders for validation
+  const existingOrders = React.useMemo(() => {
+    return contest?.problems.map((p) => p.order) || [];
+  }, [contest]);
 
   // Problem columns
   const problemColumns: ColumnDef<ContestProblem>[] = [
@@ -323,7 +378,7 @@ export default function AdminContestDetailPage({
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleProblemClick(problem.id);
+                    handleEditProblem(problem.id);
                   }}
                   className="h-8 w-8 p-0 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
                 >
@@ -489,12 +544,27 @@ export default function AdminContestDetailPage({
   }
 
   if (isError || !contest) {
+    // Check for specific error types
+    const errorMessage =
+      (error as any)?.response?.status === 403
+        ? 'Access denied. Only contest creator can view this contest.'
+        : (error as any)?.response?.status === 404
+          ? 'Contest not found.'
+          : 'Failed to load contest. Please try again later.';
+
     return (
-      <div className="flex h-screen flex-col items-center justify-center bg-[#0f1724]">
-        <p className="mb-4 text-red-400">Failed to load contest</p>
-        <Link href="/admin/contests">
-          <Button variant="outline">Back to Contests</Button>
-        </Link>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f1724]">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
+          <p className="mb-4 text-red-400">{errorMessage}</p>
+          <Link href="/admin/contests">
+            <Button
+              variant="outline"
+              className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+            >
+              Back to Contests
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -817,6 +887,27 @@ export default function AdminContestDetailPage({
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Problem Modals */}
+        <AddContestProblemModal
+          open={isAddProblemModalOpen}
+          onOpenChange={setIsAddProblemModalOpen}
+          contestId={id}
+          existingOrders={existingOrders}
+        />
+        <EditContestProblemModal
+          open={isEditProblemModalOpen}
+          onOpenChange={setIsEditProblemModalOpen}
+          contestId={id}
+          problem={selectedProblem}
+          existingOrders={existingOrders}
+        />
+        <DeleteContestProblemModal
+          open={isDeleteProblemModalOpen}
+          onOpenChange={setIsDeleteProblemModalOpen}
+          contestId={id}
+          problem={selectedProblem}
+        />
       </div>
     </div>
   );
