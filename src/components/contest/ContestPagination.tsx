@@ -100,25 +100,30 @@ const ContestPagination = ({ table }: ContestPaginationProps) => {
           <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        {pageNumbers.map((pageNum, index) => (
-          <Button
-            key={`page-${pageNum}-${index}`}
-            variant="outline"
-            size="icon"
-            onClick={() => {
-              if (typeof pageNum === 'number') {
-                table.setPageIndex(pageNum - 1);
-              }
-            }}
-            disabled={pageNum === '...'}
-            className={clsx(
-              'border-[#3a4556] bg-[#252d3d] text-gray-200 hover:bg-[#2a3344]',
-              currentPage === pageNum && 'bg-cyan-600 hover:bg-cyan-700'
-            )}
-          >
-            {pageNum}
-          </Button>
-        ))}
+        <div className="flex items-center gap-1">
+          {pageNumbers.map((pageNum, index) =>
+            typeof pageNum === 'number' ? (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(pageNum - 1)}
+                className={clsx(
+                  currentPage === pageNum
+                    ? 'border-cyan-500 bg-cyan-500 text-white hover:bg-cyan-600 hover:text-white'
+                    : 'border-[#3a4556] bg-[#252d3d] text-gray-200 hover:bg-[#2a3344]',
+                  'cursor-pointer'
+                )}
+              >
+                {pageNum}
+              </Button>
+            ) : (
+              <span key={index} className="px-2 text-gray-400">
+                {pageNum}
+              </span>
+            )
+          )}
+        </div>
 
         <Button
           variant="outline"

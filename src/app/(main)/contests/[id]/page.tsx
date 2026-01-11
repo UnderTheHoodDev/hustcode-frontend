@@ -127,7 +127,7 @@ export default function ContestDetailPage({
     } as ContestDetail;
   }, [data]);
 
-  const handleProblemClick = (problemId: string) => {
+  const handleProblemClick = (problemId: string, _status?: ContestStatus) => {
     // Navigate to contest problem page instead of regular problem page
     router.push(`/contests/${id}/problems/${problemId}`);
   };
@@ -204,10 +204,12 @@ export default function ContestDetailPage({
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#0f1724]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
-          <p className="text-gray-400">Loading contest...</p>
+      <div className="layout-padding">
+        <div className="flex min-h-screen items-center justify-center py-4">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
+            <p className="text-gray-400">Loading contest...</p>
+          </div>
         </div>
       </div>
     );
@@ -223,115 +225,119 @@ export default function ContestDetailPage({
           : 'Failed to load contest. Please try again later.';
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f1724]">
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
-          <p className="mb-4 text-red-400">{errorMessage}</p>
-          <Link href="/contests">
-            <Button
-              variant="outline"
-              className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
-            >
-              Back to Contests
-            </Button>
-          </Link>
+      <div className="layout-padding">
+        <div className="flex min-h-screen items-center justify-center py-4">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
+            <p className="mb-4 text-red-400">{errorMessage}</p>
+            <Link href="/contests">
+              <Button
+                variant="outline"
+                className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+              >
+                Back to Contests
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1724]">
-      <div className="layout-padding">
-        {/* Header */}
-        <div className="py-6">
-          <Link
-            href="/contests"
-            className="mb-4 inline-flex items-center gap-2 text-gray-400 hover:text-gray-200"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Contests
-          </Link>
+    <div className="layout-padding">
+      <div className="flex min-h-screen gap-8 py-4">
+        <div className="w-full">
+          {/* Header */}
+          <div className="mb-6">
+            <Link
+              href="/contests"
+              className="mb-4 inline-flex items-center gap-2 text-gray-400 transition-colors hover:text-gray-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Contests
+            </Link>
 
-          <div className="mt-4 flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3">
-                <Trophy className="h-8 w-8 text-yellow-500" />
-                <h1 className="text-3xl font-bold text-gray-100">
-                  {contest.title}
-                </h1>
-                <ContestStatusBadge status={contest.status} />
-              </div>
-              <p className="mt-2 text-gray-400">{contest.description}</p>
+            <div className="mt-4 flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <Trophy className="h-8 w-8 text-yellow-500" />
+                  <h1 className="text-2xl font-bold text-gray-100">
+                    {contest.title}
+                  </h1>
+                  <ContestStatusBadge status={contest.status} />
+                </div>
+                <p className="mt-2 text-gray-400">{contest.description}</p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>Start: {formatDateTime(contest.startTime)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>
-                    Duration:{' '}
-                    {formatDuration(contest.startTime, contest.endTime)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{contest._count?.participants || 0} participants</span>
+                <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>Start: {formatDateTime(contest.startTime)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      Duration:{' '}
+                      {formatDuration(contest.startTime, contest.endTime)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>{contest._count?.participants || 0} participants</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="problems" className="mt-6">
-          <TabsList className="border-[#3a4556] bg-[#1e293b]">
-            <TabsTrigger
-              value="problems"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
-            >
-              Problems ({contest.problems.length})
-            </TabsTrigger>
-            <TabsTrigger
-              value="leaderboard"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
-            >
-              Leaderboard
-            </TabsTrigger>
-          </TabsList>
+          {/* Tabs */}
+          <Tabs defaultValue="problems" className="mt-6">
+            <TabsList className="border-[#3a4556] bg-[#252d3d]">
+              <TabsTrigger
+                value="problems"
+                className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+              >
+                Problems ({contest.problems.length})
+              </TabsTrigger>
+              <TabsTrigger
+                value="leaderboard"
+                className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+              >
+                Leaderboard
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="problems" className="mt-4">
-            {contest.problems.length > 0 ? (
-              <ContestTable
-                table={problemTable}
-                onRowClick={handleProblemClick}
-              />
-            ) : (
+            <TabsContent value="problems" className="mt-4">
+              {contest.problems.length > 0 ? (
+                <ContestTable
+                  table={problemTable}
+                  onRowClick={handleProblemClick}
+                />
+              ) : (
+                <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
+                  <div className="text-center text-gray-400">
+                    <Trophy className="mx-auto mb-2 h-12 w-12 text-gray-600" />
+                    <p>No problems available yet</p>
+                    <p className="mt-1 text-sm">
+                      Problems will be added to this contest soon
+                    </p>
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="leaderboard" className="mt-4">
               <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
                 <div className="text-center text-gray-400">
                   <Trophy className="mx-auto mb-2 h-12 w-12 text-gray-600" />
-                  <p>No problems available yet</p>
+                  <p>Leaderboard coming soon</p>
                   <p className="mt-1 text-sm">
-                    Problems will be added to this contest soon
+                    This feature is under development
                   </p>
                 </div>
               </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="leaderboard" className="mt-4">
-            <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
-              <div className="text-center text-gray-400">
-                <Trophy className="mx-auto mb-2 h-12 w-12 text-gray-600" />
-                <p>Leaderboard coming soon</p>
-                <p className="mt-1 text-sm">
-                  This feature is under development
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

@@ -534,10 +534,12 @@ export default function AdminContestDetailPage({
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#0f1724]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
-          <p className="text-gray-400">Loading contest...</p>
+      <div className="layout-padding">
+        <div className="flex min-h-screen items-center justify-center py-4">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-cyan-400" />
+            <p className="text-gray-400">Loading contest...</p>
+          </div>
         </div>
       </div>
     );
@@ -553,361 +555,366 @@ export default function AdminContestDetailPage({
           : 'Failed to load contest. Please try again later.';
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0f1724]">
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
-          <p className="mb-4 text-red-400">{errorMessage}</p>
-          <Link href="/admin/contests">
-            <Button
-              variant="outline"
-              className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
-            >
-              Back to Contests
-            </Button>
-          </Link>
+      <div className="layout-padding">
+        <div className="flex min-h-screen items-center justify-center py-4">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
+            <p className="mb-4 text-red-400">{errorMessage}</p>
+            <Link href="/admin/contests">
+              <Button
+                variant="outline"
+                className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+              >
+                Back to Contests
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1724]">
-      <div className="layout-padding">
-        {/* Header */}
-        <div className="py-6">
-          <Link
-            href="/admin/contests"
-            className="mb-4 inline-flex items-center gap-2 text-gray-400 hover:text-gray-200"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Contests
-          </Link>
-
-          <div className="mt-4 flex items-center gap-3">
-            <Trophy className="h-8 w-8 text-yellow-500" />
-            <h1 className="text-3xl font-bold text-gray-100">
-              {contest.title}
-            </h1>
-            <ContestStatusBadge status={contest.status} />
-            {!contest.isPublic && (
-              <Badge className="border-0 bg-purple-500/10 text-purple-400">
-                Private
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <Tabs defaultValue="detail" className="mt-6">
-          <TabsList className="border-[#3a4556] bg-[#1e293b]">
-            <TabsTrigger
-              value="detail"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
+    <div className="layout-padding">
+      <div className="flex gap-8 py-4">
+        <div className="w-full">
+          {/* Header */}
+          <div className="mb-6">
+            <Link
+              href="/admin/contests"
+              className="mb-4 inline-flex items-center gap-2 text-gray-400 transition-colors hover:text-gray-200"
             >
-              Detail
-            </TabsTrigger>
-            <TabsTrigger
-              value="submissions"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
-            >
-              Submissions ({submissions?.total || 0})
-            </TabsTrigger>
-          </TabsList>
+              <ArrowLeft className="h-4 w-4" />
+              Back to Contests
+            </Link>
 
-          {/* Detail Tab */}
-          <TabsContent value="detail" className="mt-4">
-            <div className="grid gap-6 lg:grid-cols-2">
-              {/* Edit Form */}
-              <div className="rounded-lg border border-[#3a4556] bg-[#1e293b] p-6">
-                <h2 className="mb-4 text-lg font-semibold text-gray-100">
-                  Contest Information
-                </h2>
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
-                  >
-                    {/* Title */}
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={labelClassName}>
-                            Title
-                          </FormLabel>
-                          <FormControl>
-                            <Input className={inputClassName} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Description */}
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={labelClassName}>
-                            Description
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className={inputClassName}
-                              rows={3}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Start & End Time */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="startTime"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={labelClassName}>
-                              Start Time
-                            </FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Select start time"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="endTime"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={labelClassName}>
-                              End Time
-                            </FormLabel>
-                            <FormControl>
-                              <DateTimePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Select end time"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {/* Status & Visibility */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={labelClassName}>
-                              Status
-                            </FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger className={inputClassName}>
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="border-[#3a4556] bg-[#252d3d]">
-                                <SelectItem
-                                  value="UPCOMING"
-                                  className="text-gray-200"
-                                >
-                                  Upcoming
-                                </SelectItem>
-                                <SelectItem
-                                  value="RUNNING"
-                                  className="text-gray-200"
-                                >
-                                  Running
-                                </SelectItem>
-                                <SelectItem
-                                  value="FINISHED"
-                                  className="text-gray-200"
-                                >
-                                  Finished
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="isPublic"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={labelClassName}>
-                              Visibility
-                            </FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger className={inputClassName}>
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="border-[#3a4556] bg-[#252d3d]">
-                                <SelectItem
-                                  value="true"
-                                  className="text-gray-200"
-                                >
-                                  Public
-                                </SelectItem>
-                                <SelectItem
-                                  value="false"
-                                  className="text-gray-200"
-                                >
-                                  Private
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={isUpdating}
-                      className="w-full bg-cyan-600 text-white hover:bg-cyan-700"
-                    >
-                      <Save className="mr-2 h-4 w-4" />
-                      {isUpdating ? 'Saving...' : 'Save Changes'}
-                    </Button>
-                  </form>
-                </Form>
-              </div>
-
-              {/* Problems List */}
-              <div className="rounded-lg border border-[#3a4556] bg-[#1e293b] p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-100">
-                    Problems ({contest.problems.length})
-                  </h2>
-                  <Button
-                    onClick={handleAddProblem}
-                    size="sm"
-                    className="bg-cyan-600 text-white hover:bg-cyan-700"
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Problem
-                  </Button>
-                </div>
-                <ContestTable
-                  table={problemTable}
-                  onRowClick={handleProblemClick}
-                />
-              </div>
+            <div className="mt-4 flex items-center gap-3">
+              <Trophy className="h-8 w-8 text-yellow-500" />
+              <h1 className="text-2xl font-bold text-gray-100">
+                {contest.title}
+              </h1>
+              <ContestStatusBadge status={contest.status} />
+              {!contest.isPublic && (
+                <Badge className="border-0 bg-purple-500/10 text-purple-400">
+                  Private
+                </Badge>
+              )}
             </div>
-          </TabsContent>
+          </div>
 
-          {/* Submissions Tab */}
-          <TabsContent value="submissions" className="mt-4">
-            <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
-              <Table>
-                <TableHeader>
-                  {submissionTable.getHeaderGroups().map((headerGroup) => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className="border-b border-[#3a4556] hover:bg-transparent"
+          {/* Tabs */}
+          <Tabs defaultValue="detail" className="mt-6">
+            <TabsList className="border-[#3a4556] bg-[#252d3d]">
+              <TabsTrigger
+                value="detail"
+                className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+              >
+                Detail
+              </TabsTrigger>
+              <TabsTrigger
+                value="submissions"
+                className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+              >
+                Submissions ({submissions?.total || 0})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Detail Tab */}
+            <TabsContent value="detail" className="mt-4">
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Edit Form */}
+                <div className="rounded-lg border border-[#3a4556] bg-[#252d3d] p-6">
+                  <h2 className="mb-4 text-lg font-semibold text-gray-100">
+                    Contest Information
+                  </h2>
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-4"
                     >
-                      {headerGroup.headers.map((header) => (
-                        <TableHead
-                          key={header.id}
-                          className="font-medium text-gray-400"
-                          style={{ width: header.getSize() }}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : typeof header.column.columnDef.header ===
-                                'function'
-                              ? header.column.columnDef.header(
-                                  header.getContext()
-                                )
-                              : header.column.columnDef.header}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {submissionTable.getRowModel().rows?.length ? (
-                    submissionTable.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        className="border-b border-[#3a4556] hover:bg-[#2a3344]"
+                      {/* Title */}
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={labelClassName}>
+                              Title
+                            </FormLabel>
+                            <FormControl>
+                              <Input className={inputClassName} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Description */}
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={labelClassName}>
+                              Description
+                            </FormLabel>
+                            <FormControl>
+                              <Textarea
+                                className={inputClassName}
+                                rows={3}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Start & End Time */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="startTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={labelClassName}>
+                                Start Time
+                              </FormLabel>
+                              <FormControl>
+                                <DateTimePicker
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Select start time"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="endTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={labelClassName}>
+                                End Time
+                              </FormLabel>
+                              <FormControl>
+                                <DateTimePicker
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Select end time"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      {/* Status & Visibility */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="status"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={labelClassName}>
+                                Status
+                              </FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className={inputClassName}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="border-[#3a4556] bg-[#252d3d]">
+                                  <SelectItem
+                                    value="UPCOMING"
+                                    className="text-gray-200"
+                                  >
+                                    Upcoming
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="RUNNING"
+                                    className="text-gray-200"
+                                  >
+                                    Running
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="FINISHED"
+                                    className="text-gray-200"
+                                  >
+                                    Finished
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="isPublic"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={labelClassName}>
+                                Visibility
+                              </FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className={inputClassName}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="border-[#3a4556] bg-[#252d3d]">
+                                  <SelectItem
+                                    value="true"
+                                    className="text-gray-200"
+                                  >
+                                    Public
+                                  </SelectItem>
+                                  <SelectItem
+                                    value="false"
+                                    className="text-gray-200"
+                                  >
+                                    Private
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={isUpdating}
+                        className="w-full bg-cyan-500 text-white hover:bg-cyan-600"
                       >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {typeof cell.column.columnDef.cell === 'function'
-                              ? cell.column.columnDef.cell(cell.getContext())
-                              : cell.getValue()}
-                          </TableCell>
+                        <Save className="mr-2 h-4 w-4" />
+                        {isUpdating ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </form>
+                  </Form>
+                </div>
+
+                {/* Problems List */}
+                <div className="rounded-lg border border-[#3a4556] bg-[#252d3d] p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-100">
+                      Problems ({contest.problems.length})
+                    </h2>
+                    <Button
+                      onClick={handleAddProblem}
+                      size="sm"
+                      className="bg-cyan-500 text-white hover:bg-cyan-600"
+                    >
+                      <Plus className="mr-1 h-4 w-4" />
+                      Add Problem
+                    </Button>
+                  </div>
+                  <ContestTable
+                    table={problemTable}
+                    onRowClick={handleProblemClick}
+                    isAdmin
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Submissions Tab */}
+            <TabsContent value="submissions" className="mt-4">
+              <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
+                <Table>
+                  <TableHeader>
+                    {submissionTable.getHeaderGroups().map((headerGroup) => (
+                      <TableRow
+                        key={headerGroup.id}
+                        className="border-b border-[#3a4556] hover:bg-transparent"
+                      >
+                        {headerGroup.headers.map((header) => (
+                          <TableHead
+                            key={header.id}
+                            className="font-medium text-gray-400"
+                            style={{ width: header.getSize() }}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : typeof header.column.columnDef.header ===
+                                  'function'
+                                ? header.column.columnDef.header(
+                                    header.getContext()
+                                  )
+                                : header.column.columnDef.header}
+                          </TableHead>
                         ))}
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={submissionTable.getAllColumns().length}
-                        className="h-24 text-center text-gray-400"
-                      >
-                        No submissions yet.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-            <ContestPagination table={submissionTable} />
-            <div className="mt-4 text-sm text-gray-400">
-              Total: {submissions?.total || 0} submissions
-            </div>
-          </TabsContent>
-        </Tabs>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {submissionTable.getRowModel().rows?.length ? (
+                      submissionTable.getRowModel().rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          className="border-b border-[#3a4556] hover:bg-[#2a3344]"
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                              {typeof cell.column.columnDef.cell === 'function'
+                                ? cell.column.columnDef.cell(cell.getContext())
+                                : cell.getValue()}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={submissionTable.getAllColumns().length}
+                          className="h-24 text-center text-gray-400"
+                        >
+                          No submissions yet.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              <ContestPagination table={submissionTable} />
+              <div className="mt-4 text-sm text-gray-400">
+                Total: {submissions?.total || 0} submissions
+              </div>
+            </TabsContent>
+          </Tabs>
 
-        {/* Problem Modals */}
-        <AddContestProblemModal
-          open={isAddProblemModalOpen}
-          onOpenChange={setIsAddProblemModalOpen}
-          contestId={id}
-          existingOrders={existingOrders}
-        />
-        <EditContestProblemModal
-          open={isEditProblemModalOpen}
-          onOpenChange={setIsEditProblemModalOpen}
-          contestId={id}
-          problem={selectedProblem}
-          existingOrders={existingOrders}
-        />
-        <DeleteContestProblemModal
-          open={isDeleteProblemModalOpen}
-          onOpenChange={setIsDeleteProblemModalOpen}
-          contestId={id}
-          problem={selectedProblem}
-        />
+          {/* Problem Modals */}
+          <AddContestProblemModal
+            open={isAddProblemModalOpen}
+            onOpenChange={setIsAddProblemModalOpen}
+            contestId={id}
+            existingOrders={existingOrders}
+          />
+          <EditContestProblemModal
+            open={isEditProblemModalOpen}
+            onOpenChange={setIsEditProblemModalOpen}
+            contestId={id}
+            problem={selectedProblem}
+            existingOrders={existingOrders}
+          />
+          <DeleteContestProblemModal
+            open={isDeleteProblemModalOpen}
+            onOpenChange={setIsDeleteProblemModalOpen}
+            contestId={id}
+            problem={selectedProblem}
+          />
+        </div>
       </div>
     </div>
   );

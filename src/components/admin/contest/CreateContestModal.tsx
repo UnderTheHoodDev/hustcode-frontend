@@ -93,7 +93,7 @@ const CreateContestModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#1e293b] sm:max-w-lg">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#252d3d] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl text-gray-100">
             Create New Contest
@@ -224,7 +224,7 @@ const CreateContestModal = ({
               <Button
                 type="submit"
                 disabled={isPending}
-                className="bg-cyan-600 text-white hover:bg-cyan-700"
+                className="bg-cyan-500 text-white hover:bg-cyan-600"
               >
                 {isPending ? 'Creating...' : 'Create Contest'}
               </Button>

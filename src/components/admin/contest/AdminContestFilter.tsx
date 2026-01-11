@@ -51,7 +51,7 @@ const AdminContestFilter = ({
 
       <Button
         onClick={onCreateContest}
-        className="bg-cyan-600 text-white hover:bg-cyan-700"
+        className="bg-cyan-500 text-white hover:bg-cyan-600"
       >
         <Plus className="mr-2 h-4 w-4" />
         Create Contest

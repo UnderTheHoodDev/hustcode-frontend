@@ -487,12 +487,12 @@ const AddContestProblemModal = ({
           </Button>
         </div>
 
-        <div className="space-y-4">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="rounded-md border border-[#3a4556] bg-[#1e293b] p-3"
-            >
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div
+                      key={field.id}
+                      className="rounded-md border border-[#3a4556] bg-[#252d3d] p-3"
+                    >
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-400">
                   Testcase #{index + 1}
@@ -568,7 +568,7 @@ const AddContestProblemModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#1e293b] sm:max-w-3xl">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#252d3d] sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-xl text-gray-100">
             Add Problem to Contest
@@ -586,13 +586,13 @@ const AddContestProblemModal = ({
           <TabsList className="border-[#3a4556] bg-[#1e293b]">
             <TabsTrigger
               value="select"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
+              className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
             >
               Select Existing
             </TabsTrigger>
             <TabsTrigger
               value="create"
-              className="data-[state=active]:bg-[#252d3d] data-[state=active]:text-cyan-400"
+              className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
             >
               Create New
             </TabsTrigger>
@@ -626,7 +626,7 @@ const AddContestProblemModal = ({
                 <p className="text-gray-400">No problems found</p>
               </div>
             ) : (
-              <div className="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-[#3a4556] bg-[#252d3d] p-4">
+              <div className="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-[#3a4556] bg-[#1e293b] p-4">
                 {problems.map((problem: any) => (
                   <button
                     key={problem.id}
@@ -644,7 +644,7 @@ const AddContestProblemModal = ({
                     className={`w-full rounded-lg border p-3 text-left transition-colors ${
                       selectedProblemId === problem.id
                         ? 'border-cyan-500 bg-cyan-500/10'
-                        : 'border-[#3a4556] bg-[#1e293b] hover:border-[#4a5566] hover:bg-[#252d3d]'
+                        : 'border-[#3a4556] bg-[#252d3d] hover:border-[#4a5566] hover:bg-[#2a3344]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -719,7 +719,7 @@ const AddContestProblemModal = ({
                   <Button
                     type="submit"
                     disabled={isPending}
-                    className="bg-cyan-600 text-white hover:bg-cyan-700"
+                    className="bg-cyan-500 text-white hover:bg-cyan-600"
                   >
                     {isPending ? 'Creating...' : 'Create Problem'}
                   </Button>
@@ -764,7 +764,7 @@ const AddContestProblemModal = ({
                   <Button
                     type="submit"
                     disabled={isPending || !selectedProblemId}
-                    className="bg-cyan-600 text-white hover:bg-cyan-700"
+                    className="bg-cyan-500 text-white hover:bg-cyan-600"
                   >
                     {isPending ? 'Creating...' : 'Add to Contest'}
                   </Button>

@@ -207,7 +207,7 @@ const EditContestProblemModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#1e293b] sm:max-w-2xl">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto border-[#3a4556] bg-[#252d3d] sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl text-gray-100">
             Edit Contest Problem
@@ -489,7 +489,7 @@ const EditContestProblemModal = ({
                   {fields.map((field, index) => (
                     <div
                       key={field.id}
-                      className="rounded-md border border-[#3a4556] bg-[#1e293b] p-3"
+                      className="rounded-md border border-[#3a4556] bg-[#252d3d] p-3"
                     >
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-400">
@@ -571,13 +571,13 @@ const EditContestProblemModal = ({
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isPending}
-                  className="bg-cyan-600 text-white hover:bg-cyan-700"
-                >
-                  {isPending ? 'Saving...' : 'Save Changes'}
-                </Button>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="bg-cyan-500 text-white hover:bg-cyan-600"
+              >
+                {isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
               </DialogFooter>
             </form>
           </Form>
