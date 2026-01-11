@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Clock, Trophy } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
@@ -33,6 +33,9 @@ const ContestStartCountdown = ({
     isStarted: false,
   });
 
+  // Ref to track if onContestStart has been called
+  const hasCalledStartRef = useRef(false);
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
@@ -47,7 +50,11 @@ const ContestStartCountdown = ({
           seconds: 0,
           isStarted: true,
         });
-        onContestStart?.();
+        // Only call onContestStart once
+        if (!hasCalledStartRef.current) {
+          hasCalledStartRef.current = true;
+          onContestStart?.();
+        }
         return;
       }
 

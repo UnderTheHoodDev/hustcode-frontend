@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Loader2, Play, Send } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { use, useCallback, useMemo, useState } from 'react';
 
 import ContestCountdownTimer from '@/components/contest/ContestCountdownTimer';
@@ -42,6 +43,7 @@ export default function ContestProblemPage({
 }: {
   params: Promise<{ id: string; problemId: string }>;
 }) {
+  const router = useRouter();
   const { id: contestId, problemId } = use(params);
 
   // Fetch contest detail from API

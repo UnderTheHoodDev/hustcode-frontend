@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, Clock } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ContestCountdownTimerProps {
   endTime: string;
@@ -26,6 +26,9 @@ const ContestCountdownTimer = ({
     isUrgent: false,
   });
 
+  // Ref to track if onContestEnd has been called
+  const hasCalledEndRef = useRef(false);
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
@@ -40,7 +43,11 @@ const ContestCountdownTimer = ({
           isEnded: true,
           isUrgent: false,
         });
-        onContestEnd?.();
+        // Only call onContestEnd once
+        if (!hasCalledEndRef.current) {
+          hasCalledEndRef.current = true;
+          onContestEnd?.();
+        }
         return;
       }
 
