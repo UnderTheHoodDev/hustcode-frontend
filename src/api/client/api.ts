@@ -579,6 +579,12 @@ export interface SubmitProblemDto {
      * @memberof SubmitProblemDto
      */
     'language': SubmitLanguageDto;
+    /**
+     * Contest ID (if submitting during a contest)
+     * @type {string}
+     * @memberof SubmitProblemDto
+     */
+    'contestId'?: string;
 }
 /**
  * 

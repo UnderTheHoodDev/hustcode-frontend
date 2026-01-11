@@ -20,4 +20,14 @@ const toastError = (message: string, options = {}) => {
   });
 };
 
-export { toastError, toastSuccess };
+const toastWarning = (message: string, options = {}) => {
+  toast.warning(message, {
+    ...options,
+    style: {
+      background: 'var(--color-background-warning, #422006)',
+      color: 'var(--color-warning, #fbbf24)',
+    },
+  });
+};
+
+export { toastError, toastSuccess, toastWarning };

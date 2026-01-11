@@ -128,7 +128,8 @@ export default function ContestDetailPage({
   }, [data]);
 
   const handleProblemClick = (problemId: string) => {
-    router.push(`/problems/${problemId}`);
+    // Navigate to contest problem page instead of regular problem page
+    router.push(`/contests/${id}/problems/${problemId}`);
   };
 
   const problemColumns: ColumnDef<ContestProblem>[] = [

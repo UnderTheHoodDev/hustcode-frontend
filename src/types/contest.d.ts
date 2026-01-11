@@ -23,6 +23,24 @@ type ContestProblem = {
   };
 };
 
+// Detailed contest problem with testcases and constraints
+type ContestProblemDetail = ContestProblem & {
+  taskDescription: string;
+  inputDescription: string;
+  outputDescription: string;
+  testcases: Array<{
+    id: string;
+    input: string;
+    output: string;
+    isSample: boolean;
+  }>;
+  problemConstrain: {
+    id: string;
+    memoryLimit: number;
+    timeLimit: number;
+  } | null;
+};
+
 type Contest = {
   id: string;
   title: string;
@@ -42,6 +60,15 @@ type Contest = {
 
 type ContestDetail = Contest & {
   problems: ContestProblem[];
+};
+
+// Contest detail with full problem information including testcases
+type ContestDetailWithProblems = Contest & {
+  problems: Array<{
+    order: number;
+    points: number;
+    problem: ContestProblemDetail;
+  }>;
 };
 
 type ContestsResponse = {

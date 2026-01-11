@@ -11,10 +11,15 @@ import {
 
 interface ContestTableProps {
   table: TableType<any>;
-  onRowClick: (contestId: string) => void;
+  onRowClick: (contestId: string, status: ContestStatus) => void;
+  isAdmin?: boolean;
 }
 
-const ContestTable = ({ table, onRowClick }: ContestTableProps) => {
+const ContestTable = ({
+  table,
+  onRowClick,
+  isAdmin = false,
+}: ContestTableProps) => {
   return (
     <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
       <Table>
@@ -43,19 +48,32 @@ const ContestTable = ({ table, onRowClick }: ContestTableProps) => {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                onClick={() => onRowClick(row.original.id)}
-                className="cursor-pointer border-b border-[#3a4556] hover:bg-[#2a3344]"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              const isUpcoming = row.original.status === 'UPCOMING';
+              const shouldDisable = isUpcoming && !isAdmin;
+              return (
+                <TableRow
+                  key={row.id}
+                  onClick={() =>
+                    onRowClick(row.original.id, row.original.status)
+                  }
+                  className={`border-b border-[#3a4556] ${
+                    shouldDisable
+                      ? 'cursor-not-allowed opacity-70 hover:bg-transparent'
+                      : 'cursor-pointer hover:bg-[#2a3344]'
+                  }`}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell

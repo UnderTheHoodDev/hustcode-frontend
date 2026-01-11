@@ -6,7 +6,15 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Calendar, Clock, Loader2, Pencil, Trash2, Trophy, Users } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  Loader2,
+  Pencil,
+  Trash2,
+  Trophy,
+  Users,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -102,7 +110,7 @@ export default function AdminContestList() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleRowClick = (contestId: string) => {
+  const handleRowClick = (contestId: string, _status: ContestStatus) => {
     router.push(`/admin/contests/${contestId}`);
   };
 
@@ -123,9 +131,6 @@ export default function AdminContestList() {
               </Badge>
             )}
           </div>
-          <span className="line-clamp-1 text-sm text-gray-400">
-            {row.original.description}
-          </span>
         </div>
       ),
     },
@@ -297,7 +302,7 @@ export default function AdminContestList() {
       />
 
       {/* Table */}
-      <ContestTable table={table} onRowClick={handleRowClick} />
+      <ContestTable table={table} onRowClick={handleRowClick} isAdmin />
 
       {/* Pagination */}
       <ContestPagination table={table} />

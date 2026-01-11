@@ -1204,6 +1204,11 @@
           },
           "language": {
             "$ref": "#/components/schemas/SubmitLanguageDto"
+          },
+          "contestId": {
+            "type": "string",
+            "example": "clxxx987654321",
+            "description": "Contest ID (if submitting during a contest)"
           }
         },
         "required": ["source_code", "problemId", "language"]

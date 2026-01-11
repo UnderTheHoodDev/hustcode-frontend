@@ -10,10 +10,12 @@ import { Calendar, Clock, Loader2, Trophy, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
+import ContestCountdownCell from '@/components/contest/ContestCountdownCell';
 import ContestPagination from '@/components/contest/ContestPagination';
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
 import useContests from '@/lib/api/contest/queries/use-contests';
+import { toastWarning } from '@/utils/toaster';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -69,7 +71,13 @@ export default function ContestList() {
     isPublic: true, // Only show public contests for regular users
   });
 
-  const handleRowClick = (contestId: string) => {
+  const handleRowClick = (contestId: string, status: ContestStatus) => {
+    if (status === 'UPCOMING') {
+      toastWarning(
+        'Contest has not started yet. Please wait until the contest begins.'
+      );
+      return;
+    }
     router.push(`/contests/${contestId}`);
   };
 
@@ -85,9 +93,6 @@ export default function ContestList() {
               {row.original.title}
             </span>
           </div>
-          <span className="line-clamp-1 text-sm text-gray-400">
-            {row.original.description}
-          </span>
         </div>
       ),
     },
@@ -133,6 +138,18 @@ export default function ContestList() {
         </div>
       ),
       size: 100,
+    },
+    {
+      id: 'countdown',
+      header: () => <div className="text-center">Countdown</div>,
+      cell: ({ row }) => (
+        <ContestCountdownCell
+          startTime={row.original.startTime}
+          endTime={row.original.endTime}
+          status={row.original.status}
+        />
+      ),
+      size: 150,
     },
   ];
 
