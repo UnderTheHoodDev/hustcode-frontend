@@ -4,7 +4,7 @@ import {
   ContestsApi,
   ProblemApi,
   ProblemSubmissionApi,
-  UserApi,
+  UsersApi,
 } from '@/api/client/api';
 import { Configuration } from '@/api/client/configuration';
 import { authConnect } from '@/api/guest';
@@ -41,7 +41,7 @@ axiosInstanceWithAuth.interceptors.response.use(
   }
 );
 
-export const userConnect = new UserApi(
+export const userConnect = new UsersApi(
   {
     basePath: DEFAULT_API_BASE_URL,
   } as Configuration,

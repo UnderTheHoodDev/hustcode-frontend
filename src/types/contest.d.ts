@@ -89,10 +89,7 @@ type ContestFilterOptions = {
 // Submission types for contest
 type ContestSubmission = {
   id: string;
-  userId: string;
-  problemId: string;
-  contestId: string;
-  sourceCode: string;
+  code: string;
   status:
     | 'PENDING'
     | 'RUNNING'
@@ -102,9 +99,9 @@ type ContestSubmission = {
     | 'MEMORY_LIMIT_EXCEEDED'
     | 'RUNTIME_ERROR'
     | 'COMPILATION_ERROR';
-  executionTime: number | null;
-  memoryUsed: number | null;
-  createdAt: string;
+  consumedTime: number | null;
+  consumedMemory: number | null;
+  submittedAt: string;
   user: {
     id: string;
     name: string | null;

@@ -1,10 +1,12 @@
 'use client';
 
-import { ArrowLeft, Loader2, Play, Send } from 'lucide-react';
+import { useAtomValue } from 'jotai';
+import { ArrowLeft, Loader2, Play, Send, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { use, useCallback, useMemo, useState } from 'react';
 
+import { userInfoAtom } from '@/atoms';
 import ContestCountdownTimer from '@/components/contest/ContestCountdownTimer';
 import ContestProblemListSheet from '@/components/contest/ContestProblemListSheet';
 import ContestStartCountdown from '@/components/contest/ContestStartCountdown';
@@ -25,6 +27,7 @@ import useContest from '@/lib/api/contest/queries/use-contest';
 import useProblemDetailQuery from '@/lib/api/problem/queries/use-problem-detail';
 import useRunCode from '@/lib/api/submission/mutations/use-run-code';
 import useSubmitProblem from '@/lib/api/submission/mutations/use-submit-problem';
+import useUserContestScore from '@/lib/api/submission/queries/use-user-contest-score';
 import { TestCaseResult } from '@/types/submission';
 import { toastError, toastSuccess, toastWarning } from '@/utils/toaster';
 
@@ -45,6 +48,7 @@ export default function ContestProblemPage({
 }) {
   const router = useRouter();
   const { id: contestId, problemId } = use(params);
+  const userInfo = useAtomValue(userInfoAtom);
 
   // Fetch contest detail from API
   const {
@@ -116,6 +120,30 @@ export default function ContestProblemPage({
     };
   }, [contestData, problemId]);
 
+  // Prepare contest problems for score calculation
+  const contestProblemsForScore = useMemo(() => {
+    return contestProblems.map((p: { id: string; points: number }) => ({
+      id: p.id,
+      points: p.points,
+    }));
+  }, [contestProblems]);
+
+  // Fetch user's contest score
+  const { data: userScore, isLoading: isScoreLoading } = useUserContestScore({
+    userId: userInfo?.id,
+    contestProblems: contestProblemsForScore,
+    contestId,
+    enabled: !!userInfo?.id && contestProblems.length > 0,
+  });
+
+  // Helper to get problem status
+  const getProblemStatus = useCallback(
+    (probId: string) => {
+      return userScore?.problemResults.get(probId)?.status || 'not_attempted';
+    },
+    [userScore]
+  );
+
   // Code editor state
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('cpp');
@@ -156,7 +184,7 @@ export default function ContestProblemPage({
 
   // Mutations
   const runCodeMutation = useRunCode();
-  const submitProblemMutation = useSubmitProblem(problemId);
+  const submitProblemMutation = useSubmitProblem(problemId, contestId);
 
   // Handle contest start (when countdown reaches zero)
   const handleContestStart = useCallback(() => {
@@ -424,6 +452,10 @@ export default function ContestProblemPage({
             contestId={contestId}
             currentProblemId={problemId}
             problems={contestProblems}
+            userTotalPoints={userScore?.totalPoints || 0}
+            userSolvedCount={userScore?.solvedCount || 0}
+            getProblemStatus={getProblemStatus}
+            isScoreLoading={isScoreLoading}
           />
 
           {/* Problem Order Badge */}
@@ -431,10 +463,21 @@ export default function ContestProblemPage({
             <span className="flex h-7 w-7 items-center justify-center rounded bg-cyan-500/20 text-sm font-bold text-cyan-400">
               {orderToLetter(contestProblemInfo.order)}
             </span>
-            <span className="hidden text-sm font-medium text-gray-300 md:inline">
-              {problemDetail.title}
-            </span>
           </div>
+
+          {/* User Score Display */}
+          {userInfo?.id && (
+            <div className="flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5">
+              <Trophy className="h-4 w-4 text-cyan-400" />
+              {isScoreLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-cyan-400" />
+              ) : (
+                <span className="text-sm font-medium text-cyan-400">
+                  {userScore?.totalPoints || 0} pts
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Problem constraints */}
           {problemDetail.problemConstrain && (
@@ -515,6 +558,7 @@ export default function ContestProblemPage({
               submissionCount={problemDetail._count?.submissions || 0}
               likeCount={0}
               onViewSubmission={handleViewSubmission}
+              contestId={contestId}
             />
           </ResizablePanel>
 

@@ -93,20 +93,85 @@
         "tags": ["Auth"]
       }
     },
+    "/user": {
+      "get": {
+        "description": "Get paginated list of all users. Can search by name or email.",
+        "operationId": "UserController_getAllUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by name or email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort field",
+            "schema": {
+              "enum": ["name", "rating", "createdAt"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "enum": ["asc", "desc"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users retrieved successfully"
+          }
+        },
+        "summary": "Get all users",
+        "tags": ["users"]
+      }
+    },
     "/user/me": {
       "get": {
+        "description": "Get details of the currently authenticated user",
         "operationId": "UserController_getUser",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User details retrieved successfully"
           }
         },
-        "tags": ["User"]
+        "summary": "Get current user",
+        "tags": ["users"]
       }
     },
     "/user/profile/{id}": {
       "get": {
+        "description": "Get public profile of a specific user",
         "operationId": "UserController_getUserProfile",
         "parameters": [
           {
@@ -114,16 +179,21 @@
             "required": true,
             "in": "path",
             "schema": {
+              "example": "clxxx123456789",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User profile retrieved successfully"
+          },
+          "404": {
+            "description": "User not found"
           }
         },
-        "tags": ["User"]
+        "summary": "Get user profile by ID",
+        "tags": ["users"]
       }
     },
     "/problem": {
@@ -839,6 +909,252 @@
         "summary": "Remove problem from contest",
         "tags": ["contests"]
       }
+    },
+    "/contests/{id}/invitations": {
+      "post": {
+        "description": "Admin invites multiple users to a private contest. Only works for private contests.",
+        "operationId": "ContestController_inviteUsers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteUsersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Users invited successfully"
+          },
+          "400": {
+            "description": "Contest is public or invalid user IDs"
+          },
+          "403": {
+            "description": "Only contest creator can invite users"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Invite users to private contest",
+        "tags": ["contests"]
+      },
+      "get": {
+        "description": "Get list of all invited users for a private contest. Only contest creator can view.",
+        "operationId": "ContestController_getInvitations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitations retrieved successfully"
+          },
+          "403": {
+            "description": "Only contest creator can view invitations"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get all invitations for a contest",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{contestId}/invitations/{userId}": {
+      "delete": {
+        "description": "Remove a user invitation from private contest. Only contest creator can remove.",
+        "operationId": "ContestController_removeInvitation",
+        "parameters": [
+          {
+            "name": "contestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx987654321",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation removed successfully"
+          },
+          "403": {
+            "description": "Only contest creator can remove invitations"
+          },
+          "404": {
+            "description": "Contest or invitation not found"
+          }
+        },
+        "summary": "Remove user invitation",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}/leaderboard": {
+      "get": {
+        "description": "Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user's data with their rank.",
+        "operationId": "ContestController_getLeaderboard",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "filterUserId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific user ID to get only that user's leaderboard entry",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard retrieved successfully"
+          },
+          "403": {
+            "description": "Access denied to private contest"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get contest leaderboard",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}/submissions": {
+      "get": {
+        "description": "Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.",
+        "operationId": "ContestController_getContestSubmissions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific problem ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterUserId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Submissions retrieved successfully"
+          },
+          "403": {
+            "description": "Access denied to private contest"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get contest submissions",
+        "tags": ["contests"]
+      }
     }
   },
   "info": {
@@ -1437,6 +1753,20 @@
             "$ref": "#/components/schemas/CreateContestProblemConstraintDto"
           }
         }
+      },
+      "InviteUsersDto": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "example": ["user-id-1", "user-id-2", "user-id-3"],
+            "description": "Array of user IDs to invite to private contest",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["userIds"]
       }
     }
   }

@@ -1,9 +1,12 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
 import { Clock, Heart, Loader2, MessageSquare, Send } from 'lucide-react';
 
+import { userInfoAtom } from '@/atoms';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import useContestSubmissions from '@/lib/api/submission/queries/use-contest-submissions';
 import useSubmissions from '@/lib/api/submission/queries/use-submissions';
 
 interface ProblemDescriptionProps {
@@ -18,6 +21,8 @@ interface ProblemDescriptionProps {
   submissionCount?: number;
   likeCount?: number;
   onViewSubmission?: (code: string, language: string) => void;
+  // Contest mode props
+  contestId?: string;
 }
 
 const ProblemDescription = ({
@@ -32,11 +37,33 @@ const ProblemDescription = ({
   submissionCount = 0,
   likeCount = 0,
   onViewSubmission,
+  contestId,
 }: ProblemDescriptionProps) => {
-  // Fetch user's submissions for this problem
-  const { data: submissionsResponse, isLoading: isLoadingSubmissions } =
-    useSubmissions({ problemId });
-  const submissions = submissionsResponse?.data || [];
+  const userInfo = useAtomValue(userInfoAtom);
+
+  // Fetch user's submissions - use contest submissions if contestId is provided
+  const {
+    data: regularSubmissionsResponse,
+    isLoading: isLoadingRegularSubmissions,
+  } = useSubmissions({ problemId, enabled: !contestId });
+
+  const {
+    data: contestSubmissionsResponse,
+    isLoading: isLoadingContestSubmissions,
+  } = useContestSubmissions({
+    contestId: contestId || '',
+    problemId,
+    filterUserId: userInfo?.id,
+    enabled: !!contestId && !!userInfo?.id,
+  });
+
+  // Use contest submissions if in contest mode, otherwise use regular submissions
+  const isLoadingSubmissions = contestId
+    ? isLoadingContestSubmissions
+    : isLoadingRegularSubmissions;
+  const submissions = contestId
+    ? contestSubmissionsResponse?.data || []
+    : regularSubmissionsResponse?.data || [];
 
   const difficultyConfig: Record<
     string,
@@ -221,7 +248,10 @@ const ProblemDescription = ({
                     key={submission.id}
                     className="cursor-pointer rounded-lg border border-gray-700/50 bg-[#0f1724] p-4 transition-colors hover:border-gray-600 hover:bg-[#0f1724]/80"
                     onClick={() =>
-                      onViewSubmission?.(submission.code, submission.language.name)
+                      onViewSubmission?.(
+                        submission.code,
+                        submission.language.name
+                      )
                     }
                     role="button"
                     tabIndex={0}
@@ -250,7 +280,7 @@ const ProblemDescription = ({
                           {submission.language.name}
                         </span>
                       </span>
-                      {submission.consumedTime > 0 && (
+                      {(submission.consumedTime ?? 0) > 0 && (
                         <span>
                           Runtime:{' '}
                           <span className="text-cyan-400">
@@ -258,7 +288,7 @@ const ProblemDescription = ({
                           </span>
                         </span>
                       )}
-                      {submission.consumedMemory > 0 && (
+                      {(submission.consumedMemory ?? 0) > 0 && (
                         <span>
                           Memory:{' '}
                           <span className="text-cyan-400">

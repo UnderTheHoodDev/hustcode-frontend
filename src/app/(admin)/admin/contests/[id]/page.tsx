@@ -17,6 +17,7 @@ import {
   Save,
   Trash2,
   Trophy,
+  UserPlus,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -24,6 +25,11 @@ import React, { use, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import AddContestProblemModal from '@/components/admin/contest/AddContestProblemModal';
+import DeleteContestProblemModal from '@/components/admin/contest/DeleteContestProblemModal';
+import EditContestProblemModal from '@/components/admin/contest/EditContestProblemModal';
+import InviteUsersModal from '@/components/admin/contest/InviteUsersModal';
+import ContestLeaderboard from '@/components/contest/ContestLeaderboard';
 import ContestPagination from '@/components/contest/ContestPagination';
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
@@ -60,14 +66,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  mockContestSubmissionsData,
-} from '@/constants/mock-contest-data';
-import AddContestProblemModal from '@/components/admin/contest/AddContestProblemModal';
-import DeleteContestProblemModal from '@/components/admin/contest/DeleteContestProblemModal';
-import EditContestProblemModal from '@/components/admin/contest/EditContestProblemModal';
+import useRemoveInvitation from '@/lib/api/contest/mutations/use-remove-invitation';
 import useUpdateContest from '@/lib/api/contest/mutations/use-update-contest';
 import useContest from '@/lib/api/contest/queries/use-contest';
+import useContestInvitations from '@/lib/api/contest/queries/use-contest-invitations';
+import useContestLeaderboard from '@/lib/api/contest/queries/use-contest-leaderboard';
+import useContestSubmissions from '@/lib/api/submission/queries/use-contest-submissions';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -158,8 +162,13 @@ const orderToLetter = (order: number) => {
   return String.fromCharCode(64 + order);
 };
 
-const formatDateTime = (dateStr: string) => {
+const formatDateTime = (dateStr: string | Date | null | undefined) => {
+  if (!dateStr) return '-';
   const date = new Date(dateStr);
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    return '-';
+  }
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -188,12 +197,20 @@ export default function AdminContestDetailPage({
   const { id } = use(params);
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [submissionsPageSize, setSubmissionsPageSize] = useState(20);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const leaderboardPageSize = 20;
 
   // Modal states for problems
   const [isAddProblemModalOpen, setIsAddProblemModalOpen] = useState(false);
   const [isEditProblemModalOpen, setIsEditProblemModalOpen] = useState(false);
-  const [isDeleteProblemModalOpen, setIsDeleteProblemModalOpen] = useState(false);
-  const [selectedProblem, setSelectedProblem] = useState<ContestProblem | null>(null);
+  const [isDeleteProblemModalOpen, setIsDeleteProblemModalOpen] =
+    useState(false);
+  const [selectedProblem, setSelectedProblem] = useState<ContestProblem | null>(
+    null
+  );
+
+  // Modal state for invitations
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   // Fetch contest detail from API
   const { data, isLoading, isError, error } = useContest(id);
@@ -230,11 +247,71 @@ export default function AdminContestDetailPage({
     } as ContestDetail;
   }, [data]);
 
-  // Fetch submissions - using mock data for now
-  // TODO: Replace with real API when contest submissions endpoint is available
-  // Note: There's no contest-specific submissions API endpoint yet
-  // This is a placeholder using mock data
-  const submissions = mockContestSubmissionsData;
+  // Fetch contest invitations (only for private contests)
+  const isPrivateContest = contest && !contest.isPublic;
+  const { data: invitations = [], isLoading: isLoadingInvitations } =
+    useContestInvitations(id, isPrivateContest || false);
+
+  // Remove invitation mutation
+  const { mutate: removeInvitation, isPending: isRemovingInvitation } =
+    useRemoveInvitation();
+
+  // Get invited user IDs for filtering in invite modal
+  const existingInvitedUserIds = React.useMemo(() => {
+    if (!Array.isArray(invitations)) return [];
+    return invitations.map((inv) => inv.userId);
+  }, [invitations]);
+
+  // Fetch contest submissions from API
+  const { data: submissionsData, isLoading: isLoadingSubmissions } =
+    useContestSubmissions({
+      contestId: id,
+      page: submissionsPage,
+      pageSize: submissionsPageSize,
+      enabled: !!id,
+    });
+
+  // Fetch leaderboard from API
+  const { data: leaderboardResponse, isLoading: isLeaderboardLoading } =
+    useContestLeaderboard({
+      contestId: id,
+      page: leaderboardPage,
+      pageSize: leaderboardPageSize,
+      enabled: !!id,
+    });
+
+  // Transform leaderboard data for the component
+  const leaderboardData = React.useMemo(() => {
+    if (!leaderboardResponse?.data) return [];
+    return leaderboardResponse.data;
+  }, [leaderboardResponse?.data]);
+
+  const leaderboardTotalPages = leaderboardResponse?.totalPages || 1;
+
+  // Contest problems for leaderboard display
+  const contestProblemsForLeaderboard = React.useMemo(() => {
+    return (
+      contest?.problems.map((p) => ({
+        id: p.id,
+        order: p.order,
+        points: p.points,
+      })) || []
+    );
+  }, [contest?.problems]);
+
+  // Transform submissions data
+  const submissions = React.useMemo(() => {
+    if (!submissionsData) {
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        pageSize: 20,
+        totalPages: 0,
+      };
+    }
+    return submissionsData;
+  }, [submissionsData]);
 
   const form = useForm<UpdateContestFormData>({
     resolver: zodResolver(updateContestSchema) as any,
@@ -304,6 +381,10 @@ export default function AdminContestDetailPage({
       setSelectedProblem(problem);
       setIsDeleteProblemModalOpen(true);
     }
+  };
+
+  const handleRemoveInvitation = (userId: string) => {
+    removeInvitation({ contestId: id, userId });
   };
 
   // Get existing orders for validation
@@ -431,11 +512,11 @@ export default function AdminContestDetailPage({
     data: submissions?.data || [],
     columns: [
       {
-        accessorKey: 'createdAt',
+        accessorKey: 'submittedAt',
         header: 'Time',
         cell: ({ row }) => (
           <span className="text-sm text-gray-400">
-            {formatDateTime(row.original.createdAt)}
+            {formatDateTime(row.original.submittedAt)}
           </span>
         ),
         size: 180,
@@ -611,11 +692,25 @@ export default function AdminContestDetailPage({
                 Detail
               </TabsTrigger>
               <TabsTrigger
+                value="leaderboard"
+                className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+              >
+                Leaderboard
+              </TabsTrigger>
+              <TabsTrigger
                 value="submissions"
                 className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
               >
                 Submissions ({submissions?.total || 0})
               </TabsTrigger>
+              {!contest.isPublic && (
+                <TabsTrigger
+                  value="invitations"
+                  className="text-gray-300 data-[state=active]:bg-[#2a3344] data-[state=active]:text-cyan-400"
+                >
+                  Invitations ({invitations.length})
+                </TabsTrigger>
+              )}
             </TabsList>
 
             {/* Detail Tab */}
@@ -829,69 +924,222 @@ export default function AdminContestDetailPage({
               </div>
             </TabsContent>
 
+            {/* Leaderboard Tab */}
+            <TabsContent value="leaderboard" className="mt-4">
+              <ContestLeaderboard
+                leaderboardData={leaderboardData}
+                contestProblems={contestProblemsForLeaderboard}
+                isLoading={isLeaderboardLoading}
+              />
+              {/* Leaderboard Pagination */}
+              {leaderboardTotalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="text-sm text-gray-400">
+                    Page {leaderboardPage} of {leaderboardTotalPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setLeaderboardPage((p) => Math.max(1, p - 1))
+                      }
+                      disabled={leaderboardPage === 1}
+                      className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setLeaderboardPage((p) =>
+                          Math.min(leaderboardTotalPages, p + 1)
+                        )
+                      }
+                      disabled={leaderboardPage >= leaderboardTotalPages}
+                      className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
             {/* Submissions Tab */}
             <TabsContent value="submissions" className="mt-4">
-              <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
-                <Table>
-                  <TableHeader>
-                    {submissionTable.getHeaderGroups().map((headerGroup) => (
-                      <TableRow
-                        key={headerGroup.id}
-                        className="border-b border-[#3a4556] hover:bg-transparent"
-                      >
-                        {headerGroup.headers.map((header) => (
-                          <TableHead
-                            key={header.id}
-                            className="font-medium text-gray-400"
-                            style={{ width: header.getSize() }}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : typeof header.column.columnDef.header ===
-                                  'function'
-                                ? header.column.columnDef.header(
-                                    header.getContext()
-                                  )
-                                : header.column.columnDef.header}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                  <TableBody>
-                    {submissionTable.getRowModel().rows?.length ? (
-                      submissionTable.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          className="border-b border-[#3a4556] hover:bg-[#2a3344]"
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {typeof cell.column.columnDef.cell === 'function'
-                                ? cell.column.columnDef.cell(cell.getContext())
-                                : cell.getValue()}
-                            </TableCell>
+              {isLoadingSubmissions ? (
+                <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
+                  <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+                    <p className="text-gray-400">Loading submissions...</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
+                    <Table>
+                      <TableHeader>
+                        {submissionTable
+                          .getHeaderGroups()
+                          .map((headerGroup) => (
+                            <TableRow
+                              key={headerGroup.id}
+                              className="border-b border-[#3a4556] hover:bg-transparent"
+                            >
+                              {headerGroup.headers.map((header) => (
+                                <TableHead
+                                  key={header.id}
+                                  className="font-medium text-gray-400"
+                                  style={{ width: header.getSize() }}
+                                >
+                                  {header.isPlaceholder
+                                    ? null
+                                    : typeof header.column.columnDef.header ===
+                                        'function'
+                                      ? header.column.columnDef.header(
+                                          header.getContext()
+                                        )
+                                      : header.column.columnDef.header}
+                                </TableHead>
+                              ))}
+                            </TableRow>
                           ))}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={submissionTable.getAllColumns().length}
-                          className="h-24 text-center text-gray-400"
-                        >
-                          No submissions yet.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-              <ContestPagination table={submissionTable} />
-              <div className="mt-4 text-sm text-gray-400">
-                Total: {submissions?.total || 0} submissions
-              </div>
+                      </TableHeader>
+                      <TableBody>
+                        {submissionTable.getRowModel().rows?.length ? (
+                          submissionTable.getRowModel().rows.map((row) => (
+                            <TableRow
+                              key={row.id}
+                              className="border-b border-[#3a4556] hover:bg-[#2a3344]"
+                            >
+                              {row.getVisibleCells().map((cell) => (
+                                <TableCell key={cell.id}>
+                                  {typeof cell.column.columnDef.cell ===
+                                  'function'
+                                    ? cell.column.columnDef.cell(
+                                        cell.getContext()
+                                      )
+                                    : cell.getValue()}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell
+                              colSpan={submissionTable.getAllColumns().length}
+                              className="h-24 text-center text-gray-400"
+                            >
+                              No submissions yet.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <ContestPagination table={submissionTable} />
+                  <div className="mt-4 text-sm text-gray-400">
+                    Total: {submissions?.total || 0} submissions
+                  </div>
+                </>
+              )}
             </TabsContent>
+
+            {/* Invitations Tab - Only for private contests */}
+            {!contest.isPublic && (
+              <TabsContent value="invitations" className="mt-4">
+                <div className="rounded-lg border border-[#3a4556] bg-[#252d3d] p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-100">
+                      Invited Users ({invitations.length})
+                    </h2>
+                    <Button
+                      onClick={() => setIsInviteModalOpen(true)}
+                      size="sm"
+                      className="bg-cyan-500 text-white hover:bg-cyan-600"
+                    >
+                      <UserPlus className="mr-1 h-4 w-4" />
+                      Invite Users
+                    </Button>
+                  </div>
+
+                  {isLoadingInvitations ? (
+                    <div className="flex h-32 items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+                    </div>
+                  ) : !Array.isArray(invitations) ||
+                    invitations.length === 0 ? (
+                    <div className="flex h-32 flex-col items-center justify-center text-gray-400">
+                      <UserPlus className="mb-2 h-8 w-8" />
+                      <p>No users have been invited yet.</p>
+                      <p className="text-sm">
+                        Click &quot;Invite Users&quot; to add participants.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="overflow-hidden rounded-lg border border-[#3a4556]">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="border-b border-[#3a4556] hover:bg-transparent">
+                            <TableHead className="font-medium text-gray-400">
+                              Email
+                            </TableHead>
+                            <TableHead className="font-medium text-gray-400">
+                              Name
+                            </TableHead>
+                            <TableHead className="text-center font-medium text-gray-400">
+                              Actions
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {invitations.map((invitation) => (
+                            <TableRow
+                              key={invitation.id}
+                              className="border-b border-[#3a4556] hover:bg-[#2a3344]"
+                            >
+                              <TableCell className="text-gray-200">
+                                {invitation.user.email}
+                              </TableCell>
+                              <TableCell className="text-gray-400">
+                                {invitation.user.name || '-'}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleRemoveInvitation(
+                                          invitation.userId
+                                        )
+                                      }
+                                      disabled={isRemovingInvitation}
+                                      className="h-8 w-8 p-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent
+                                    side="top"
+                                    className="border-[#3a4556] bg-[#252d3d] text-gray-200"
+                                  >
+                                    Remove invitation
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
 
           {/* Problem Modals */}
@@ -914,6 +1162,16 @@ export default function AdminContestDetailPage({
             contestId={id}
             problem={selectedProblem}
           />
+
+          {/* Invite Users Modal - Only for private contests */}
+          {!contest.isPublic && (
+            <InviteUsersModal
+              open={isInviteModalOpen}
+              onOpenChange={setIsInviteModalOpen}
+              contestId={id}
+              existingInvitedUserIds={existingInvitedUserIds}
+            />
+          )}
         </div>
       </div>
     </div>

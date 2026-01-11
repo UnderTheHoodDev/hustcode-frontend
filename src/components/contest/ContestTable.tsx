@@ -13,12 +13,14 @@ interface ContestTableProps {
   table: TableType<any>;
   onRowClick: (contestId: string, status: ContestStatus) => void;
   isAdmin?: boolean;
+  isProblemTable?: boolean; // When true, don't apply contest status logic
 }
 
 const ContestTable = ({
   table,
   onRowClick,
   isAdmin = false,
+  isProblemTable = false,
 }: ContestTableProps) => {
   return (
     <div className="overflow-hidden rounded-lg border border-[#3a4556] bg-[#252d3d]">
@@ -50,7 +52,8 @@ const ContestTable = ({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               const isUpcoming = row.original.status === 'UPCOMING';
-              const shouldDisable = isUpcoming && !isAdmin;
+              // Only disable rows for contest list (not problem tables) and for upcoming contests (not admin)
+              const shouldDisable = !isProblemTable && isUpcoming && !isAdmin;
               return (
                 <TableRow
                   key={row.id}

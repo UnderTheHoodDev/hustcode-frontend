@@ -5,23 +5,33 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { useAtomValue } from 'jotai';
 import {
   ArrowLeft,
   Calendar,
+  Check,
   Clock,
   Loader2,
+  Minus,
   Trophy,
   Users,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 
+import { userInfoAtom } from '@/atoms';
+import ContestLeaderboard from '@/components/contest/ContestLeaderboard';
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useContest from '@/lib/api/contest/queries/use-contest';
+import useContestLeaderboard from '@/lib/api/contest/queries/use-contest-leaderboard';
+import useUserContestScore, {
+  ProblemSolveStatus,
+} from '@/lib/api/submission/queries/use-user-contest-score';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -59,8 +69,13 @@ const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   );
 };
 
-const formatDateTime = (dateStr: string) => {
+const formatDateTime = (dateStr: string | Date | null | undefined) => {
+  if (!dateStr) return '-';
   const date = new Date(dateStr);
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    return '-';
+  }
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -91,6 +106,11 @@ export default function ContestDetailPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const userInfo = useAtomValue(userInfoAtom);
+
+  // Leaderboard pagination state
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const leaderboardPageSize = 20;
 
   // Fetch contest detail from API
   const { data, isLoading, isError, error } = useContest(id);
@@ -127,12 +147,100 @@ export default function ContestDetailPage({
     } as ContestDetail;
   }, [data]);
 
-  const handleProblemClick = (problemId: string, _status?: ContestStatus) => {
+  // Prepare contest problems for score calculation
+  const contestProblemsForScore = React.useMemo(() => {
+    return (
+      contest?.problems.map((p) => ({
+        id: p.id,
+        points: p.points,
+      })) || []
+    );
+  }, [contest]);
+
+  // Fetch leaderboard from API
+  const { data: leaderboardResponse, isLoading: isLeaderboardLoading } =
+    useContestLeaderboard({
+      contestId: id,
+      page: leaderboardPage,
+      pageSize: leaderboardPageSize,
+      enabled: !!id,
+    });
+
+  // Transform leaderboard data for the component
+  const leaderboardData = React.useMemo(() => {
+    if (!leaderboardResponse?.data) return [];
+    return leaderboardResponse.data;
+  }, [leaderboardResponse?.data]);
+
+  const leaderboardTotalPages = leaderboardResponse?.totalPages || 1;
+
+  // Contest problems for leaderboard display
+  const contestProblemsForLeaderboard = React.useMemo(() => {
+    return (
+      contest?.problems.map((p) => ({
+        id: p.id,
+        order: p.order,
+        points: p.points,
+      })) || []
+    );
+  }, [contest?.problems]);
+
+  // Fetch user's contest score
+  const { data: userScore, isLoading: isScoreLoading } = useUserContestScore({
+    userId: userInfo?.id,
+    contestProblems: contestProblemsForScore,
+    contestId: id,
+    enabled: !!userInfo?.id && !!contest,
+  });
+
+  const handleProblemClick = (problemId: string) => {
     // Navigate to contest problem page instead of regular problem page
     router.push(`/contests/${id}/problems/${problemId}`);
   };
 
+  // Helper to get problem status
+  const getProblemStatus = (problemId: string): ProblemSolveStatus => {
+    return userScore?.problemResults.get(problemId)?.status || 'not_attempted';
+  };
+
+  // Status badge component
+  const StatusBadge = ({ status }: { status: ProblemSolveStatus }) => {
+    if (status === 'solved') {
+      return (
+        <div className="flex items-center justify-center">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
+            <Check className="h-4 w-4 text-green-500" />
+          </div>
+        </div>
+      );
+    }
+    if (status === 'attempted') {
+      return (
+        <div className="flex items-center justify-center">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-yellow-500/20">
+            <X className="h-4 w-4 text-yellow-500" />
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center justify-center">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-500/20">
+          <Minus className="h-4 w-4 text-gray-500" />
+        </div>
+      </div>
+    );
+  };
+
   const problemColumns: ColumnDef<ContestProblem>[] = [
+    {
+      id: 'status',
+      header: () => <div className="text-center">Status</div>,
+      cell: ({ row }) => (
+        <StatusBadge status={getProblemStatus(row.original.id)} />
+      ),
+      size: 80,
+    },
     {
       accessorKey: 'order',
       header: '#',
@@ -282,10 +390,44 @@ export default function ContestDetailPage({
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
-                    <span>{contest._count?.participants || 0} participants</span>
+                    <span>
+                      {contest._count?.participants || 0} participants
+                    </span>
                   </div>
                 </div>
               </div>
+
+              {/* User Score Card */}
+              {userInfo?.id && (
+                <div className="ml-6 flex-shrink-0">
+                  <div className="rounded-xl border border-[#3a4556] bg-gradient-to-br from-[#1a2332] to-[#252d3d] p-5 shadow-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500/10">
+                        <Trophy className="h-6 w-6 text-cyan-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium tracking-wider text-gray-400 uppercase">
+                          Your Score
+                        </p>
+                        {isScoreLoading ? (
+                          <Loader2 className="mt-1 h-5 w-5 animate-spin text-cyan-400" />
+                        ) : (
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-bold text-cyan-400">
+                              {userScore?.totalPoints || 0}
+                            </span>
+                            <span className="text-sm text-gray-500">pts</span>
+                            <span className="ml-2 rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs font-medium text-cyan-400">
+                              {userScore?.solvedCount || 0}/
+                              {contest.problems.length} solved
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -311,6 +453,7 @@ export default function ContestDetailPage({
                 <ContestTable
                   table={problemTable}
                   onRowClick={handleProblemClick}
+                  isProblemTable
                 />
               ) : (
                 <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
@@ -326,15 +469,45 @@ export default function ContestDetailPage({
             </TabsContent>
 
             <TabsContent value="leaderboard" className="mt-4">
-              <div className="flex h-64 items-center justify-center rounded-lg border border-[#3a4556] bg-[#252d3d]">
-                <div className="text-center text-gray-400">
-                  <Trophy className="mx-auto mb-2 h-12 w-12 text-gray-600" />
-                  <p>Leaderboard coming soon</p>
-                  <p className="mt-1 text-sm">
-                    This feature is under development
-                  </p>
+              <ContestLeaderboard
+                leaderboardData={leaderboardData}
+                contestProblems={contestProblemsForLeaderboard}
+                isLoading={isLeaderboardLoading}
+              />
+              {/* Leaderboard Pagination */}
+              {leaderboardTotalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="text-sm text-gray-400">
+                    Page {leaderboardPage} of {leaderboardTotalPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setLeaderboardPage((p) => Math.max(1, p - 1))
+                      }
+                      disabled={leaderboardPage === 1}
+                      className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setLeaderboardPage((p) =>
+                          Math.min(leaderboardTotalPages, p + 1)
+                        )
+                      }
+                      disabled={leaderboardPage >= leaderboardTotalPages}
+                      className="border-[#3a4556] bg-transparent text-gray-300 hover:bg-[#252d3d]"
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
