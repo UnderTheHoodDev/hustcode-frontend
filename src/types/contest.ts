@@ -1,13 +1,13 @@
 // Contest types
-type ContestStatus = 'UPCOMING' | 'RUNNING' | 'FINISHED';
+export type ContestStatus = 'UPCOMING' | 'RUNNING' | 'FINISHED';
 
-type ContestAuthor = {
+export type ContestAuthor = {
   id: string;
   name: string | null;
   email: string;
 };
 
-type ContestProblem = {
+export type ContestProblem = {
   id: string;
   title: string;
   description: string;
@@ -24,7 +24,7 @@ type ContestProblem = {
 };
 
 // Detailed contest problem with testcases and constraints
-type ContestProblemDetail = ContestProblem & {
+export type ContestProblemDetail = ContestProblem & {
   taskDescription: string;
   inputDescription: string;
   outputDescription: string;
@@ -41,7 +41,7 @@ type ContestProblemDetail = ContestProblem & {
   } | null;
 };
 
-type Contest = {
+export type Contest = {
   id: string;
   title: string;
   description: string;
@@ -55,15 +55,16 @@ type Contest = {
   _count?: {
     problems: number;
     participants: number;
+    invitations?: number;
   };
 };
 
-type ContestDetail = Contest & {
+export type ContestDetail = Contest & {
   problems: ContestProblem[];
 };
 
 // Contest detail with full problem information including testcases
-type ContestDetailWithProblems = Contest & {
+export type ContestDetailWithProblems = Contest & {
   problems: Array<{
     order: number;
     points: number;
@@ -71,7 +72,7 @@ type ContestDetailWithProblems = Contest & {
   }>;
 };
 
-type ContestsResponse = {
+export type ContestsResponse = {
   data: Contest[];
   total: number;
   page: number;
@@ -79,7 +80,7 @@ type ContestsResponse = {
   totalPages: number;
 };
 
-type ContestFilterOptions = {
+export type ContestFilterOptions = {
   page?: number;
   pageSize?: number;
   status?: ContestStatus;
@@ -87,7 +88,7 @@ type ContestFilterOptions = {
 };
 
 // Submission types for contest
-type ContestSubmission = {
+export type ContestSubmission = {
   id: string;
   code: string;
   status:
@@ -119,7 +120,7 @@ type ContestSubmission = {
   };
 };
 
-type ContestSubmissionsResponse = {
+export type ContestSubmissionsResponse = {
   data: ContestSubmission[];
   total: number;
   page: number;
@@ -128,7 +129,7 @@ type ContestSubmissionsResponse = {
 };
 
 // Leaderboard types (for future use)
-type LeaderboardEntry = {
+export type LeaderboardEntry = {
   rank: number;
   userId: string;
   userName: string | null;
@@ -145,7 +146,7 @@ type LeaderboardEntry = {
   }>;
 };
 
-type ContestLeaderboard = {
+export type ContestLeaderboard = {
   data: LeaderboardEntry[];
   total: number;
   page: number;

@@ -15,15 +15,24 @@ const useRemoveInvitation = () => {
     mutationFn: ({ contestId, userId }: RemoveInvitationPayload) =>
       removeContestInvitation(contestId, userId),
     onError: (error: any) => {
-      console.log('Remove invitation error:', error);
+      console.error('Remove invitation error:', error);
       const message =
         error?.response?.data?.message ||
         'Failed to remove invitation. Please try again.';
       toastError(message);
     },
     onSuccess: (_, variables) => {
+      // Invalidate contest invitations list
       queryClient.invalidateQueries({
         queryKey: ['contest-invitations', variables.contestId],
+      });
+      // Invalidate contest detail to update participant count
+      queryClient.invalidateQueries({
+        queryKey: ['contests', variables.contestId],
+      });
+      // Invalidate contests list to update participant count on list page
+      queryClient.invalidateQueries({
+        queryKey: ['contests'],
       });
       toastSuccess('Invitation removed successfully!');
     },

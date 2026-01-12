@@ -35,6 +35,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import useUpdateContestProblem from '@/lib/api/contest/mutations/use-update-contest-problem';
 import useProblemDetailQuery from '@/lib/api/problem/queries/use-problem-detail';
+import type { ContestProblem } from '@/types/contest';
 
 const testcaseSchema = z.object({
   input: z.string().min(1, 'Input is required'),
@@ -45,16 +46,37 @@ const testcaseSchema = z.object({
 const updateContestProblemSchema = z.object({
   order: z.coerce.number().min(1, 'Order must be at least 1').optional(),
   points: z.coerce.number().min(1, 'Points must be at least 1').optional(),
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long').optional(),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(200, 'Title is too long')
+    .optional(),
   description: z.string().min(1, 'Description is required').optional(),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional(),
   taskDescription: z.string().min(1, 'Task description is required').optional(),
-  inputDescription: z.string().min(1, 'Input description is required').optional(),
-  outputDescription: z.string().min(1, 'Output description is required').optional(),
+  inputDescription: z
+    .string()
+    .min(1, 'Input description is required')
+    .optional(),
+  outputDescription: z
+    .string()
+    .min(1, 'Output description is required')
+    .optional(),
   tags: z.string().optional(),
-  timeLimit: z.coerce.number().min(100, 'Min 100ms').max(10000, 'Max 10000ms').optional(),
-  memoryLimit: z.coerce.number().min(16, 'Min 16MB').max(512, 'Max 512MB').optional(),
-  testcases: z.array(testcaseSchema).min(1, 'At least one testcase is required').optional(),
+  timeLimit: z.coerce
+    .number()
+    .min(100, 'Min 100ms')
+    .max(10000, 'Max 10000ms')
+    .optional(),
+  memoryLimit: z.coerce
+    .number()
+    .min(16, 'Min 16MB')
+    .max(512, 'Max 512MB')
+    .optional(),
+  testcases: z
+    .array(testcaseSchema)
+    .min(1, 'At least one testcase is required')
+    .optional(),
 });
 
 type UpdateContestProblemFormData = z.infer<typeof updateContestProblemSchema>;
@@ -77,10 +99,8 @@ const EditContestProblemModal = ({
   // Try to fetch full problem detail if problem has an id
   // Note: Contest problems might not have a separate detail endpoint
   // So we'll use the basic info from the problem prop
-  const {
-    data: problemDetailResponse,
-    isLoading: isLoadingDetail,
-  } = useProblemDetailQuery(problem?.id || '');
+  const { data: problemDetailResponse, isLoading: isLoadingDetail } =
+    useProblemDetailQuery(problem?.id || '');
 
   const problemDetail = problemDetailResponse?.data as any;
 
@@ -118,12 +138,11 @@ const EditContestProblemModal = ({
     if (problem && open) {
       // If we have full problem detail, use it
       if (problemDetail) {
-        const testcases =
-          problemDetail.testcases?.map((tc: any) => ({
-            input: tc.input,
-            output: tc.output,
-            isSample: tc.isSample,
-          })) || [{ input: '', output: '', isSample: true }];
+        const testcases = problemDetail.testcases?.map((tc: any) => ({
+          input: tc.input,
+          output: tc.output,
+          isSample: tc.isSample,
+        })) || [{ input: '', output: '', isSample: true }];
 
         form.reset({
           order: problem.order,
@@ -134,7 +153,9 @@ const EditContestProblemModal = ({
           taskDescription: problemDetail.taskDescription || '',
           inputDescription: problemDetail.inputDescription || '',
           outputDescription: problemDetail.outputDescription || '',
-          tags: problemDetail.tags?.map((t: any) => t.name).join(', ') || problem.tags.map((t) => t.name).join(', '),
+          tags:
+            problemDetail.tags?.map((t: any) => t.name).join(', ') ||
+            problem.tags.map((t) => t.name).join(', '),
           timeLimit: problemDetail.problemConstrain?.timeLimit || 2000,
           memoryLimit: problemDetail.problemConstrain?.memoryLimit || 256,
           testcases: testcases,
@@ -165,7 +186,11 @@ const EditContestProblemModal = ({
     if (!problem) return;
 
     // Check if order changed and conflicts with existing orders
-    if (data.order && data.order !== problem.order && existingOrders.includes(data.order)) {
+    if (
+      data.order &&
+      data.order !== problem.order &&
+      existingOrders.includes(data.order)
+    ) {
       form.setError('order', {
         type: 'manual',
         message: 'This order is already taken. Please choose another.',
@@ -182,7 +207,8 @@ const EditContestProblemModal = ({
     if (data.difficulty) payload.difficulty = data.difficulty;
     if (data.taskDescription) payload.taskDescription = data.taskDescription;
     if (data.inputDescription) payload.inputDescription = data.inputDescription;
-    if (data.outputDescription) payload.outputDescription = data.outputDescription;
+    if (data.outputDescription)
+      payload.outputDescription = data.outputDescription;
     if (data.tags) payload.tags = data.tags.split(',').map((tag) => tag.trim());
     if (data.testcases) payload.testcases = data.testcases;
     if (data.timeLimit !== undefined || data.memoryLimit !== undefined) {
@@ -213,7 +239,8 @@ const EditContestProblemModal = ({
             Edit Contest Problem
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Update the problem details. Leave fields empty to keep current values.
+            Update the problem details. Leave fields empty to keep current
+            values.
           </DialogDescription>
         </DialogHeader>
 
@@ -292,7 +319,9 @@ const EditContestProblemModal = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={labelClassName}>Description</FormLabel>
+                    <FormLabel className={labelClassName}>
+                      Description
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Brief description of the problem"
@@ -313,7 +342,9 @@ const EditContestProblemModal = ({
                   name="difficulty"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClassName}>Difficulty</FormLabel>
+                      <FormLabel className={labelClassName}>
+                        Difficulty
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
@@ -328,7 +359,10 @@ const EditContestProblemModal = ({
                           <SelectItem value="EASY" className="text-green-400">
                             Easy
                           </SelectItem>
-                          <SelectItem value="MEDIUM" className="text-yellow-400">
+                          <SelectItem
+                            value="MEDIUM"
+                            className="text-yellow-400"
+                          >
                             Medium
                           </SelectItem>
                           <SelectItem value="HARD" className="text-red-400">
@@ -366,7 +400,9 @@ const EditContestProblemModal = ({
                 name="taskDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={labelClassName}>Task Description</FormLabel>
+                    <FormLabel className={labelClassName}>
+                      Task Description
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Detailed task description..."
@@ -387,7 +423,9 @@ const EditContestProblemModal = ({
                   name="inputDescription"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClassName}>Input Description</FormLabel>
+                      <FormLabel className={labelClassName}>
+                        Input Description
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Describe the input format..."
@@ -406,7 +444,9 @@ const EditContestProblemModal = ({
                   name="outputDescription"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClassName}>Output Description</FormLabel>
+                      <FormLabel className={labelClassName}>
+                        Output Description
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Describe the output format..."
@@ -423,14 +463,18 @@ const EditContestProblemModal = ({
 
               {/* Constraints */}
               <div className="rounded-lg border border-[#3a4556] bg-[#252d3d]/50 p-4">
-                <h4 className="mb-3 text-sm font-medium text-gray-300">Constraints</h4>
+                <h4 className="mb-3 text-sm font-medium text-gray-300">
+                  Constraints
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="timeLimit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={labelClassName}>Time Limit (ms)</FormLabel>
+                        <FormLabel className={labelClassName}>
+                          Time Limit (ms)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -450,7 +494,9 @@ const EditContestProblemModal = ({
                     name="memoryLimit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={labelClassName}>Memory Limit (MB)</FormLabel>
+                        <FormLabel className={labelClassName}>
+                          Memory Limit (MB)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -477,7 +523,9 @@ const EditContestProblemModal = ({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => append({ input: '', output: '', isSample: false })}
+                    onClick={() =>
+                      append({ input: '', output: '', isSample: false })
+                    }
                     className="border-[#3a4556] bg-transparent text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
                   >
                     <Plus className="mr-1 h-4 w-4" />
@@ -523,7 +571,9 @@ const EditContestProblemModal = ({
                           name={`testcases.${index}.input`}
                           render={({ field: inputField }) => (
                             <FormItem>
-                              <FormLabel className="text-xs text-gray-400">Input</FormLabel>
+                              <FormLabel className="text-xs text-gray-400">
+                                Input
+                              </FormLabel>
                               <FormControl>
                                 <Textarea
                                   placeholder="Input data..."
@@ -571,13 +621,13 @@ const EditContestProblemModal = ({
                 >
                   Cancel
                 </Button>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="bg-cyan-500 text-white hover:bg-cyan-600"
-              >
-                {isPending ? 'Saving...' : 'Save Changes'}
-              </Button>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="bg-cyan-500 text-white hover:bg-cyan-600"
+                >
+                  {isPending ? 'Saving...' : 'Save Changes'}
+                </Button>
               </DialogFooter>
             </form>
           </Form>

@@ -31,6 +31,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import useContests from '@/lib/api/contest/queries/use-contests';
+import type { Contest, ContestStatus, ContestsResponse } from '@/types/contest';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -164,15 +165,22 @@ export default function AdminContestList() {
     {
       accessorKey: '_count',
       header: () => <div className="text-center">Info</div>,
-      cell: ({ row }) => (
-        <div className="flex flex-col items-center gap-1 text-sm text-gray-400">
-          <span>{row.original._count?.problems || 0} problems</span>
-          <div className="flex items-center gap-1">
-            <Users className="h-3 w-3" />
-            <span>{row.original._count?.participants || 0}</span>
+      cell: ({ row }) => {
+        // Support both participants and invitations count from backend
+        const participantCount =
+          row.original._count?.participants ??
+          row.original._count?.invitations ??
+          0;
+        return (
+          <div className="flex flex-col items-center gap-1 text-sm text-gray-400">
+            <span>{row.original._count?.problems || 0} problems</span>
+            <div className="flex items-center gap-1">
+              <Users className="h-3 w-3" />
+              <span>{participantCount}</span>
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
       size: 100,
     },
     {

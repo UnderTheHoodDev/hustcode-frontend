@@ -11,11 +11,11 @@ const useCreateContestProblem = () => {
     mutationFn: (payload: CreateContestProblemDto) =>
       createContestProblem(payload),
     onError: (error) => {
-      console.log('Create contest problem error:', error);
+      console.error('Create contest problem error:', error);
       toastError('Failed to create contest problem. Please check your input.');
     },
     onSuccess: (response) => {
-      console.log('Create contest problem successful:', response);
+      console.warn('Create contest problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['contests'] });
       queryClient.invalidateQueries({ queryKey: ['admin-contests'] });
       // Invalidate contest detail query

@@ -822,6 +822,27 @@ export const UpdateProblemDtoStatusEnum = {
 
 export type UpdateProblemDtoStatusEnum = typeof UpdateProblemDtoStatusEnum[keyof typeof UpdateProblemDtoStatusEnum];
 
+/**
+ * 
+ * @export
+ * @interface UpdateUserRoleDto
+ */
+export interface UpdateUserRoleDto {
+    /**
+     * New role for the user
+     * @type {string}
+     * @memberof UpdateUserRoleDto
+     */
+    'role': UpdateUserRoleDtoRoleEnum;
+}
+
+export const UpdateUserRoleDtoRoleEnum = {
+    User: 'USER',
+    Admin: 'ADMIN'
+} as const;
+
+export type UpdateUserRoleDtoRoleEnum = typeof UpdateUserRoleDtoRoleEnum[keyof typeof UpdateUserRoleDtoRoleEnum];
+
 
 /**
  * AppApi - axios parameter creator
@@ -3509,6 +3530,46 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerUpdateUserRole: async (id: string, updateUserRoleDto: UpdateUserRoleDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('userControllerUpdateUserRole', 'id', id)
+            // verify required parameter 'updateUserRoleDto' is not null or undefined
+            assertParamExists('userControllerUpdateUserRole', 'updateUserRoleDto', updateUserRoleDto)
+            const localVarPath = `/user/{id}/role`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateUserRoleDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -3561,6 +3622,20 @@ export const UsersApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerGetUserProfile']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerUpdateUserRole(id, updateUserRoleDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerUpdateUserRole']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -3603,6 +3678,17 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          */
         userControllerGetUserProfile(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.userControllerGetUserProfile(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.userControllerUpdateUserRole(id, updateUserRoleDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3651,6 +3737,19 @@ export class UsersApi extends BaseAPI {
      */
     public userControllerGetUserProfile(id: string, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).userControllerGetUserProfile(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update the role of a specific user (Admin only)
+     * @summary Update user role
+     * @param {string} id User ID to update
+     * @param {UpdateUserRoleDto} updateUserRoleDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerUpdateUserRole(id, updateUserRoleDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -15,6 +15,7 @@ import ContestPagination from '@/components/contest/ContestPagination';
 import ContestTable from '@/components/contest/ContestTable';
 import { Badge } from '@/components/ui/badge';
 import useContests from '@/lib/api/contest/queries/use-contests';
+import type { Contest, ContestStatus } from '@/types/contest';
 import { toastWarning } from '@/utils/toaster';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
@@ -126,17 +127,24 @@ export default function ContestList() {
     {
       accessorKey: '_count',
       header: () => <div className="text-center">Info</div>,
-      cell: ({ row }) => (
-        <div className="flex flex-col items-center gap-1 text-sm text-gray-400">
-          <div className="flex items-center gap-1">
-            <span>{row.original._count?.problems || 0} problems</span>
+      cell: ({ row }) => {
+        // Support both participants and invitations count from backend
+        const participantCount =
+          row.original._count?.participants ??
+          row.original._count?.invitations ??
+          0;
+        return (
+          <div className="flex flex-col items-center gap-1 text-sm text-gray-400">
+            <div className="flex items-center gap-1">
+              <span>{row.original._count?.problems || 0} problems</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Users className="h-3 w-3" />
+              <span>{participantCount}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Users className="h-3 w-3" />
-            <span>{row.original._count?.participants || 0}</span>
-          </div>
-        </div>
-      ),
+        );
+      },
       size: 100,
     },
     {

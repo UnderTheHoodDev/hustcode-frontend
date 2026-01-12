@@ -10,11 +10,11 @@ const useCreateProblem = () => {
   const mutation = useMutation({
     mutationFn: (payload: CreateProblemDto) => createProblem(payload),
     onError: (error) => {
-      console.log('Create problem error:', error);
+      console.error('Create problem error:', error);
       toastError('Failed to create problem. Please check your input.');
     },
     onSuccess: (response) => {
-      console.log('Create problem successful:', response);
+      console.warn('Create problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['problems'] });
       queryClient.invalidateQueries({ queryKey: ['admin-problems'] });
       toastSuccess('Problem created successfully!');

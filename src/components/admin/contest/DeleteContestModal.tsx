@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import useDeleteContest from '@/lib/api/contest/mutations/use-delete-contest';
+import type { Contest } from '@/types/contest';
 
 interface DeleteContestModalProps {
   open: boolean;

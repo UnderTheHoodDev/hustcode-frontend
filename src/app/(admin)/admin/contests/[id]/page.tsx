@@ -72,6 +72,11 @@ import useContest from '@/lib/api/contest/queries/use-contest';
 import useContestInvitations from '@/lib/api/contest/queries/use-contest-invitations';
 import useContestLeaderboard from '@/lib/api/contest/queries/use-contest-leaderboard';
 import useContestSubmissions from '@/lib/api/submission/queries/use-contest-submissions';
+import type {
+  ContestDetail,
+  ContestProblem,
+  ContestStatus,
+} from '@/types/contest';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -338,7 +343,8 @@ export default function AdminContestDetailPage({
         isPublic: contest.isPublic ? 'true' : 'false',
       });
     }
-  }, [contest, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contest?.id, contest?.isPublic, contest?.status]);
 
   const { mutate: updateContest, isPending: isUpdating } = useUpdateContest(id);
 
@@ -563,24 +569,22 @@ export default function AdminContestDetailPage({
         size: 180,
       },
       {
-        accessorKey: 'executionTime',
+        accessorKey: 'consumedTime',
         header: () => <div className="text-center">Time</div>,
         cell: ({ row }) => (
           <div className="text-center text-sm text-gray-400">
-            {row.original.executionTime
-              ? `${row.original.executionTime}ms`
-              : '-'}
+            {row.original.consumedTime ? `${row.original.consumedTime}ms` : '-'}
           </div>
         ),
         size: 80,
       },
       {
-        accessorKey: 'memoryUsed',
+        accessorKey: 'consumedMemory',
         header: () => <div className="text-center">Memory</div>,
         cell: ({ row }) => (
           <div className="text-center text-sm text-gray-400">
-            {row.original.memoryUsed
-              ? `${(row.original.memoryUsed / 1024).toFixed(1)}MB`
+            {row.original.consumedMemory
+              ? `${(row.original.consumedMemory / 1024).toFixed(1)}MB`
               : '-'}
           </div>
         ),
@@ -721,7 +725,7 @@ export default function AdminContestDetailPage({
                   <h2 className="mb-4 text-lg font-semibold text-gray-100">
                     Contest Information
                   </h2>
-                  <Form {...form}>
+                  <Form {...form} key={contest.id}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
                       className="space-y-4"
@@ -861,10 +865,11 @@ export default function AdminContestDetailPage({
                               <Select
                                 onValueChange={field.onChange}
                                 value={field.value}
+                                defaultValue={field.value}
                               >
                                 <FormControl>
                                   <SelectTrigger className={inputClassName}>
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select visibility" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="border-[#3a4556] bg-[#252d3d]">

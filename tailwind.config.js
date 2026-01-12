@@ -1,7 +1,9 @@
 import animate from 'tailwindcss-animate';
 
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   content: ['./src/**/*.{ts,tsx}'],
   plugins: [animate],
 };
+
+export default config;

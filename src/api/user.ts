@@ -26,7 +26,7 @@ axiosInstanceWithAuth.interceptors.response.use(
       try {
         await authConnect.authControllerRefresh();
         return axiosInstanceWithAuth(originalRequest);
-      } catch (error) {
+      } catch {
         const isUserApiCall =
           originalRequest.url?.includes('/user') ||
           originalRequest.url?.includes('/api/user');
@@ -48,6 +48,9 @@ export const userConnect = new UsersApi(
   undefined,
   axiosInstanceWithAuth
 );
+
+// Alias for consistency with other APIs
+export const userConnectWithAuth = userConnect;
 
 export const problemConnectWithAuth = new ProblemApi(
   {

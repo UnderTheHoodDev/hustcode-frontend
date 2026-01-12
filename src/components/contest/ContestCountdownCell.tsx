@@ -3,6 +3,8 @@
 import { Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import type { ContestStatus } from '@/types/contest';
+
 interface ContestCountdownCellProps {
   startTime: string;
   endTime: string;

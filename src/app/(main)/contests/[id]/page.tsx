@@ -32,6 +32,11 @@ import useContestLeaderboard from '@/lib/api/contest/queries/use-contest-leaderb
 import useUserContestScore, {
   ProblemSolveStatus,
 } from '@/lib/api/submission/queries/use-user-contest-score';
+import type {
+  ContestDetail,
+  ContestProblem,
+  ContestStatus,
+} from '@/types/contest';
 
 const ContestStatusBadge = ({ status }: { status: ContestStatus }) => {
   const statusConfig: Record<ContestStatus, { color: string; label: string }> =
@@ -391,7 +396,10 @@ export default function ContestDetailPage({
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     <span>
-                      {contest._count?.participants || 0} participants
+                      {contest._count?.participants ??
+                        contest._count?.invitations ??
+                        0}{' '}
+                      participants
                     </span>
                   </div>
                 </div>

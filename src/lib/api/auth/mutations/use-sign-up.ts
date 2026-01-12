@@ -12,11 +12,11 @@ const useSignUpMutation = () => {
   const mutation = useMutation({
     mutationFn: (payload: SignupDto) => signUp(payload),
     onError: (error) => {
-      console.log('Sign up error:', error);
+      console.error('Sign up error:', error);
       toastError('Sign up failed. Please try again.');
     },
     onSuccess: (response) => {
-      console.log('Sign up successful:', response);
+      console.warn('Sign up successful:', response);
       router.push('/');
       queryClient.invalidateQueries({ queryKey: ['user_status'] });
       toastSuccess('Sign up successful!');

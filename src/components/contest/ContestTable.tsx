@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import type { ContestStatus } from '@/types/contest';
 
 interface ContestTableProps {
   table: TableType<any>;

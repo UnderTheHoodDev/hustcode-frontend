@@ -196,6 +196,51 @@
         "tags": ["users"]
       }
     },
+    "/user/{id}/role": {
+      "patch": {
+        "description": "Update the role of a specific user (Admin only)",
+        "operationId": "UserController_updateUserRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User role updated successfully"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update user role",
+        "tags": ["users"]
+      }
+    },
     "/problem": {
       "post": {
         "operationId": "ProblemController_create",
@@ -1194,6 +1239,18 @@
           }
         },
         "required": ["email", "password"]
+      },
+      "UpdateUserRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "example": "ADMIN",
+            "enum": ["USER", "ADMIN"],
+            "description": "New role for the user"
+          }
+        },
+        "required": ["role"]
       },
       "CreateTestcaseDto": {
         "type": "object",

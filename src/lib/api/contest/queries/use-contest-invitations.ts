@@ -6,7 +6,7 @@ export interface ContestInvitation {
   id: string;
   contestId: string;
   userId: string;
-  createdAt: string;
+  invitedAt: string;
   user: {
     id: string;
     email: string;
@@ -14,22 +14,31 @@ export interface ContestInvitation {
   };
 }
 
-interface InvitationsResponse {
-  data: ContestInvitation[];
-}
-
 const useContestInvitations = (contestId: string, enabled: boolean = true) => {
   return useQuery<ContestInvitation[]>({
     queryKey: ['contest-invitations', contestId],
     queryFn: async () => {
       const response = await getContestInvitations(contestId);
-      // Handle both array response and { data: [...] } response
+
+      // API returns { contestId, totalInvited, invitations: [...] }
+      if (response && Array.isArray(response.invitations)) {
+        return response.invitations;
+      }
+
+      // Fallback: Direct array response
       if (Array.isArray(response)) {
         return response;
       }
+
+      // Fallback: { data: [...] } response
       if (response && Array.isArray(response.data)) {
         return response.data;
       }
+
+      console.warn(
+        '[useContestInvitations] Unexpected response format:',
+        response
+      );
       return [];
     },
     enabled: enabled && !!contestId,

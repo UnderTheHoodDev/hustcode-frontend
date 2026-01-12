@@ -59,6 +59,7 @@ export default [
       '.eslintcache',
       '*.min.js',
       'src/api/client/configuration.ts',
+      'next-env.d.ts',
     ],
   },
 ];

@@ -9,11 +9,11 @@ const useDeleteContest = () => {
   const mutation = useMutation({
     mutationFn: (contest_id: string) => deleteContest(contest_id),
     onError: (error) => {
-      console.log('Delete contest error:', error);
+      console.error('Delete contest error:', error);
       toastError('Failed to delete contest. Please check your input.');
     },
     onSuccess: (response) => {
-      console.log('Delete contest successful:', response);
+      console.warn('Delete contest successful:', response);
       queryClient.invalidateQueries({ queryKey: ['contests'] });
       queryClient.invalidateQueries({ queryKey: ['admin-contests'] });
       toastSuccess('Contest deleted successfully!');

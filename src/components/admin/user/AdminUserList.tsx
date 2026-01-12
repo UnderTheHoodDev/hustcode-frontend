@@ -7,11 +7,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Loader2, Search, Users } from 'lucide-react';
+import { Eye, Loader2, Search, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import ContestPagination from '@/components/contest/ContestPagination';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -28,6 +30,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { User } from '@/lib/api/user';
 import useUsers from '@/lib/api/user/queries/use-users';
 import { useDebounce } from '@/lib/hooks/use-debounce';
@@ -44,6 +51,7 @@ const RoleBadge = ({ role }: { role: string }) => {
 };
 
 export default function AdminUserList() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,6 +121,33 @@ export default function AdminUserList() {
         </div>
       ),
       size: 120,
+    },
+    {
+      id: 'actions',
+      header: () => <div className="text-center">Actions</div>,
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-cyan-400 hover:bg-cyan-400/10 hover:text-cyan-300"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/admin/users/${row.original.id}`);
+                }}
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="border-[#3a4556] bg-[#252d3d] text-gray-200">
+              View Details
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      ),
+      size: 80,
     },
   ];
 
@@ -259,7 +294,10 @@ export default function AdminUserList() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      className="border-b border-[#3a4556] hover:bg-[#2a3344]"
+                      className="cursor-pointer border-b border-[#3a4556] hover:bg-[#2a3344]"
+                      onClick={() =>
+                        router.push(`/admin/users/${row.original.id}`)
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>

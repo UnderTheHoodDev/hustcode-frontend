@@ -9,6 +9,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useContestSubmissions from '@/lib/api/submission/queries/use-contest-submissions';
 import useSubmissions from '@/lib/api/submission/queries/use-submissions';
 
+// Common submission display type that works for both regular and contest submissions
+type SubmissionDisplay = {
+  id: string;
+  code: string;
+  status: string;
+  submittedAt: string;
+  consumedTime?: number | null;
+  consumedMemory?: number | null;
+  language: {
+    name: string;
+    id?: string;
+    version?: string;
+  };
+};
+
 interface ProblemDescriptionProps {
   problemId: string;
   title: string;
@@ -239,7 +254,7 @@ const ProblemDescription = ({
                 </p>
               </div>
             ) : (
-              submissions.map((submission) => {
+              submissions.map((submission: SubmissionDisplay) => {
                 const status =
                   statusConfig[submission.status] || statusConfig.PENDING;
 

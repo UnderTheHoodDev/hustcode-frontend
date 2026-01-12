@@ -8,6 +8,7 @@ import {
 } from '@/api/client/api';
 import { contestConnectWithAuth } from '@/api/user';
 import { DEFAULT_API_BASE_URL } from '@/config/api';
+import type { ContestFilterOptions } from '@/types/contest';
 
 // Create axios instance with auth for custom API calls
 const axiosWithAuth = axios.create({

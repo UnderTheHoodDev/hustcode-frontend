@@ -3,7 +3,6 @@
 import { useAtomValue } from 'jotai';
 import { ArrowLeft, Loader2, Play, Send, Trophy } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { use, useCallback, useMemo, useState } from 'react';
 
 import { userInfoAtom } from '@/atoms';
@@ -28,6 +27,7 @@ import useProblemDetailQuery from '@/lib/api/problem/queries/use-problem-detail'
 import useRunCode from '@/lib/api/submission/mutations/use-run-code';
 import useSubmitProblem from '@/lib/api/submission/mutations/use-submit-problem';
 import useUserContestScore from '@/lib/api/submission/queries/use-user-contest-score';
+import type { ContestDetail } from '@/types/contest';
 import { TestCaseResult } from '@/types/submission';
 import { toastError, toastSuccess, toastWarning } from '@/utils/toaster';
 
@@ -46,7 +46,6 @@ export default function ContestProblemPage({
 }: {
   params: Promise<{ id: string; problemId: string }>;
 }) {
-  const router = useRouter();
   const { id: contestId, problemId } = use(params);
   const userInfo = useAtomValue(userInfoAtom);
 

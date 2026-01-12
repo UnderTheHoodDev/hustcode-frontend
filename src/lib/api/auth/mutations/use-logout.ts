@@ -11,11 +11,11 @@ const useLogoutMutation = () => {
   const mutation = useMutation({
     mutationFn: () => logout(),
     onError: (error) => {
-      console.log('Logout error:', error);
+      console.error('Logout error:', error);
       toastError('Logout failed. Please try again.');
     },
     onSuccess: (response) => {
-      console.log('Logout successful:', response);
+      console.warn('Logout successful:', response);
       router.push('/');
       queryClient.invalidateQueries({ queryKey: ['user_status'] });
       toastSuccess('Logout successful!');

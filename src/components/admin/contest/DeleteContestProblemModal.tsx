@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import useRemoveContestProblem from '@/lib/api/contest/mutations/use-remove-contest-problem';
+import type { ContestProblem } from '@/types/contest';
 
 interface DeleteContestProblemModalProps {
   open: boolean;
@@ -53,8 +54,8 @@ const DeleteContestProblemModal = ({
           </DialogTitle>
           <DialogDescription className="text-gray-400">
             Are you sure you want to remove this problem from the contest? This
-            action cannot be undone. The problem will be permanently deleted since
-            it's contest-only.
+            action cannot be undone. The problem will be permanently deleted
+            since it&apos;s contest-only.
           </DialogDescription>
         </DialogHeader>
 
@@ -91,4 +92,3 @@ const DeleteContestProblemModal = ({
 };
 
 export default DeleteContestProblemModal;
-
