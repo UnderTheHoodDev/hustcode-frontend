@@ -12,12 +12,19 @@ export type SubmitProblemPayload = {
   source_code: string;
   problemId: string;
   language: SubmissionLanguage;
+  contestId?: string; // Optional: pass when submitting during a contest
 };
 
 // Testcase result from API response
 export type TestcaseResultFromAPI = {
   testcaseId: string;
-  status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Memory Limit Exceeded' | 'Runtime Error' | 'Compile Error';
+  status:
+    | 'Accepted'
+    | 'Wrong Answer'
+    | 'Time Limit Exceeded'
+    | 'Memory Limit Exceeded'
+    | 'Runtime Error'
+    | 'Compile Error';
   time: number;
   memory: number;
   stdout: string;
@@ -58,7 +65,7 @@ export type SubmitProblemResponse = {
 
 // ===== Get User Submissions API =====
 
-export type SubmissionStatus = 
+export type SubmissionStatus =
   | 'PENDING'
   | 'RUNNING'
   | 'ACCEPTED'
@@ -119,7 +126,13 @@ export type RunCodePayload = {
 export type RunCodeResult = {
   time: number | null;
   memory: number | null;
-  status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Memory Limit Exceeded' | 'Runtime Error' | 'Compile Error';
+  status:
+    | 'Accepted'
+    | 'Wrong Answer'
+    | 'Time Limit Exceeded'
+    | 'Memory Limit Exceeded'
+    | 'Runtime Error'
+    | 'Compile Error';
   stdout: string;
   stderr: string;
   compile_error: string | null;

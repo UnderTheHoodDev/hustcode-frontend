@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { DEFAULT_API_BASE_URL } from '@/config/api';
+import { ContestSubmissionsResponse } from '@/types/contest';
 import {
   RunCodePayload,
   RunCodeResult,
@@ -53,4 +54,23 @@ const getUserSubmissions = async (params: {
   return response.data;
 };
 
-export { getUserSubmissions, runCode, submitProblem };
+// Get contest submissions - GET /contests/:id/submissions
+// This endpoint returns all submissions for a specific contest
+// Can filter by problemId, userId (filterUserId), and status
+const getContestSubmissions = async (params: {
+  contestId: string;
+  page?: number;
+  pageSize?: number;
+  problemId?: string;
+  filterUserId?: string;
+  status?: string;
+}): Promise<ContestSubmissionsResponse> => {
+  const { contestId, ...queryParams } = params;
+  const response = await submissionAxios.get<ContestSubmissionsResponse>(
+    `/contests/${contestId}/submissions`,
+    { params: queryParams }
+  );
+  return response.data;
+};
+
+export { getContestSubmissions, getUserSubmissions, runCode, submitProblem };

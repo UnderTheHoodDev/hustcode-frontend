@@ -79,7 +79,7 @@ export default function ProblemList() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(20);
+  const pageSize = 20;
 
   // Build filter options for API
   // Note: userStatus (Solved/Attempted/Unsolved) is filtered client-side
@@ -128,8 +128,6 @@ export default function ProblemList() {
 
     return data.filter((problem) => problem.userStatus === statusFilter);
   }, [apiData, statusFilter]);
-
-  const totalPages = apiData?.totalPages || 1;
 
   // Get all unique tags from problems for filter dropdown
   const allTags = React.useMemo(() => {

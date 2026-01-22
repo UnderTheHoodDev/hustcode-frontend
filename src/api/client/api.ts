@@ -26,6 +26,175 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface CreateContestDto
+ */
+export interface CreateContestDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestDto
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestDto
+     */
+    'description': string;
+    /**
+     * Contest start time (ISO 8601)
+     * @type {string}
+     * @memberof CreateContestDto
+     */
+    'startTime': string;
+    /**
+     * Contest end time (ISO 8601)
+     * @type {string}
+     * @memberof CreateContestDto
+     */
+    'endTime': string;
+    /**
+     * Is this contest public?
+     * @type {boolean}
+     * @memberof CreateContestDto
+     */
+    'isPublic': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface CreateContestProblemConstraintDto
+ */
+export interface CreateContestProblemConstraintDto {
+    /**
+     * Memory limit in MB
+     * @type {number}
+     * @memberof CreateContestProblemConstraintDto
+     */
+    'memoryLimit': number;
+    /**
+     * Time limit in milliseconds
+     * @type {number}
+     * @memberof CreateContestProblemConstraintDto
+     */
+    'timeLimit': number;
+}
+/**
+ * 
+ * @export
+ * @interface CreateContestProblemDto
+ */
+export interface CreateContestProblemDto {
+    /**
+     * Contest ID
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'contestId': string;
+    /**
+     * Problem order (A=1, B=2, C=3...)
+     * @type {number}
+     * @memberof CreateContestProblemDto
+     */
+    'order': number;
+    /**
+     * Points for this problem
+     * @type {number}
+     * @memberof CreateContestProblemDto
+     */
+    'points': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'description': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof CreateContestProblemDto
+     */
+    'tags': Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'difficulty': CreateContestProblemDtoDifficultyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'taskDescription': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'inputDescription': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemDto
+     */
+    'outputDescription': string;
+    /**
+     * 
+     * @type {Array<CreateContestProblemTestcaseDto>}
+     * @memberof CreateContestProblemDto
+     */
+    'testcases': Array<CreateContestProblemTestcaseDto>;
+    /**
+     * 
+     * @type {CreateContestProblemConstraintDto}
+     * @memberof CreateContestProblemDto
+     */
+    'constraint': CreateContestProblemConstraintDto;
+}
+
+export const CreateContestProblemDtoDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+
+export type CreateContestProblemDtoDifficultyEnum = typeof CreateContestProblemDtoDifficultyEnum[keyof typeof CreateContestProblemDtoDifficultyEnum];
+
+/**
+ * 
+ * @export
+ * @interface CreateContestProblemTestcaseDto
+ */
+export interface CreateContestProblemTestcaseDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemTestcaseDto
+     */
+    'input': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateContestProblemTestcaseDto
+     */
+    'output': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CreateContestProblemTestcaseDto
+     */
+    'isSample': boolean;
+}
+/**
+ * 
+ * @export
  * @interface CreateProblemConstraintDto
  */
 export interface CreateProblemConstraintDto {
@@ -227,6 +396,19 @@ export interface CreateTestcaseDto {
 /**
  * 
  * @export
+ * @interface InviteUsersDto
+ */
+export interface InviteUsersDto {
+    /**
+     * Array of user IDs to invite to private contest
+     * @type {Array<string>}
+     * @memberof InviteUsersDto
+     */
+    'userIds': Array<string>;
+}
+/**
+ * 
+ * @export
  * @interface LoginDto
  */
 export interface LoginDto {
@@ -410,7 +592,147 @@ export interface SubmitProblemDto {
      * @memberof SubmitProblemDto
      */
     'language': SubmitLanguageDto;
+    /**
+     * Contest ID (if submitting during a contest)
+     * @type {string}
+     * @memberof SubmitProblemDto
+     */
+    'contestId'?: string;
 }
+/**
+ * 
+ * @export
+ * @interface UpdateContestDto
+ */
+export interface UpdateContestDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestDto
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestDto
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestDto
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestDto
+     */
+    'endTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestDto
+     */
+    'status'?: UpdateContestDtoStatusEnum;
+    /**
+     * Convert private contest to public
+     * @type {boolean}
+     * @memberof UpdateContestDto
+     */
+    'isPublic'?: boolean;
+}
+
+export const UpdateContestDtoStatusEnum = {
+    Upcoming: 'UPCOMING',
+    Running: 'RUNNING',
+    Finished: 'FINISHED'
+} as const;
+
+export type UpdateContestDtoStatusEnum = typeof UpdateContestDtoStatusEnum[keyof typeof UpdateContestDtoStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface UpdateContestProblemDto
+ */
+export interface UpdateContestProblemDto {
+    /**
+     * Problem order
+     * @type {number}
+     * @memberof UpdateContestProblemDto
+     */
+    'order'?: number;
+    /**
+     * Points
+     * @type {number}
+     * @memberof UpdateContestProblemDto
+     */
+    'points'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UpdateContestProblemDto
+     */
+    'tags'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'difficulty'?: UpdateContestProblemDtoDifficultyEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'taskDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'inputDescription'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateContestProblemDto
+     */
+    'outputDescription'?: string;
+    /**
+     * 
+     * @type {Array<CreateContestProblemTestcaseDto>}
+     * @memberof UpdateContestProblemDto
+     */
+    'testcases'?: Array<CreateContestProblemTestcaseDto>;
+    /**
+     * 
+     * @type {CreateContestProblemConstraintDto}
+     * @memberof UpdateContestProblemDto
+     */
+    'constraint'?: CreateContestProblemConstraintDto;
+}
+
+export const UpdateContestProblemDtoDifficultyEnum = {
+    Easy: 'EASY',
+    Medium: 'MEDIUM',
+    Hard: 'HARD'
+} as const;
+
+export type UpdateContestProblemDtoDifficultyEnum = typeof UpdateContestProblemDtoDifficultyEnum[keyof typeof UpdateContestProblemDtoDifficultyEnum];
+
 /**
  * 
  * @export
@@ -499,6 +821,27 @@ export const UpdateProblemDtoStatusEnum = {
 } as const;
 
 export type UpdateProblemDtoStatusEnum = typeof UpdateProblemDtoStatusEnum[keyof typeof UpdateProblemDtoStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface UpdateUserRoleDto
+ */
+export interface UpdateUserRoleDto {
+    /**
+     * New role for the user
+     * @type {string}
+     * @memberof UpdateUserRoleDto
+     */
+    'role': UpdateUserRoleDtoRoleEnum;
+}
+
+export const UpdateUserRoleDtoRoleEnum = {
+    User: 'USER',
+    Admin: 'ADMIN'
+} as const;
+
+export type UpdateUserRoleDtoRoleEnum = typeof UpdateUserRoleDtoRoleEnum[keyof typeof UpdateUserRoleDtoRoleEnum];
 
 
 /**
@@ -940,6 +1283,1334 @@ export class AuthApi extends BaseAPI {
      */
     public authControllerSignup(signupDto: SignupDto, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).authControllerSignup(signupDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ContestsApi - axios parameter creator
+ * @export
+ */
+export const ContestsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Create a contest (public or private). Only authenticated users can create contests.
+         * @summary Create a new contest
+         * @param {CreateContestDto} createContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerCreate: async (createContestDto: CreateContestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createContestDto' is not null or undefined
+            assertParamExists('contestControllerCreate', 'createContestDto', createContestDto)
+            const localVarPath = `/contests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createContestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Create a new contest-only problem. The problem will have CONTEST_ONLY visibility and won\'t appear in public problem list.
+         * @summary Create problem in contest
+         * @param {CreateContestProblemDto} createContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerCreateProblem: async (createContestProblemDto: CreateContestProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createContestProblemDto' is not null or undefined
+            assertParamExists('contestControllerCreateProblem', 'createContestProblemDto', createContestProblemDto)
+            const localVarPath = `/contests/problems`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createContestProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get paginated list of contests. Users see public contests and private contests they have access to.
+         * @summary Get all contests
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ContestControllerFindAllStatusEnum} [status] 
+         * @param {boolean} [isPublic] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerFindAll: async (page?: number, pageSize?: number, status?: ContestControllerFindAllStatusEnum, isPublic?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/contests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (isPublic !== undefined) {
+                localVarQueryParameter['isPublic'] = isPublic;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get detailed information about a contest including problems
+         * @summary Get contest by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerFindOne: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerFindOne', 'id', id)
+            const localVarPath = `/contests/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.
+         * @summary Get contest submissions
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] Filter by specific problem ID
+         * @param {string} [filterUserId] Filter by specific user ID
+         * @param {string} [status] Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetContestSubmissions: async (id: string, page?: number, pageSize?: number, problemId?: string, filterUserId?: string, status?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerGetContestSubmissions', 'id', id)
+            const localVarPath = `/contests/{id}/submissions`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (problemId !== undefined) {
+                localVarQueryParameter['problemId'] = problemId;
+            }
+
+            if (filterUserId !== undefined) {
+                localVarQueryParameter['filterUserId'] = filterUserId;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get list of all invited users for a private contest. Only contest creator can view.
+         * @summary Get all invitations for a contest
+         * @param {string} id Contest ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetInvitations: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerGetInvitations', 'id', id)
+            const localVarPath = `/contests/{id}/invitations`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user\'s data with their rank.
+         * @summary Get contest leaderboard
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterUserId] Filter by specific user ID to get only that user\&#39;s leaderboard entry
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetLeaderboard: async (id: string, page?: number, pageSize?: number, filterUserId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerGetLeaderboard', 'id', id)
+            const localVarPath = `/contests/{id}/leaderboard`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (filterUserId !== undefined) {
+                localVarQueryParameter['filterUserId'] = filterUserId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Admin invites multiple users to a private contest. Only works for private contests.
+         * @summary Invite users to private contest
+         * @param {string} id Contest ID
+         * @param {InviteUsersDto} inviteUsersDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerInviteUsers: async (id: string, inviteUsersDto: InviteUsersDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerInviteUsers', 'id', id)
+            // verify required parameter 'inviteUsersDto' is not null or undefined
+            assertParamExists('contestControllerInviteUsers', 'inviteUsersDto', inviteUsersDto)
+            const localVarPath = `/contests/{id}/invitations`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(inviteUsersDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Soft delete a contest. Only creator can delete.
+         * @summary Delete contest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemove: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerRemove', 'id', id)
+            const localVarPath = `/contests/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Remove a user invitation from private contest. Only contest creator can remove.
+         * @summary Remove user invitation
+         * @param {string} contestId 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemoveInvitation: async (contestId: string, userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'contestId' is not null or undefined
+            assertParamExists('contestControllerRemoveInvitation', 'contestId', contestId)
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('contestControllerRemoveInvitation', 'userId', userId)
+            const localVarPath = `/contests/{contestId}/invitations/{userId}`
+                .replace(`{${"contestId"}}`, encodeURIComponent(String(contestId)))
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Remove a problem from contest and delete it (since it\'s contest-only). Only contest creator can remove problems.
+         * @summary Remove problem from contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemoveProblem: async (contestId: string, problemId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'contestId' is not null or undefined
+            assertParamExists('contestControllerRemoveProblem', 'contestId', contestId)
+            // verify required parameter 'problemId' is not null or undefined
+            assertParamExists('contestControllerRemoveProblem', 'problemId', problemId)
+            const localVarPath = `/contests/{contestId}/problems/{problemId}`
+                .replace(`{${"contestId"}}`, encodeURIComponent(String(contestId)))
+                .replace(`{${"problemId"}}`, encodeURIComponent(String(problemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update contest details. Only contest creator can update. Set isPublic=true to convert private contest to public.
+         * @summary Update contest
+         * @param {string} id 
+         * @param {UpdateContestDto} updateContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdate: async (id: string, updateContestDto: UpdateContestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('contestControllerUpdate', 'id', id)
+            // verify required parameter 'updateContestDto' is not null or undefined
+            assertParamExists('contestControllerUpdate', 'updateContestDto', updateContestDto)
+            const localVarPath = `/contests/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateContestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdateProblem: async (contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'contestId' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'contestId', contestId)
+            // verify required parameter 'problemId' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'problemId', problemId)
+            // verify required parameter 'updateContestProblemDto' is not null or undefined
+            assertParamExists('contestControllerUpdateProblem', 'updateContestProblemDto', updateContestProblemDto)
+            const localVarPath = `/contests/{contestId}/problems/{problemId}`
+                .replace(`{${"contestId"}}`, encodeURIComponent(String(contestId)))
+                .replace(`{${"problemId"}}`, encodeURIComponent(String(problemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateContestProblemDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ContestsApi - functional programming interface
+ * @export
+ */
+export const ContestsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContestsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Create a contest (public or private). Only authenticated users can create contests.
+         * @summary Create a new contest
+         * @param {CreateContestDto} createContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerCreate(createContestDto: CreateContestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerCreate(createContestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerCreate']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Create a new contest-only problem. The problem will have CONTEST_ONLY visibility and won\'t appear in public problem list.
+         * @summary Create problem in contest
+         * @param {CreateContestProblemDto} createContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerCreateProblem(createContestProblemDto: CreateContestProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerCreateProblem(createContestProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerCreateProblem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get paginated list of contests. Users see public contests and private contests they have access to.
+         * @summary Get all contests
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ContestControllerFindAllStatusEnum} [status] 
+         * @param {boolean} [isPublic] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerFindAll(page?: number, pageSize?: number, status?: ContestControllerFindAllStatusEnum, isPublic?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerFindAll(page, pageSize, status, isPublic, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerFindAll']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get detailed information about a contest including problems
+         * @summary Get contest by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerFindOne(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerFindOne(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerFindOne']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.
+         * @summary Get contest submissions
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] Filter by specific problem ID
+         * @param {string} [filterUserId] Filter by specific user ID
+         * @param {string} [status] Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerGetContestSubmissions(id: string, page?: number, pageSize?: number, problemId?: string, filterUserId?: string, status?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerGetContestSubmissions(id, page, pageSize, problemId, filterUserId, status, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerGetContestSubmissions']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get list of all invited users for a private contest. Only contest creator can view.
+         * @summary Get all invitations for a contest
+         * @param {string} id Contest ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerGetInvitations(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerGetInvitations(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerGetInvitations']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user\'s data with their rank.
+         * @summary Get contest leaderboard
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterUserId] Filter by specific user ID to get only that user\&#39;s leaderboard entry
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerGetLeaderboard(id: string, page?: number, pageSize?: number, filterUserId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerGetLeaderboard(id, page, pageSize, filterUserId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerGetLeaderboard']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Admin invites multiple users to a private contest. Only works for private contests.
+         * @summary Invite users to private contest
+         * @param {string} id Contest ID
+         * @param {InviteUsersDto} inviteUsersDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerInviteUsers(id: string, inviteUsersDto: InviteUsersDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerInviteUsers(id, inviteUsersDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerInviteUsers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Soft delete a contest. Only creator can delete.
+         * @summary Delete contest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerRemove(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerRemove(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerRemove']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Remove a user invitation from private contest. Only contest creator can remove.
+         * @summary Remove user invitation
+         * @param {string} contestId 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerRemoveInvitation(contestId: string, userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerRemoveInvitation(contestId, userId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerRemoveInvitation']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Remove a problem from contest and delete it (since it\'s contest-only). Only contest creator can remove problems.
+         * @summary Remove problem from contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerRemoveProblem(contestId: string, problemId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerRemoveProblem(contestId, problemId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerRemoveProblem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update contest details. Only contest creator can update. Set isPublic=true to convert private contest to public.
+         * @summary Update contest
+         * @param {string} id 
+         * @param {UpdateContestDto} updateContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerUpdate(id: string, updateContestDto: UpdateContestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerUpdate(id, updateContestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerUpdate']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ContestsApi.contestControllerUpdateProblem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ContestsApi - factory interface
+ * @export
+ */
+export const ContestsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContestsApiFp(configuration)
+    return {
+        /**
+         * Create a contest (public or private). Only authenticated users can create contests.
+         * @summary Create a new contest
+         * @param {CreateContestDto} createContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerCreate(createContestDto: CreateContestDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerCreate(createContestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Create a new contest-only problem. The problem will have CONTEST_ONLY visibility and won\'t appear in public problem list.
+         * @summary Create problem in contest
+         * @param {CreateContestProblemDto} createContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerCreateProblem(createContestProblemDto: CreateContestProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerCreateProblem(createContestProblemDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get paginated list of contests. Users see public contests and private contests they have access to.
+         * @summary Get all contests
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {ContestControllerFindAllStatusEnum} [status] 
+         * @param {boolean} [isPublic] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerFindAll(page?: number, pageSize?: number, status?: ContestControllerFindAllStatusEnum, isPublic?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerFindAll(page, pageSize, status, isPublic, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get detailed information about a contest including problems
+         * @summary Get contest by ID
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerFindOne(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerFindOne(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.
+         * @summary Get contest submissions
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [problemId] Filter by specific problem ID
+         * @param {string} [filterUserId] Filter by specific user ID
+         * @param {string} [status] Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetContestSubmissions(id: string, page?: number, pageSize?: number, problemId?: string, filterUserId?: string, status?: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerGetContestSubmissions(id, page, pageSize, problemId, filterUserId, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get list of all invited users for a private contest. Only contest creator can view.
+         * @summary Get all invitations for a contest
+         * @param {string} id Contest ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetInvitations(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerGetInvitations(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user\'s data with their rank.
+         * @summary Get contest leaderboard
+         * @param {string} id Contest ID
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterUserId] Filter by specific user ID to get only that user\&#39;s leaderboard entry
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerGetLeaderboard(id: string, page?: number, pageSize?: number, filterUserId?: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerGetLeaderboard(id, page, pageSize, filterUserId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Admin invites multiple users to a private contest. Only works for private contests.
+         * @summary Invite users to private contest
+         * @param {string} id Contest ID
+         * @param {InviteUsersDto} inviteUsersDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerInviteUsers(id: string, inviteUsersDto: InviteUsersDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerInviteUsers(id, inviteUsersDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Soft delete a contest. Only creator can delete.
+         * @summary Delete contest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemove(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerRemove(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Remove a user invitation from private contest. Only contest creator can remove.
+         * @summary Remove user invitation
+         * @param {string} contestId 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemoveInvitation(contestId: string, userId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerRemoveInvitation(contestId, userId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Remove a problem from contest and delete it (since it\'s contest-only). Only contest creator can remove problems.
+         * @summary Remove problem from contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerRemoveProblem(contestId: string, problemId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerRemoveProblem(contestId, problemId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update contest details. Only contest creator can update. Set isPublic=true to convert private contest to public.
+         * @summary Update contest
+         * @param {string} id 
+         * @param {UpdateContestDto} updateContestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdate(id: string, updateContestDto: UpdateContestDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerUpdate(id, updateContestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+         * @summary Update problem in contest
+         * @param {string} contestId 
+         * @param {string} problemId 
+         * @param {UpdateContestProblemDto} updateContestProblemDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ContestsApi - object-oriented interface
+ * @export
+ * @class ContestsApi
+ * @extends {BaseAPI}
+ */
+export class ContestsApi extends BaseAPI {
+    /**
+     * Create a contest (public or private). Only authenticated users can create contests.
+     * @summary Create a new contest
+     * @param {CreateContestDto} createContestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerCreate(createContestDto: CreateContestDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerCreate(createContestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Create a new contest-only problem. The problem will have CONTEST_ONLY visibility and won\'t appear in public problem list.
+     * @summary Create problem in contest
+     * @param {CreateContestProblemDto} createContestProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerCreateProblem(createContestProblemDto: CreateContestProblemDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerCreateProblem(createContestProblemDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get paginated list of contests. Users see public contests and private contests they have access to.
+     * @summary Get all contests
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {ContestControllerFindAllStatusEnum} [status] 
+     * @param {boolean} [isPublic] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerFindAll(page?: number, pageSize?: number, status?: ContestControllerFindAllStatusEnum, isPublic?: boolean, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerFindAll(page, pageSize, status, isPublic, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get detailed information about a contest including problems
+     * @summary Get contest by ID
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerFindOne(id: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerFindOne(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.
+     * @summary Get contest submissions
+     * @param {string} id Contest ID
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {string} [problemId] Filter by specific problem ID
+     * @param {string} [filterUserId] Filter by specific user ID
+     * @param {string} [status] Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerGetContestSubmissions(id: string, page?: number, pageSize?: number, problemId?: string, filterUserId?: string, status?: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerGetContestSubmissions(id, page, pageSize, problemId, filterUserId, status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get list of all invited users for a private contest. Only contest creator can view.
+     * @summary Get all invitations for a contest
+     * @param {string} id Contest ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerGetInvitations(id: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerGetInvitations(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user\'s data with their rank.
+     * @summary Get contest leaderboard
+     * @param {string} id Contest ID
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {string} [filterUserId] Filter by specific user ID to get only that user\&#39;s leaderboard entry
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerGetLeaderboard(id: string, page?: number, pageSize?: number, filterUserId?: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerGetLeaderboard(id, page, pageSize, filterUserId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Admin invites multiple users to a private contest. Only works for private contests.
+     * @summary Invite users to private contest
+     * @param {string} id Contest ID
+     * @param {InviteUsersDto} inviteUsersDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerInviteUsers(id: string, inviteUsersDto: InviteUsersDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerInviteUsers(id, inviteUsersDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Soft delete a contest. Only creator can delete.
+     * @summary Delete contest
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerRemove(id: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerRemove(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Remove a user invitation from private contest. Only contest creator can remove.
+     * @summary Remove user invitation
+     * @param {string} contestId 
+     * @param {string} userId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerRemoveInvitation(contestId: string, userId: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerRemoveInvitation(contestId, userId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Remove a problem from contest and delete it (since it\'s contest-only). Only contest creator can remove problems.
+     * @summary Remove problem from contest
+     * @param {string} contestId 
+     * @param {string} problemId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerRemoveProblem(contestId: string, problemId: string, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerRemoveProblem(contestId, problemId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update contest details. Only contest creator can update. Set isPublic=true to convert private contest to public.
+     * @summary Update contest
+     * @param {string} id 
+     * @param {UpdateContestDto} updateContestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerUpdate(id: string, updateContestDto: UpdateContestDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerUpdate(id, updateContestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.
+     * @summary Update problem in contest
+     * @param {string} contestId 
+     * @param {string} problemId 
+     * @param {UpdateContestProblemDto} updateContestProblemDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContestsApi
+     */
+    public contestControllerUpdateProblem(contestId: string, problemId: string, updateContestProblemDto: UpdateContestProblemDto, options?: RawAxiosRequestConfig) {
+        return ContestsApiFp(this.configuration).contestControllerUpdateProblem(contestId, problemId, updateContestProblemDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+/**
+ * @export
+ */
+export const ContestControllerFindAllStatusEnum = {
+    Upcoming: 'UPCOMING',
+    Running: 'RUNNING',
+    Finished: 'FINISHED'
+} as const;
+export type ContestControllerFindAllStatusEnum = typeof ContestControllerFindAllStatusEnum[keyof typeof ContestControllerFindAllStatusEnum];
+
+
+/**
+ * LanguageApi - axios parameter creator
+ * @export
+ */
+export const LanguageApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Get list of all supported programming languages with submission and solution counts
+         * @summary Get all programming languages
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindAll: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/language`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Find a language by its name (case insensitive)
+         * @summary Search language by name
+         * @param {string} name Language name to search for
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindByName: async (name: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'name' is not null or undefined
+            assertParamExists('languageControllerFindByName', 'name', name)
+            const localVarPath = `/language/search`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get detailed information about a specific programming language
+         * @summary Get language by ID
+         * @param {string} id Language ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindOne: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('languageControllerFindOne', 'id', id)
+            const localVarPath = `/language/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * LanguageApi - functional programming interface
+ * @export
+ */
+export const LanguageApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = LanguageApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Get list of all supported programming languages with submission and solution counts
+         * @summary Get all programming languages
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async languageControllerFindAll(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.languageControllerFindAll(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['LanguageApi.languageControllerFindAll']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Find a language by its name (case insensitive)
+         * @summary Search language by name
+         * @param {string} name Language name to search for
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async languageControllerFindByName(name: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.languageControllerFindByName(name, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['LanguageApi.languageControllerFindByName']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get detailed information about a specific programming language
+         * @summary Get language by ID
+         * @param {string} id Language ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async languageControllerFindOne(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.languageControllerFindOne(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['LanguageApi.languageControllerFindOne']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * LanguageApi - factory interface
+ * @export
+ */
+export const LanguageApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = LanguageApiFp(configuration)
+    return {
+        /**
+         * Get list of all supported programming languages with submission and solution counts
+         * @summary Get all programming languages
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindAll(options?: RawAxiosRequestConfig): AxiosPromise<any> {
+            return localVarFp.languageControllerFindAll(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Find a language by its name (case insensitive)
+         * @summary Search language by name
+         * @param {string} name Language name to search for
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindByName(name: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.languageControllerFindByName(name, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get detailed information about a specific programming language
+         * @summary Get language by ID
+         * @param {string} id Language ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        languageControllerFindOne(id: string, options?: RawAxiosRequestConfig): AxiosPromise<any> {
+            return localVarFp.languageControllerFindOne(id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * LanguageApi - object-oriented interface
+ * @export
+ * @class LanguageApi
+ * @extends {BaseAPI}
+ */
+export class LanguageApi extends BaseAPI {
+    /**
+     * Get list of all supported programming languages with submission and solution counts
+     * @summary Get all programming languages
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof LanguageApi
+     */
+    public languageControllerFindAll(options?: RawAxiosRequestConfig) {
+        return LanguageApiFp(this.configuration).languageControllerFindAll(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Find a language by its name (case insensitive)
+     * @summary Search language by name
+     * @param {string} name Language name to search for
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof LanguageApi
+     */
+    public languageControllerFindByName(name: string, options?: RawAxiosRequestConfig) {
+        return LanguageApiFp(this.configuration).languageControllerFindByName(name, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get detailed information about a specific programming language
+     * @summary Get language by ID
+     * @param {string} id Language ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof LanguageApi
+     */
+    public languageControllerFindOne(id: string, options?: RawAxiosRequestConfig) {
+        return LanguageApiFp(this.configuration).languageControllerFindOne(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1735,13 +3406,69 @@ export class SubmissionApi extends BaseAPI {
 
 
 /**
- * UserApi - axios parameter creator
+ * UsersApi - axios parameter creator
  * @export
  */
-export const UserApiAxiosParamCreator = function (configuration?: Configuration) {
+export const UsersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * Get paginated list of all users. Can search by name or email.
+         * @summary Get all users
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [search] Search by name or email
+         * @param {UserControllerGetAllUsersSortByEnum} [sortBy] Sort field
+         * @param {UserControllerGetAllUsersSortOrderEnum} [sortOrder] Sort order
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerGetAllUsers: async (page?: number, pageSize?: number, search?: string, sortBy?: UserControllerGetAllUsersSortByEnum, sortOrder?: UserControllerGetAllUsersSortOrderEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/user`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (sortBy !== undefined) {
+                localVarQueryParameter['sortBy'] = sortBy;
+            }
+
+            if (sortOrder !== undefined) {
+                localVarQueryParameter['sortOrder'] = sortOrder;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get details of the currently authenticated user
+         * @summary Get current user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1770,7 +3497,8 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 
+         * Get public profile of a specific user
+         * @summary Get user profile by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1802,29 +3530,88 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerUpdateUserRole: async (id: string, updateUserRoleDto: UpdateUserRoleDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('userControllerUpdateUserRole', 'id', id)
+            // verify required parameter 'updateUserRoleDto' is not null or undefined
+            assertParamExists('userControllerUpdateUserRole', 'updateUserRoleDto', updateUserRoleDto)
+            const localVarPath = `/user/{id}/role`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateUserRoleDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
 /**
- * UserApi - functional programming interface
+ * UsersApi - functional programming interface
  * @export
  */
-export const UserApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = UserApiAxiosParamCreator(configuration)
+export const UsersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsersApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
+         * Get paginated list of all users. Can search by name or email.
+         * @summary Get all users
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [search] Search by name or email
+         * @param {UserControllerGetAllUsersSortByEnum} [sortBy] Sort field
+         * @param {UserControllerGetAllUsersSortOrderEnum} [sortOrder] Sort order
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerGetAllUsers(page?: number, pageSize?: number, search?: string, sortBy?: UserControllerGetAllUsersSortByEnum, sortOrder?: UserControllerGetAllUsersSortOrderEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerGetAllUsers(page, pageSize, search, sortBy, sortOrder, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerGetAllUsers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get details of the currently authenticated user
+         * @summary Get current user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async userControllerGetUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerGetUser(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UserApi.userControllerGetUser']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerGetUser']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 
+         * Get public profile of a specific user
+         * @summary Get user profile by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1832,21 +3619,50 @@ export const UserApiFp = function(configuration?: Configuration) {
         async userControllerGetUserProfile(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerGetUserProfile(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UserApi.userControllerGetUserProfile']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerGetUserProfile']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerUpdateUserRole(id, updateUserRoleDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerUpdateUserRole']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * UserApi - factory interface
+ * UsersApi - factory interface
  * @export
  */
-export const UserApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = UserApiFp(configuration)
+export const UsersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsersApiFp(configuration)
     return {
         /**
-         * 
+         * Get paginated list of all users. Can search by name or email.
+         * @summary Get all users
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [search] Search by name or email
+         * @param {UserControllerGetAllUsersSortByEnum} [sortBy] Sort field
+         * @param {UserControllerGetAllUsersSortOrderEnum} [sortOrder] Sort order
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerGetAllUsers(page?: number, pageSize?: number, search?: string, sortBy?: UserControllerGetAllUsersSortByEnum, sortOrder?: UserControllerGetAllUsersSortOrderEnum, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.userControllerGetAllUsers(page, pageSize, search, sortBy, sortOrder, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get details of the currently authenticated user
+         * @summary Get current user
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1854,7 +3670,8 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.userControllerGetUser(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Get public profile of a specific user
+         * @summary Get user profile by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1862,37 +3679,96 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
         userControllerGetUserProfile(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.userControllerGetUserProfile(id, options).then((request) => request(axios, basePath));
         },
+        /**
+         * Update the role of a specific user (Admin only)
+         * @summary Update user role
+         * @param {string} id User ID to update
+         * @param {UpdateUserRoleDto} updateUserRoleDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.userControllerUpdateUserRole(id, updateUserRoleDto, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
 /**
- * UserApi - object-oriented interface
+ * UsersApi - object-oriented interface
  * @export
- * @class UserApi
+ * @class UsersApi
  * @extends {BaseAPI}
  */
-export class UserApi extends BaseAPI {
+export class UsersApi extends BaseAPI {
     /**
-     * 
+     * Get paginated list of all users. Can search by name or email.
+     * @summary Get all users
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {string} [search] Search by name or email
+     * @param {UserControllerGetAllUsersSortByEnum} [sortBy] Sort field
+     * @param {UserControllerGetAllUsersSortOrderEnum} [sortOrder] Sort order
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof UserApi
+     * @memberof UsersApi
      */
-    public userControllerGetUser(options?: RawAxiosRequestConfig) {
-        return UserApiFp(this.configuration).userControllerGetUser(options).then((request) => request(this.axios, this.basePath));
+    public userControllerGetAllUsers(page?: number, pageSize?: number, search?: string, sortBy?: UserControllerGetAllUsersSortByEnum, sortOrder?: UserControllerGetAllUsersSortOrderEnum, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerGetAllUsers(page, pageSize, search, sortBy, sortOrder, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * Get details of the currently authenticated user
+     * @summary Get current user
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerGetUser(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerGetUser(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get public profile of a specific user
+     * @summary Get user profile by ID
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof UserApi
+     * @memberof UsersApi
      */
     public userControllerGetUserProfile(id: string, options?: RawAxiosRequestConfig) {
-        return UserApiFp(this.configuration).userControllerGetUserProfile(id, options).then((request) => request(this.axios, this.basePath));
+        return UsersApiFp(this.configuration).userControllerGetUserProfile(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update the role of a specific user (Admin only)
+     * @summary Update user role
+     * @param {string} id User ID to update
+     * @param {UpdateUserRoleDto} updateUserRoleDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerUpdateUserRole(id: string, updateUserRoleDto: UpdateUserRoleDto, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerUpdateUserRole(id, updateUserRoleDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
+/**
+ * @export
+ */
+export const UserControllerGetAllUsersSortByEnum = {
+    Name: 'name',
+    Rating: 'rating',
+    CreatedAt: 'createdAt'
+} as const;
+export type UserControllerGetAllUsersSortByEnum = typeof UserControllerGetAllUsersSortByEnum[keyof typeof UserControllerGetAllUsersSortByEnum];
+/**
+ * @export
+ */
+export const UserControllerGetAllUsersSortOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type UserControllerGetAllUsersSortOrderEnum = typeof UserControllerGetAllUsersSortOrderEnum[keyof typeof UserControllerGetAllUsersSortOrderEnum];
 
 

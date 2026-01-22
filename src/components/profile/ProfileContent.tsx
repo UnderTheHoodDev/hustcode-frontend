@@ -20,22 +20,71 @@ import useProfileQuery from '@/lib/api/user/queries/use-profile';
 import { getUserInitials } from '@/utils/user';
 
 // Language colors for visual distinction
-const LANGUAGE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  python: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
-  javascript: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-  typescript: { bg: 'bg-blue-600/20', text: 'text-blue-300', border: 'border-blue-600/30' },
-  java: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' },
-  c: { bg: 'bg-gray-500/20', text: 'text-gray-300', border: 'border-gray-500/30' },
-  'c++': { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' },
-  cpp: { bg: 'bg-pink-500/20', text: 'text-pink-400', border: 'border-pink-500/30' },
-  nodejs: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-  go: { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/30' },
-  rust: { bg: 'bg-orange-600/20', text: 'text-orange-300', border: 'border-orange-600/30' },
+const LANGUAGE_COLORS: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  python: {
+    bg: 'bg-blue-500/20',
+    text: 'text-blue-400',
+    border: 'border-blue-500/30',
+  },
+  javascript: {
+    bg: 'bg-yellow-500/20',
+    text: 'text-yellow-400',
+    border: 'border-yellow-500/30',
+  },
+  typescript: {
+    bg: 'bg-blue-600/20',
+    text: 'text-blue-300',
+    border: 'border-blue-600/30',
+  },
+  java: {
+    bg: 'bg-orange-500/20',
+    text: 'text-orange-400',
+    border: 'border-orange-500/30',
+  },
+  c: {
+    bg: 'bg-gray-500/20',
+    text: 'text-gray-300',
+    border: 'border-gray-500/30',
+  },
+  'c++': {
+    bg: 'bg-pink-500/20',
+    text: 'text-pink-400',
+    border: 'border-pink-500/30',
+  },
+  cpp: {
+    bg: 'bg-pink-500/20',
+    text: 'text-pink-400',
+    border: 'border-pink-500/30',
+  },
+  nodejs: {
+    bg: 'bg-green-500/20',
+    text: 'text-green-400',
+    border: 'border-green-500/30',
+  },
+  go: {
+    bg: 'bg-cyan-500/20',
+    text: 'text-cyan-400',
+    border: 'border-cyan-500/30',
+  },
+  rust: {
+    bg: 'bg-orange-600/20',
+    text: 'text-orange-300',
+    border: 'border-orange-600/30',
+  },
 };
 
 const getLanguageColor = (language: string) => {
   const key = language.toLowerCase();
-  return LANGUAGE_COLORS[key] || { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' };
+  return (
+    LANGUAGE_COLORS[key] || {
+      bg: 'bg-purple-500/20',
+      text: 'text-purple-400',
+      border: 'border-purple-500/30',
+    }
+  );
 };
 
 const ProfileContent = () => {
@@ -89,7 +138,7 @@ const ProfileContent = () => {
               </AvatarFallback>
             </Avatar>
             {isAdmin && (
-              <div className="absolute -bottom-1 -right-1 rounded-full bg-amber-500 p-1.5">
+              <div className="absolute -right-1 -bottom-1 rounded-full bg-amber-500 p-1.5">
                 <Shield className="h-4 w-4 text-white" />
               </div>
             )}
@@ -222,10 +271,11 @@ const ProfileContent = () => {
                 .sort((a, b) => b.count - a.count)
                 .map((lang) => {
                   const colors = getLanguageColor(lang.language);
-                  const percentage = totalSubmissions > 0 
-                    ? Math.round((lang.count / totalSubmissions) * 100) 
-                    : 0;
-                  
+                  const percentage =
+                    totalSubmissions > 0
+                      ? Math.round((lang.count / totalSubmissions) * 100)
+                      : 0;
+
                   return (
                     <div
                       key={lang.language}
@@ -233,7 +283,9 @@ const ProfileContent = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
+                          <div
+                            className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}
+                          >
                             <Code2 className={`h-5 w-5 ${colors.text}`} />
                           </div>
                           <div>
@@ -255,11 +307,13 @@ const ProfileContent = () => {
                       <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-gray-700/50">
                         <div
                           className={`h-full rounded-full ${colors.bg} transition-all`}
-                          style={{ 
+                          style={{
                             width: `${percentage}%`,
-                            backgroundColor: colors.text.replace('text-', '').includes('400') 
-                              ? `rgb(var(--tw-${colors.text.replace('text-', '').replace('-400', '-500')}))` 
-                              : undefined
+                            backgroundColor: colors.text
+                              .replace('text-', '')
+                              .includes('400')
+                              ? `rgb(var(--tw-${colors.text.replace('text-', '').replace('-400', '-500')}))`
+                              : undefined,
                           }}
                         />
                       </div>

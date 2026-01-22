@@ -9,11 +9,11 @@ const useDeleteProblem = (id: string) => {
   const mutation = useMutation({
     mutationFn: () => deleteProblem(id),
     onError: (error) => {
-      console.log('Delete problem error:', error);
+      console.error('Delete problem error:', error);
       toastError('Failed to delete problem. Please check your input.');
     },
     onSuccess: (response) => {
-      console.log('Delete problem successful:', response);
+      console.warn('Delete problem successful:', response);
       queryClient.invalidateQueries({ queryKey: ['problems'] });
       queryClient.invalidateQueries({ queryKey: ['admin-problems'] });
       toastSuccess('Problem deleted successfully!');

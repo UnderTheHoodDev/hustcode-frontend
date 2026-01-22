@@ -8,7 +8,7 @@ import Logo from '@/icons/Logo';
 import useUserMeQuery from '@/lib/api/user/queries/use-me';
 
 const Header = () => {
-  const { data } = useUserMeQuery();
+  useUserMeQuery();
 
   return (
     <header className="layout-padding absolute z-10 flex w-full items-center py-5">

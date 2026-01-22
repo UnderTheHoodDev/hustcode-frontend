@@ -93,20 +93,85 @@
         "tags": ["Auth"]
       }
     },
+    "/user": {
+      "get": {
+        "description": "Get paginated list of all users. Can search by name or email.",
+        "operationId": "UserController_getAllUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by name or email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort field",
+            "schema": {
+              "enum": ["name", "rating", "createdAt"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "enum": ["asc", "desc"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users retrieved successfully"
+          }
+        },
+        "summary": "Get all users",
+        "tags": ["users"]
+      }
+    },
     "/user/me": {
       "get": {
+        "description": "Get details of the currently authenticated user",
         "operationId": "UserController_getUser",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User details retrieved successfully"
           }
         },
-        "tags": ["User"]
+        "summary": "Get current user",
+        "tags": ["users"]
       }
     },
     "/user/profile/{id}": {
       "get": {
+        "description": "Get public profile of a specific user",
         "operationId": "UserController_getUserProfile",
         "parameters": [
           {
@@ -114,16 +179,66 @@
             "required": true,
             "in": "path",
             "schema": {
+              "example": "clxxx123456789",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User profile retrieved successfully"
+          },
+          "404": {
+            "description": "User not found"
           }
         },
-        "tags": ["User"]
+        "summary": "Get user profile by ID",
+        "tags": ["users"]
+      }
+    },
+    "/user/{id}/role": {
+      "patch": {
+        "description": "Update the role of a specific user (Admin only)",
+        "operationId": "UserController_updateUserRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User role updated successfully"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update user role",
+        "tags": ["users"]
       }
     },
     "/problem": {
@@ -432,6 +547,659 @@
         "summary": "Get all submissions for a user",
         "tags": ["ProblemSubmission"]
       }
+    },
+    "/language": {
+      "get": {
+        "description": "Get list of all supported programming languages with submission and solution counts",
+        "operationId": "LanguageController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of languages retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "clxxx123",
+                      "name": "python",
+                      "createdAt": "2025-01-01T00:00:00.000Z",
+                      "updatedAt": "2025-01-01T00:00:00.000Z",
+                      "_count": {
+                        "submissions": 1250,
+                        "solutions": 45
+                      }
+                    },
+                    {
+                      "id": "clxxx456",
+                      "name": "javascript",
+                      "createdAt": "2025-01-01T00:00:00.000Z",
+                      "updatedAt": "2025-01-01T00:00:00.000Z",
+                      "_count": {
+                        "submissions": 980,
+                        "solutions": 38
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all programming languages",
+        "tags": ["Language"]
+      }
+    },
+    "/language/search": {
+      "get": {
+        "description": "Find a language by its name (case insensitive)",
+        "operationId": "LanguageController_findByName",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "description": "Language name to search for",
+            "schema": {
+              "example": "python",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Language found"
+          },
+          "404": {
+            "description": "Language not found"
+          }
+        },
+        "summary": "Search language by name",
+        "tags": ["Language"]
+      }
+    },
+    "/language/{id}": {
+      "get": {
+        "description": "Get detailed information about a specific programming language",
+        "operationId": "LanguageController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Language ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Language retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "clxxx123",
+                    "name": "python",
+                    "createdAt": "2025-01-01T00:00:00.000Z",
+                    "updatedAt": "2025-01-01T00:00:00.000Z",
+                    "_count": {
+                      "submissions": 1250,
+                      "solutions": 45
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Language not found"
+          }
+        },
+        "summary": "Get language by ID",
+        "tags": ["Language"]
+      }
+    },
+    "/contests": {
+      "post": {
+        "description": "Create a contest (public or private). Only authenticated users can create contests.",
+        "operationId": "ContestController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contest created successfully"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "summary": "Create a new contest",
+        "tags": ["contests"]
+      },
+      "get": {
+        "description": "Get paginated list of contests. Users see public contests and private contests they have access to.",
+        "operationId": "ContestController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["UPCOMING", "RUNNING", "FINISHED"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "isPublic",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contests retrieved successfully"
+          }
+        },
+        "summary": "Get all contests",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}": {
+      "get": {
+        "description": "Get detailed information about a contest including problems",
+        "operationId": "ContestController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contest retrieved successfully"
+          },
+          "403": {
+            "description": "Access denied to private contest"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get contest by ID",
+        "tags": ["contests"]
+      },
+      "patch": {
+        "description": "Update contest details. Only contest creator can update. Set isPublic=true to convert private contest to public.",
+        "operationId": "ContestController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contest updated successfully"
+          },
+          "403": {
+            "description": "Only contest creator can update"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Update contest",
+        "tags": ["contests"]
+      },
+      "delete": {
+        "description": "Soft delete a contest. Only creator can delete.",
+        "operationId": "ContestController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contest deleted successfully"
+          },
+          "403": {
+            "description": "Only contest creator can delete"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Delete contest",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/problems": {
+      "post": {
+        "description": "Create a new contest-only problem. The problem will have CONTEST_ONLY visibility and won't appear in public problem list.",
+        "operationId": "ContestController_createProblem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContestProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contest problem created successfully"
+          },
+          "400": {
+            "description": "Invalid input or order already exists"
+          },
+          "403": {
+            "description": "Only contest creator can add problems"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Create problem in contest",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{contestId}/problems/{problemId}": {
+      "patch": {
+        "description": "Update contest problem details including order, points, problem content, testcases, and constraints. Only contest creator can update.",
+        "operationId": "ContestController_updateProblem",
+        "parameters": [
+          {
+            "name": "contestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx987654321",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContestProblemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Problem updated successfully"
+          },
+          "400": {
+            "description": "Invalid input or order conflict"
+          },
+          "403": {
+            "description": "Only contest creator can update problems"
+          },
+          "404": {
+            "description": "Contest or problem not found"
+          }
+        },
+        "summary": "Update problem in contest",
+        "tags": ["contests"]
+      },
+      "delete": {
+        "description": "Remove a problem from contest and delete it (since it's contest-only). Only contest creator can remove problems.",
+        "operationId": "ContestController_removeProblem",
+        "parameters": [
+          {
+            "name": "contestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx987654321",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Problem removed successfully"
+          },
+          "403": {
+            "description": "Only contest creator can remove problems"
+          },
+          "404": {
+            "description": "Contest or problem not found"
+          }
+        },
+        "summary": "Remove problem from contest",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}/invitations": {
+      "post": {
+        "description": "Admin invites multiple users to a private contest. Only works for private contests.",
+        "operationId": "ContestController_inviteUsers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteUsersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Users invited successfully"
+          },
+          "400": {
+            "description": "Contest is public or invalid user IDs"
+          },
+          "403": {
+            "description": "Only contest creator can invite users"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Invite users to private contest",
+        "tags": ["contests"]
+      },
+      "get": {
+        "description": "Get list of all invited users for a private contest. Only contest creator can view.",
+        "operationId": "ContestController_getInvitations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitations retrieved successfully"
+          },
+          "403": {
+            "description": "Only contest creator can view invitations"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get all invitations for a contest",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{contestId}/invitations/{userId}": {
+      "delete": {
+        "description": "Remove a user invitation from private contest. Only contest creator can remove.",
+        "operationId": "ContestController_removeInvitation",
+        "parameters": [
+          {
+            "name": "contestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "clxxx987654321",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation removed successfully"
+          },
+          "403": {
+            "description": "Only contest creator can remove invitations"
+          },
+          "404": {
+            "description": "Contest or invitation not found"
+          }
+        },
+        "summary": "Remove user invitation",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}/leaderboard": {
+      "get": {
+        "description": "Get leaderboard with participant scores sorted by total score (highest first). For tie-breaker, earlier last submission time ranks higher. If filterUserId is provided, returns only that user's data with their rank.",
+        "operationId": "ContestController_getLeaderboard",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "filterUserId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific user ID to get only that user's leaderboard entry",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard retrieved successfully"
+          },
+          "403": {
+            "description": "Access denied to private contest"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get contest leaderboard",
+        "tags": ["contests"]
+      }
+    },
+    "/contests/{id}/submissions": {
+      "get": {
+        "description": "Get paginated list of submissions for a contest. Can filter by problemId and/or userId. Only accessible by users who have access to the contest.",
+        "operationId": "ContestController_getContestSubmissions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Contest ID",
+            "schema": {
+              "example": "clxxx123456789",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "problemId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific problem ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterUserId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by specific user ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by submission status (ACCEPTED, WRONG_ANSWER, etc.)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Submissions retrieved successfully"
+          },
+          "403": {
+            "description": "Access denied to private contest"
+          },
+          "404": {
+            "description": "Contest not found"
+          }
+        },
+        "summary": "Get contest submissions",
+        "tags": ["contests"]
+      }
     }
   },
   "info": {
@@ -471,6 +1239,18 @@
           }
         },
         "required": ["email", "password"]
+      },
+      "UpdateUserRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "example": "ADMIN",
+            "enum": ["USER", "ADMIN"],
+            "description": "New role for the user"
+          }
+        },
+        "required": ["role"]
       },
       "CreateTestcaseDto": {
         "type": "object",
@@ -797,9 +1577,253 @@
           },
           "language": {
             "$ref": "#/components/schemas/SubmitLanguageDto"
+          },
+          "contestId": {
+            "type": "string",
+            "example": "clxxx987654321",
+            "description": "Contest ID (if submitting during a contest)"
           }
         },
         "required": ["source_code", "problemId", "language"]
+      },
+      "CreateContestDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Weekly Contest #1"
+          },
+          "description": {
+            "type": "string",
+            "example": "A weekly programming contest for beginners"
+          },
+          "startTime": {
+            "type": "string",
+            "example": "2025-11-01T10:00:00Z",
+            "description": "Contest start time (ISO 8601)"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "2025-11-01T12:00:00Z",
+            "description": "Contest end time (ISO 8601)"
+          },
+          "isPublic": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is this contest public?",
+            "default": true
+          }
+        },
+        "required": ["title", "description", "startTime", "endTime", "isPublic"]
+      },
+      "UpdateContestDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Weekly Contest #1 (Updated)"
+          },
+          "description": {
+            "type": "string",
+            "example": "Updated contest description"
+          },
+          "startTime": {
+            "type": "string",
+            "example": "2025-11-01T10:00:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "2025-11-01T12:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["UPCOMING", "RUNNING", "FINISHED"]
+          },
+          "isPublic": {
+            "type": "boolean",
+            "example": true,
+            "description": "Convert private contest to public"
+          }
+        }
+      },
+      "CreateContestProblemTestcaseDto": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "example": "5 3"
+          },
+          "output": {
+            "type": "string",
+            "example": "8"
+          },
+          "isSample": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": ["input", "output", "isSample"]
+      },
+      "CreateContestProblemConstraintDto": {
+        "type": "object",
+        "properties": {
+          "memoryLimit": {
+            "type": "number",
+            "example": 256,
+            "description": "Memory limit in MB"
+          },
+          "timeLimit": {
+            "type": "number",
+            "example": 2000,
+            "description": "Time limit in milliseconds"
+          }
+        },
+        "required": ["memoryLimit", "timeLimit"]
+      },
+      "CreateContestProblemDto": {
+        "type": "object",
+        "properties": {
+          "contestId": {
+            "type": "string",
+            "example": "clxxx123456789",
+            "description": "Contest ID"
+          },
+          "order": {
+            "type": "number",
+            "example": 1,
+            "description": "Problem order (A=1, B=2, C=3...)"
+          },
+          "points": {
+            "type": "number",
+            "example": 100,
+            "description": "Points for this problem"
+          },
+          "title": {
+            "type": "string",
+            "example": "Two Sum"
+          },
+          "description": {
+            "type": "string",
+            "example": "Given an array of integers, return indices of two numbers..."
+          },
+          "tags": {
+            "example": ["array", "hash-table"],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["EASY", "MEDIUM", "HARD"],
+            "example": "EASY"
+          },
+          "taskDescription": {
+            "type": "string",
+            "example": "Find two numbers that add up to target"
+          },
+          "inputDescription": {
+            "type": "string",
+            "example": "First line: array\nSecond line: target"
+          },
+          "outputDescription": {
+            "type": "string",
+            "example": "Two space-separated indices"
+          },
+          "testcases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateContestProblemTestcaseDto"
+            }
+          },
+          "constraint": {
+            "$ref": "#/components/schemas/CreateContestProblemConstraintDto"
+          }
+        },
+        "required": [
+          "contestId",
+          "order",
+          "points",
+          "title",
+          "description",
+          "tags",
+          "difficulty",
+          "taskDescription",
+          "inputDescription",
+          "outputDescription",
+          "testcases",
+          "constraint"
+        ]
+      },
+      "UpdateContestProblemDto": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "number",
+            "example": 1,
+            "description": "Problem order"
+          },
+          "points": {
+            "type": "number",
+            "example": 100,
+            "description": "Points"
+          },
+          "title": {
+            "type": "string",
+            "example": "Two Sum (Updated)"
+          },
+          "description": {
+            "type": "string",
+            "example": "Updated description..."
+          },
+          "tags": {
+            "example": ["array", "hash-table", "two-pointers"],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["EASY", "MEDIUM", "HARD"],
+            "example": "MEDIUM"
+          },
+          "taskDescription": {
+            "type": "string",
+            "example": "Updated task description"
+          },
+          "inputDescription": {
+            "type": "string",
+            "example": "Updated input description"
+          },
+          "outputDescription": {
+            "type": "string",
+            "example": "Updated output description"
+          },
+          "testcases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateContestProblemTestcaseDto"
+            }
+          },
+          "constraint": {
+            "$ref": "#/components/schemas/CreateContestProblemConstraintDto"
+          }
+        }
+      },
+      "InviteUsersDto": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "example": ["user-id-1", "user-id-2", "user-id-3"],
+            "description": "Array of user IDs to invite to private contest",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["userIds"]
       }
     }
   }
