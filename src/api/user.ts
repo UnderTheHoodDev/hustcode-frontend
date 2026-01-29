@@ -22,12 +22,21 @@ axiosInstanceWithAuth.interceptors.response.use(
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      console.log(originalRequest);
 
       try {
-        const response = await authConnect.authControllerRefresh();
-        console.log(response);
-        return axiosInstanceWithAuth(originalRequest);
+        await authConnect.authControllerRefresh();
+
+        // Create a fresh request config to avoid using stale cached headers
+        // With cookie-based auth, browser will automatically send new cookies
+        const freshRequestConfig = {
+          method: originalRequest.method,
+          url: originalRequest.url,
+          data: originalRequest.data,
+          params: originalRequest.params,
+          // Don't copy old headers, let axios create fresh ones
+        };
+
+        return axiosInstanceWithAuth(freshRequestConfig);
       } catch {
         const isUserApiCall =
           originalRequest.url?.includes('/user') ||
