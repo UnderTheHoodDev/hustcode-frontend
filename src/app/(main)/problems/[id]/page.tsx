@@ -161,7 +161,7 @@ export default function ProblemDetailPage({
             testcaseId: testCase.id,
             input: testCase.input,
             expectedOutput: testCase.output,
-            userOutput: result.stdout || result.stderr || '',
+            userOutput: result.stdout || result.stderr || result.compile_error || '',
             isPassed: result.status === 'Accepted',
             time: result.time,
             memory: result.memory,
@@ -224,7 +224,7 @@ export default function ProblemDetailPage({
       // Convert API testcase results to UI format
       const results: TestCaseResult[] = response.testcaseResults.map((tc) => ({
         testcaseId: tc.testcaseId,
-        userOutput: tc.stdout || tc.stderr || '',
+        userOutput: tc.stdout || tc.stderr || tc.compile_error || '',
         isPassed: tc.status === 'Accepted',
         time: tc.time,
         memory: tc.memory,

@@ -47,6 +47,16 @@ const TestCasePanel = ({
     (submissionResults || []).map((r) => [r.testcaseId, r] as const)
   );
 
+  // Helper to truncate output for TLE cases to prevent memory overflow
+  const MAX_OUTPUT_LENGTH = 1000; // 1KB limit for TLE outputs
+  const getTruncatedOutput = (output: string, status: string): string => {
+    if (status === 'Time Limit Exceeded' && output.length > MAX_OUTPUT_LENGTH) {
+      const truncatedLength = output.length - MAX_OUTPUT_LENGTH;
+      return `${output.slice(0, MAX_OUTPUT_LENGTH)}\n\n... (${truncatedLength.toLocaleString()} characters truncated due to TLE)`;
+    }
+    return output;
+  };
+
   if (testCases.length === 0 && !isSubmitting && !submissionResults) {
     return (
       <div className="flex h-full flex-col items-center justify-center bg-[#1a2332] p-4 text-gray-500">
@@ -243,13 +253,12 @@ const TestCasePanel = ({
                           Your Output:
                         </p>
                         <pre
-                          className={`rounded-lg border p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap ${
-                            result.isPassed
-                              ? 'border-green-500/30 bg-green-500/10 text-green-300'
-                              : 'border-red-500/30 bg-red-500/10 text-red-300'
-                          }`}
+                          className={`rounded-lg border p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap ${result.isPassed
+                            ? 'border-green-500/30 bg-green-500/10 text-green-300'
+                            : 'border-red-500/30 bg-red-500/10 text-red-300'
+                            }`}
                         >
-                          {result.userOutput}
+                          {getTruncatedOutput(result.userOutput, result.status)}
                         </pre>
                       </div>
                     )}

@@ -19,16 +19,17 @@ export type SubmitProblemPayload = {
 export type TestcaseResultFromAPI = {
   testcaseId: string;
   status:
-    | 'Accepted'
-    | 'Wrong Answer'
-    | 'Time Limit Exceeded'
-    | 'Memory Limit Exceeded'
-    | 'Runtime Error'
-    | 'Compile Error';
+  | 'Accepted'
+  | 'Wrong Answer'
+  | 'Time Limit Exceeded'
+  | 'Memory Limit Exceeded'
+  | 'Runtime Error'
+  | 'Compile Error';
   time: number;
   memory: number;
   stdout: string;
   stderr: string;
+  compile_error: string | null;
 };
 
 // Submission object in response
@@ -127,12 +128,12 @@ export type RunCodeResult = {
   time: number | null;
   memory: number | null;
   status:
-    | 'Accepted'
-    | 'Wrong Answer'
-    | 'Time Limit Exceeded'
-    | 'Memory Limit Exceeded'
-    | 'Runtime Error'
-    | 'Compile Error';
+  | 'Accepted'
+  | 'Wrong Answer'
+  | 'Time Limit Exceeded'
+  | 'Memory Limit Exceeded'
+  | 'Runtime Error'
+  | 'Compile Error';
   stdout: string;
   stderr: string;
   compile_error: string | null;

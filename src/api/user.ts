@@ -22,9 +22,11 @@ axiosInstanceWithAuth.interceptors.response.use(
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+      console.log(originalRequest);
 
       try {
-        await authConnect.authControllerRefresh();
+        const response = await authConnect.authControllerRefresh();
+        console.log(response);
         return axiosInstanceWithAuth(originalRequest);
       } catch {
         const isUserApiCall =
